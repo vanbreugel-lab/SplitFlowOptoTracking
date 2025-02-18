@@ -72,7 +72,7 @@ The preprint is available at:
 ```
 # Downloading the Data 
 
-All data necessary to generate the analyses and figures used in the manuscript can be found at Dryad: DOI: 10.5061/dryad.x0k6djhwc.  
+All data necessary to generate the analyses and figures used in the manuscript can be found at Dryad: http://datadryad.org/stash/share/hXDpmpVc06gILE47fxuhvA5gjex5lpNEZ2rrFbWVB1g
 (note: data will be made public upon publication). Download this data and place into the 'Data' directory in this repo.  
 
 # Running the simulations
