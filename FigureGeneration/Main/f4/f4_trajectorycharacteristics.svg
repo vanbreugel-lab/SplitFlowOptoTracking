@@ -7,8 +7,8 @@
    viewBox="0 0 215.9 279.4"
    version="1.1"
    id="svg5"
-   inkscape:version="1.1 (c4e8f9e, 2021-05-24)"
-   sodipodi:docname="f4_draft6.svg"
+   inkscape:version="1.2 (dc2aeda, 2022-05-15)"
+   sodipodi:docname="f4_trajectorycharacteristics.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -31,31 +31,37 @@
      units="in"
      showguides="true"
      inkscape:guide-bbox="true"
-     inkscape:zoom="0.43656503"
-     inkscape:cx="166.06919"
-     inkscape:cy="466.13903"
+     inkscape:zoom="1.5111232"
+     inkscape:cx="394.07774"
+     inkscape:cy="294.15206"
      inkscape:window-width="1280"
-     inkscape:window-height="671"
+     inkscape:window-height="643"
      inkscape:window-x="0"
-     inkscape:window-y="23"
+     inkscape:window-y="38"
      inkscape:window-maximized="0"
-     inkscape:current-layer="layer1">
+     inkscape:current-layer="D1"
+     inkscape:showpageshadow="0"
+     inkscape:deskcolor="#d1d1d1">
     <sodipodi:guide
        position="102.50514,254.20806"
        orientation="0,-1"
-       id="guide824" />
+       id="guide824"
+       inkscape:locked="false" />
     <sodipodi:guide
        position="73.548886,25.164086"
        orientation="0,-1"
-       id="guide826" />
+       id="guide826"
+       inkscape:locked="false" />
     <sodipodi:guide
        position="24.902379,18.79371"
        orientation="1,0"
-       id="guide828" />
+       id="guide828"
+       inkscape:locked="false" />
     <sodipodi:guide
        position="190.24259,45.433464"
        orientation="1,0"
-       id="guide830" />
+       id="guide830"
+       inkscape:locked="false" />
   </sodipodi:namedview>
   <defs
      id="defs2">
@@ -3476,20 +3482,6 @@
             </g>
           </g>
         </g>
-        <rect
-           style="display:inline;fill:#b90000;fill-opacity:0.33871;stroke:none;stroke-width:0;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
-           id="rect242162-2"
-           width="154.32285"
-           height="19.177423"
-           x="-17.289194"
-           y="109.64797" />
-        <rect
-           style="fill:#377272;fill-opacity:0.183288;stroke:none;stroke-width:0;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
-           id="rect242162-1-3"
-           width="154.30176"
-           height="19.458385"
-           x="-17.196983"
-           y="131.55013" />
         <g
            id="g59804"
            style="display:none;stroke-linecap:butt;stroke-linejoin:round"
@@ -3610,22 +3602,22 @@
            xml:space="preserve"
            transform="matrix(0,-0.26458333,0.26458333,0,-85.953528,142.00921)"
            id="text243034-9"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.6667px;line-height:0px;font-family:Optima;-inkscape-font-specification:Optima;white-space:pre;shape-inside:url(#rect243036-79);fill:#b90000;fill-opacity:0.278592;stroke:none;stroke-width:0;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.6667px;line-height:0px;font-family:Optima;-inkscape-font-specification:Optima;white-space:pre;shape-inside:url(#rect243036-79);display:inline;fill:#b90000;fill-opacity:0.278592;stroke:none;stroke-width:0;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"><tspan
              x="72.367188"
              y="257.38859"
-             id="tspan9936"><tspan
-               style="fill:black;fill-opacity:1"
-               id="tspan9934">Flash</tspan></tspan></text>
+             id="tspan41705"><tspan
+               style="fill:#000000;fill-opacity:1"
+               id="tspan41703">Flash</tspan></tspan></text>
         <text
            xml:space="preserve"
            transform="matrix(0,-0.26458333,0.26458333,0,-85.950962,163.87102)"
            id="text243034-2-9"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.6667px;line-height:0px;font-family:Optima;-inkscape-font-specification:Optima;white-space:pre;shape-inside:url(#rect243036-7-0);fill:#b90000;fill-opacity:0.278592;stroke:none;stroke-width:0;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.6667px;line-height:0px;font-family:Optima;-inkscape-font-specification:Optima;white-space:pre;shape-inside:url(#rect243036-7-0);display:inline;fill:#b90000;fill-opacity:0.278592;stroke:none;stroke-width:0;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"><tspan
              x="72.367188"
              y="257.38859"
-             id="tspan9940"><tspan
-               style="fill:black;fill-opacity:1"
-               id="tspan9938">Sham</tspan></tspan></text>
+             id="tspan41709"><tspan
+               style="fill:#000000;fill-opacity:1"
+               id="tspan41707">Sham</tspan></tspan></text>
         <text
            xml:space="preserve"
            style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52777px;line-height:0px;font-family:Optima;-inkscape-font-specification:'Optima Bold';fill:black;fill-opacity:0.945098;stroke:none;stroke-width:0.2;stroke-linecap:butt;stroke-linejoin:round;paint-order:fill markers stroke"
@@ -8078,6 +8070,22 @@
        transform="scale(0.92265514,1.0838286)"><tspan
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.68935px;font-family:Optima;-inkscape-font-specification:Optima;stroke-width:0.0464752"
          id="tspan23936-3-4-3-1">unsteady region</tspan></text>
+    <path
+       d="m 111.40588,64.162545 h 71.80403 v 19.17665 h -71.80403 z"
+       style="fill:#b90000;fill-opacity:0.33871;fill-rule:nonzero;stroke:none;stroke-width:0.352778"
+       id="path3897" />
+    <path
+       d="m 28.939838,64.238395 h 78.630612 v 19.17665 H 28.939838 Z"
+       style="fill:#b90000;fill-opacity:0.33871;fill-rule:nonzero;stroke:none;stroke-width:0.353718"
+       id="path3899" />
+    <path
+       d="m 111.38224,86.063695 h 71.89787 v 19.459215 h -71.89787 z"
+       style="fill:#377272;fill-opacity:0.183288;fill-rule:nonzero;stroke:none;stroke-width:0.352778"
+       id="path3901" />
+    <path
+       d="M 29.012863,86.125785 H 107.67137 V 105.585 H 29.012863 Z"
+       style="fill:#377272;fill-opacity:0.183288;fill-rule:nonzero;stroke:none;stroke-width:0.352778"
+       id="path3903" />
   </g>
   <g
      style="display:inline;stroke-linecap:butt;stroke-linejoin:round"
@@ -8141,7 +8149,7 @@
           <path
              d="m 338.28749,229.34254 h 15.97033 v -44.59757 h -15.97033 z"
              clip-path="url(#pf5b0ac3cb8)"
-             style="opacity:0.1;fill:red;stroke:red;stroke-linejoin:miter"
+             style="opacity:0.1;fill:#ff0000;stroke:#ff0000;stroke-linejoin:miter"
              id="path6386" />
         </g>
         <g
@@ -8155,7 +8163,7 @@
                 <path
                    id="m9929ff8029"
                    d="M 0,0 V -3"
-                   style="stroke:black;stroke-width:0.5" />
+                   style="stroke:#000000;stroke-width:0.5" />
               </defs>
               <g
                  id="g6394">
@@ -8163,7 +8171,7 @@
                    xlink:href="#m9929ff8029"
                    x="326.45761"
                    y="234.34253"
-                   style="stroke:black;stroke-width:0.5"
+                   style="stroke:#000000;stroke-width:0.5"
                    id="use6392"
                    width="100%"
                    height="100%" />
@@ -8180,7 +8188,7 @@
                    xlink:href="#m9929ff8029"
                    x="338.28751"
                    y="234.34253"
-                   style="stroke:black;stroke-width:0.5"
+                   style="stroke:#000000;stroke-width:0.5"
                    id="use6398"
                    width="100%"
                    height="100%" />
@@ -8197,7 +8205,7 @@
                    xlink:href="#m9929ff8029"
                    x="354.37613"
                    y="234.34253"
-                   style="stroke:black;stroke-width:0.5"
+                   style="stroke:#000000;stroke-width:0.5"
                    id="use6404"
                    width="100%"
                    height="100%" />
@@ -8214,7 +8222,7 @@
                    xlink:href="#m9929ff8029"
                    x="409.26672"
                    y="234.34253"
-                   style="stroke:black;stroke-width:0.5"
+                   style="stroke:#000000;stroke-width:0.5"
                    id="use6410"
                    width="100%"
                    height="100%" />
@@ -8233,7 +8241,7 @@
                 <path
                    id="me382b75dbe"
                    d="M 0,0 H 3"
-                   style="stroke:black;stroke-width:0.5" />
+                   style="stroke:#000000;stroke-width:0.5" />
               </defs>
               <g
                  id="g6422">
@@ -8241,7 +8249,7 @@
                    xlink:href="#me382b75dbe"
                    x="321.45761"
                    y="229.34253"
-                   style="stroke:black;stroke-width:0.5"
+                   style="stroke:#000000;stroke-width:0.5"
                    id="use6420"
                    width="100%"
                    height="100%" />
@@ -8258,7 +8266,7 @@
                    xlink:href="#me382b75dbe"
                    x="321.45761"
                    y="218.19315"
-                   style="stroke:black;stroke-width:0.5"
+                   style="stroke:#000000;stroke-width:0.5"
                    id="use6426"
                    width="100%"
                    height="100%" />
@@ -8275,7 +8283,7 @@
                    xlink:href="#me382b75dbe"
                    x="321.45761"
                    y="207.04375"
-                   style="stroke:black;stroke-width:0.5"
+                   style="stroke:#000000;stroke-width:0.5"
                    id="use6432"
                    width="100%"
                    height="100%" />
@@ -8292,7 +8300,7 @@
                    xlink:href="#me382b75dbe"
                    x="321.45761"
                    y="195.89436"
-                   style="stroke:black;stroke-width:0.5"
+                   style="stroke:#000000;stroke-width:0.5"
                    id="use6438"
                    width="100%"
                    height="100%" />
@@ -8309,7 +8317,7 @@
                    xlink:href="#me382b75dbe"
                    x="321.45761"
                    y="184.74498"
-                   style="stroke:black;stroke-width:0.5"
+                   style="stroke:#000000;stroke-width:0.5"
                    id="use6444"
                    width="100%"
                    height="100%" />
@@ -8321,7 +8329,7 @@
            id="patch_4">
           <path
              d="M 321.45762,229.34254 V 184.74497"
-             style="fill:none;stroke:black;stroke-width:0.5;stroke-linecap:square;stroke-linejoin:miter"
+             style="fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:square;stroke-linejoin:miter"
              id="path6451" />
         </g>
         <g
@@ -8335,7 +8343,7 @@
            id="patch_6">
           <path
              d="m 326.45762,234.34254 h 82.8091"
-             style="fill:none;stroke:black;stroke-width:0.5;stroke-linecap:square;stroke-linejoin:miter"
+             style="fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:square;stroke-linejoin:miter"
              id="path6457" />
         </g>
         <g
@@ -8352,7 +8360,7 @@
              id="patch_8">
             <path
                d="m 414.15578,198.57893 v -13.87265 h -4.93906 v 13.87265 z"
-               style="opacity:0.7;fill:white;stroke:white;stroke-linejoin:miter"
+               style="opacity:0.7;fill:#ffffff;stroke:#ffffff;stroke-linejoin:miter"
                id="path6463" />
           </g>
           <!-- n=96 -->
