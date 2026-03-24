@@ -18,7 +18,7 @@
    id="svg8"
    inkscape:version="0.92.5 (0.92.5+68)"
    sodipodi:docname="animal_summary.svg"
-   inkscape:export-filename="/home/caveman/Sync/LAB_Private/PAPERS/2024_unsteady_split_flow/Animal_Trajectories/animal_summary.png"
+   inkscape:export-filename="/home/caveman/Sync/LAB_Private/PAPERS/2026_unsteady_flow_unifying/SplitFlowOptoTracking/FvB_Figures/sup_fig_animal_trajectories/animal_summary.png"
    inkscape:export-xdpi="600.02197"
    inkscape:export-ydpi="600.02197">
   <defs
@@ -3377,7 +3377,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
-     inkscape:cx="429.13772"
+     inkscape:cx="300.20915"
      inkscape:cy="462.77634"
      inkscape:document-units="in"
      inkscape:current-layer="layer2"
@@ -3419,7 +3419,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
