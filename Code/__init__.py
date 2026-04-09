@@ -10,5 +10,5 @@ from . import BayesFactorFunctions
 from . import staircase_approximation
 from . import FlyDataProcessingScript
 from . import TripletLoss
-from . import optimizer_pca
+from . import vae_optuna
 from . import RFClassifier

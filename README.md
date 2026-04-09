@@ -17,7 +17,7 @@ Download each zip archive from Dryad and unzip into the `Data/` directory. See `
 
 # Installing the Code
 
-The `Code/` directory is packaged as `splitflow` and contains shared utilities used across all analysis and figure notebooks. Install it in editable mode from the repo root:
+The `Code/` directory is packaged as `splitflow` (configured in `pyproject.toml`) and contains shared utilities used across all analysis and figure notebooks. Install it in editable mode from the repo root:
 
 ```bash
 pip install -e .
@@ -36,27 +36,28 @@ import splitflow.opto_tracking as opto
 
 ```
 ├── Code/
-│   ├── BayesFactorFunctions.py         # Bayes factor statistical functions
-│   ├── FeatureFunctions.py             # Trajectory feature extraction
 │   ├── FlyDataProcessingScript.py      # Raw fly data preprocessing pipeline
 │   ├── PlotUtilities.py                # Shared plotting helpers
-│   ├── RFClassifier.py                 # Random forest classifier
-│   ├── StochasticAlgorithms.py         # Casting/circling/unifying algorithm implementations
-│   ├── TripletLoss.py                  # Triplet loss for autoencoder training
-│   ├── WindDataProcessing.py           # Wind tunnel data processing
-│   ├── affine_math_and_plot_helper.py  # Affine transform math and plotting
+│   ├── WindDataProcessing.py           # Wind tunnel CFD data processing
+│   ├── StochasticAlgorithms.py         # Algorithm implementations for Brownian motion, Levy flight, etc.
+│   ├── opto_tracking.py                # Algorithm implementations for Casting/Circling in CFD
 │   ├── kinematics.py                   # Trajectory kinematics calculations
-│   ├── optimizer_pca.py                # PCA-based optimizer
-│   ├── opto_tracking.py                # Optogenetics + tracking utilities
-│   └── staircase_approximation.py      # Staircase function approximation
+│   ├── TripletLoss.py                  # Autoencoder training functions
+│   ├── vae_optuna.py                   # VAE param search code
+│   ├── RFClassifier.py                 # Random forest classifier
+│   ├── affine_math_and_plot_helper.py  # Affine transform math and plotting for unifying algorithm
+│   ├── staircase_approximation.py      # Staircase function approximation for unifying algorithm
+│   ├── BayesFactorFunctions.py         # Bayes factor statistical functions -- used in older version of paper
+│   └── FeatureFunctions.py             # Trajectory feature extraction  -- used in older version of paper
+│
 │
 ├── Data/
 │   ├── download_from_dryad_and_unzip_here.txt   # Download instructions + expected structure
-│   │   [download from Dryad and unzip here — see file above]
+│   │   [download from Dryad and unzip into the directories as shown below]
 │   ├── wind_tunnel_data/               # Wind speed measurements (laminar, outdoor, split flow)
 │   ├── CFD/
 │   │   ├── 2D_PlanarSlices/            # 2D velocity field slices (XY steady/unsteady, XZ)
-│   │   ├── 2D_PlumeData/               # 2D odor concentration slices
+│   │   ├── 2D_PlumeData/               # 2D odor concentration slices -- used in older version of paper
 │   │   └── 3D_Velocity_Fields/         # 3D velocity fields, 20s simulation (6 archives)
 │   ├── Experimental_Fly_Data/
 │   │   └── preprocessed_hdfs/          # Merged HDF files per split-flow condition
@@ -67,6 +68,7 @@ import splitflow.opto_tracking as opto
 │   │   └── Supplemental/               # Analysis outputs for supplemental figures (42 parquet files)
 │   ├── Fig1_Input_Data/                # Data specifically used for Figure 1
 │   └── Fig5_Input_Data/                # Data specifically used for Figure 5
+│
 │
 ├── FigureGeneration/
 │   ├── Main/
@@ -90,7 +92,7 @@ import splitflow.opto_tracking as opto
 │   │   │   └── misc/
 │   │   │       └── optuna_hyperparam_search_multiobj_6class.ipynb
 │   │   └── fig_5_unifying_algo_analysis/
-│   │       ├── analysis_scripts/                    # Run these first to generate Unifying_Algo_Results
+│   │       ├── analysis_scripts/                    # scripts used to generate the data in Unifying_Algo_Results
 │   │       │   ├── analyze_NEW_unifying_sims.py
 │   │       │   ├── analyze_cfd_sims.py
 │   │       │   ├── analyze_laminar.py
@@ -133,7 +135,8 @@ import splitflow.opto_tracking as opto
 │       ├── sup_fig_extra_real_trajectories/
 │       │   └── S3_sample_real_trajectories.ipynb
 │       ├── sup_fig_sorted_trajectories/
-│       │   └── S2_AllTrajectories.ipynb
+│       │   ├── supp_All_Trajectories_sorted.ipynb
+│       │   └── supplemental_autoencoder_altitude_colored.ipynb
 │       ├── sup_fig_synthetic_trajectories/
 │       │   └── S5_sample_simulated_trajectories.ipynb
 │       ├── sup_fig_tunnel_methods/
@@ -149,16 +152,18 @@ import splitflow.opto_tracking as opto
 │       └── sup_fig_vertical_split/
 │           └── S1_verticalsplit.ipynb
 │
+│
 ├── TrajectorySimulations/
 │   ├── generate_unifying_algo_trajectories/
-│   │   ├── generate_unifying_trajectories.ipynb    # Step-by-step walkthrough
-│   │   ├── generate_unifying_trajectories.py       # Script version
+│   │   ├── generate_unifying_trajectories.ipynb                 # Step-by-step walkthrough
+│   │   ├── generate_unifying_trajectories.py                    # Script version
 │   │   └── plot_trajectories.ipynb
 │   └── generating_synthetic_test_trajectory_data/
-│       ├── Casting_Circling_CFD_trajectory_generation.ipynb
-│       ├── cfd_casting_circling_sims.py
-│       ├── stochastic_trajectories.ipynb
-│       └── param_sweep/                            # Parameter sweep scripts (outputs gitignored)
+│       ├── Casting_Circling_CFD_trajectory_generation.ipynb     # Step-by-step walkthrough
+│       ├── cfd_casting_circling_sims.py                         # Script version
+│       ├── stochastic_trajectories.ipynb                        # Step-by-step walkthrough for all other algorithms
+│       └── param_sweep/                            
+│
 │
 ├── LICENSE
 └── README.md
@@ -172,7 +177,7 @@ Notebooks are provided for a step-by-step walkthrough of trajectory generation:
 - **Casting/circling (CFD-informed):** `TrajectorySimulations/generating_synthetic_test_trajectory_data/Casting_Circling_CFD_trajectory_generation.ipynb`
 - **Stochastic trajectories:** `TrajectorySimulations/generating_synthetic_test_trajectory_data/stochastic_trajectories.ipynb`
 
-Note: simulations using 3D CFD velocity fields can take hours to run. The CFD 3D data archives (`3D_vel_1.zip` – `3D_vel_6.zip`, ~4 GB each) are only required if re-running these simulations from scratch.
+Note: simulations using 3D CFD velocity fields can take a while to run. The CFD 3D data archives (`3D_vel_1.zip` – `3D_vel_6.zip`, ~4 GB each) are only required if re-running these simulations from scratch.
 
 # Generating the figures
 
