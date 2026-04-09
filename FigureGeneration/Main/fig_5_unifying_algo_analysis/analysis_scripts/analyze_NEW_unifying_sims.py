@@ -12,7 +12,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Load the data
-    hdf_filename =  '../trajectory_data/new_unifying.parquet'
+    hdf_filename =  '../../../../Data/Experimental_Fly_Data/new_unifying.parquet'
     df = pd.read_parquet(hdf_filename)
 
     # How many trajectories to process (max)
@@ -50,5 +50,5 @@ if __name__ == '__main__':
                                                                      n_bootstraps=n_bootstraps,         
                                                                      use_cvx_affine=use_cvx_affine,      
                                                                      include_translation=include_translation)
-        unifying_algo_data.to_parquet(f'../unifying_algo_results/new_unifying_{sim_exp}_{translation_flag}.parquet')
+        unifying_algo_data.to_parquet(f'../../../../Data/Unifying_Algo_Results/Main/new_unifying_{sim_exp}_{translation_flag}.parquet')
 

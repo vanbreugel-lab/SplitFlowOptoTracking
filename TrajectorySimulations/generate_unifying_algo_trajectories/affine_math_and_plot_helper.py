@@ -79,7 +79,7 @@ def get_wind(scenario, RANDOMNESS=False, SMOOTHING_WINDOW=11, dt=0.01, length=5)
     t = interp_t - interp_t[0]
     
     # load unsteady wind
-    unsteady_wind = pd.read_hdf('unsteady_timeseries.hdf')
+    unsteady_wind = pd.read_hdf('un../../Data/Simulated_Trajectory_Data/steady_timeseries.hdf')
     cfd_t = unsteady_wind.Time.values
     cfd_xvel = unsteady_wind.xvel.values
     cfd_yvel = unsteady_wind.yvel.values

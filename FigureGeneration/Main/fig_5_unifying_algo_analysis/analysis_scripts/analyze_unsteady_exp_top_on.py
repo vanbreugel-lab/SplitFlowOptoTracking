@@ -14,7 +14,7 @@ if __name__ == '__main__':
 
     n_trajecs = 200
 
-    top_on_df = pd.read_hdf('../trajectory_data/flies_splitflow_topon_c1xwt_preprocessed_optotrigger_trimmed.hdf')
+    top_on_df = pd.read_hdf('../../../../Data/Experimental_Fly_Data/flies_splitflow_topon_c1xwt_preprocessed_optotrigger_trimmed.hdf')
 
     df_flash_top_on = top_on_df[top_on_df.intensity>0]
     df_sham_top_on = top_on_df[top_on_df.intensity==0]
@@ -63,7 +63,7 @@ if __name__ == '__main__':
                                                                  n_bootstraps=n_bootstraps,         
                                                                  use_cvx_affine=use_cvx_affine,      
                                                                  include_translation=include_translation)
-    unifying_algo_data.to_parquet(f'../unifying_algo_results/unsteady_top_on_data_flash_{translation_flag}.parquet')
+    unifying_algo_data.to_parquet(f'../../../../Data/Unifying_Algo_Results/Main/unsteady_top_on_data_flash_{translation_flag}.parquet')
 
 
     # Run analysis on SHAM data LOW FLIES (unsteady)
@@ -79,7 +79,7 @@ if __name__ == '__main__':
                                                                  n_bootstraps=n_bootstraps,         
                                                                  use_cvx_affine=use_cvx_affine,      
                                                                  include_translation=include_translation)
-    unifying_algo_data.to_parquet(f'../unifying_algo_results/unsteady_top_on_data_sham_{translation_flag}.parquet')
+    unifying_algo_data.to_parquet(f'../../../../Data/Unifying_Algo_Results/Main/unsteady_top_on_data_sham_{translation_flag}.parquet')
 
 
 

@@ -12,7 +12,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Load the data
-    hdf_filename =  '../trajectory_data/flies_laminar_c1xwt_preprocessed_optotrigger_trimmed.hdf'
+    hdf_filename =  '../../../../Data/Experimental_Fly_Data/flies_laminar_c1xwt_preprocessed_optotrigger_trimmed.hdf'
     df_laminar = pd.read_hdf(hdf_filename)
 
     # How many trajectories to process (max)
@@ -32,7 +32,7 @@ if __name__ == '__main__':
 
     translation_flag = f'translation{include_translation}'
 
-    parquet_filename = '../trajectory_data/cfd_sim_circling_casting_all_wind_conditions_preprocessed.parquet'
+    parquet_filename = '../../../../Data/Experimental_Fly_Data/cfd_sim_circling_casting_all_wind_conditions_preprocessed.parquet'
     df_sims = pd.read_parquet(parquet_filename)
 
     # drop columns with nans
@@ -54,4 +54,4 @@ if __name__ == '__main__':
                                                                  n_bootstraps=n_bootstraps,         
                                                                  use_cvx_affine=use_cvx_affine,      
                                                                  include_translation=include_translation)
-        unifying_algo_data.to_parquet('../unifying_algo_results/' + 'cfd_sim_' + sim_exp.replace(' ', '_') + f'_{translation_flag}.parquet')
+        unifying_algo_data.to_parquet('../../../../Data/Unifying_Algo_Results/Main/' + 'cfd_sim_' + sim_exp.replace(' ', '_') + f'_{translation_flag}.parquet')

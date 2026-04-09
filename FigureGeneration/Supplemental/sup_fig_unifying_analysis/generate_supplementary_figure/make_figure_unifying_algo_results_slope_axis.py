@@ -43,39 +43,39 @@ TRANSLATION = True
 
 class LabelToMetadata:
     def __init__(self):
-        self.flash = metadata = {'../unifying_algo_results/laminar_data_flash_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
-                                 '../unifying_algo_results/unsteady_top_on_data_flash_translation' + str(TRANSLATION) + '.parquet': [2, '#2b75b3b3', 'unsteady'],
-                                 '../unifying_algo_results/stillair_data_flash_translation' + str(TRANSLATION) + '.parquet': [3, '#084a72ff', 'stillair'],
+        self.flash = metadata = {'../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/laminar_data_flash_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
+                                 '../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/unsteady_top_on_data_flash_translation' + str(TRANSLATION) + '.parquet': [2, '#2b75b3b3', 'unsteady'],
+                                 '../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/stillair_data_flash_translation' + str(TRANSLATION) + '.parquet': [3, '#084a72ff', 'stillair'],
                                }
 
-        self.sham = metadata = {'../unifying_algo_results/laminar_data_sham_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
-                                 '../unifying_algo_results/unsteady_top_on_data_sham_translation' + str(TRANSLATION) + '.parquet': [2, '#2b75b3b3', 'unsteady'],
-                                 '../unifying_algo_results/stillair_data_sham_translation' + str(TRANSLATION) + '.parquet': [3, '#084a72ff', 'stillair'],
+        self.sham = metadata = {'../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/laminar_data_sham_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
+                                 '../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/unsteady_top_on_data_sham_translation' + str(TRANSLATION) + '.parquet': [2, '#2b75b3b3', 'unsteady'],
+                                 '../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/stillair_data_sham_translation' + str(TRANSLATION) + '.parquet': [3, '#084a72ff', 'stillair'],
                                }
 
-        self.WT_flash = metadata = {'../unifying_algo_results/WT_laminar_data_flash_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
+        self.WT_flash = metadata = {'../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/WT_laminar_data_flash_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
                                  'None': [2, '#2b75b3b3', 'unsteady'],
-                                 '../unifying_algo_results/WT_stillair_data_flash_translation' + str(TRANSLATION) + '.parquet': [3, '#084a72ff', 'stillair'],
+                                 '../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/WT_stillair_data_flash_translation' + str(TRANSLATION) + '.parquet': [3, '#084a72ff', 'stillair'],
                                }
 
-        self.WT_sham = metadata = {'../unifying_algo_results/WT_laminar_data_sham_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
+        self.WT_sham = metadata = {'../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/WT_laminar_data_sham_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
                                  'None': [2, '#2b75b3b3', 'unsteady'],
-                                 '../unifying_algo_results/WT_stillair_data_sham_translation' + str(TRANSLATION) + '.parquet': [3, '#084a72ff', 'stillair'],
+                                 '../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/WT_stillair_data_sham_translation' + str(TRANSLATION) + '.parquet': [3, '#084a72ff', 'stillair'],
                                }
 
-        self.CFD_casting = metadata = {'../unifying_algo_results/cfd_sim_steady_casting_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
-                                 '../unifying_algo_results/cfd_sim_unsteady_casting_translation' + str(TRANSLATION) + '.parquet': [2, '#2b75b3b3', 'unsteady'],
+        self.CFD_casting = metadata = {'../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/cfd_sim_steady_casting_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
+                                 '../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/cfd_sim_unsteady_casting_translation' + str(TRANSLATION) + '.parquet': [2, '#2b75b3b3', 'unsteady'],
                                  'None': [3, '#084a72ff', 'stillair'],
                                }
 
-        self.CFD_circling = metadata = {'../unifying_algo_results/cfd_sim_steady_circling_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
-                                 '../unifying_algo_results/cfd_sim_unsteady_circling_translation' + str(TRANSLATION) + '.parquet': [2, '#2b75b3b3', 'unsteady'], 
-                                 '../unifying_algo_results/cfd_sim_still_air_circle_translation' + str(TRANSLATION) + '.parquet': [3, '#084a72ff', 'stillair'],
+        self.CFD_circling = metadata = {'../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/cfd_sim_steady_circling_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
+                                 '../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/cfd_sim_unsteady_circling_translation' + str(TRANSLATION) + '.parquet': [2, '#2b75b3b3', 'unsteady'], 
+                                 '../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/cfd_sim_still_air_circle_translation' + str(TRANSLATION) + '.parquet': [3, '#084a72ff', 'stillair'],
                                }
 
-        self.unifying = metadata = {'../unifying_algo_results/new_unifying_laminar_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
-                         '../unifying_algo_results/new_unifying_unsteady_translation' + str(TRANSLATION) + '.parquet': [2, '#2b75b3b3', 'unsteady'],
-                         '../unifying_algo_results/new_unifying_stillair_translation' + str(TRANSLATION) + '.parquet': [3, '#084a72ff', 'stillair'],
+        self.unifying = metadata = {'../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/new_unifying_laminar_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
+                         '../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/new_unifying_unsteady_translation' + str(TRANSLATION) + '.parquet': [2, '#2b75b3b3', 'unsteady'],
+                         '../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/new_unifying_stillair_translation' + str(TRANSLATION) + '.parquet': [3, '#084a72ff', 'stillair'],
                        }
 
 

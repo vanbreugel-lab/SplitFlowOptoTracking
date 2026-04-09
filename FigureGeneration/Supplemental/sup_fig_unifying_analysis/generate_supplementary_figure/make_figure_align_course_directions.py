@@ -75,39 +75,39 @@ def clean_labels(ax, show_labels, spines=['left', 'bottom']):
 
 class LabelToMetadata:
     def __init__(self):
-        self.flash = metadata = {'../unifying_algo_results/laminar_data_flash_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
-                                 '../unifying_algo_results/unsteady_top_on_data_flash_translation' + str(TRANSLATION) + '.parquet': [2, '#2b75b3b3', 'unsteady'],
-                                 '../unifying_algo_results/stillair_data_flash_translation' + str(TRANSLATION) + '.parquet': [3, '#084a72ff', 'stillair'],
+        self.flash = metadata = {'../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/laminar_data_flash_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
+                                 '../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/unsteady_top_on_data_flash_translation' + str(TRANSLATION) + '.parquet': [2, '#2b75b3b3', 'unsteady'],
+                                 '../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/stillair_data_flash_translation' + str(TRANSLATION) + '.parquet': [3, '#084a72ff', 'stillair'],
                                }
 
-        self.sham = metadata = {'../unifying_algo_results/laminar_data_sham_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
-                                 '../unifying_algo_results/unsteady_top_on_data_sham_translation' + str(TRANSLATION) + '.parquet': [2, '#2b75b3b3', 'unsteady'],
-                                 '../unifying_algo_results/stillair_data_sham_translation' + str(TRANSLATION) + '.parquet': [3, '#084a72ff', 'stillair'],
+        self.sham = metadata = {'../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/laminar_data_sham_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
+                                 '../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/unsteady_top_on_data_sham_translation' + str(TRANSLATION) + '.parquet': [2, '#2b75b3b3', 'unsteady'],
+                                 '../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/stillair_data_sham_translation' + str(TRANSLATION) + '.parquet': [3, '#084a72ff', 'stillair'],
                                }
 
-        self.WT_flash = metadata = {'../unifying_algo_results/WT_laminar_data_flash_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
+        self.WT_flash = metadata = {'../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/WT_laminar_data_flash_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
                                  'None': [2, '#2b75b3b3', 'unsteady'],
-                                 '../unifying_algo_results/WT_stillair_data_flash_translation' + str(TRANSLATION) + '.parquet': [3, '#084a72ff', 'stillair'],
+                                 '../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/WT_stillair_data_flash_translation' + str(TRANSLATION) + '.parquet': [3, '#084a72ff', 'stillair'],
                                }
 
-        self.WT_sham = metadata = {'../unifying_algo_results/WT_laminar_data_sham_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
+        self.WT_sham = metadata = {'../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/WT_laminar_data_sham_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
                                  'None': [2, '#2b75b3b3', 'unsteady'],
-                                 '../unifying_algo_results/WT_stillair_data_sham_translation' + str(TRANSLATION) + '.parquet': [3, '#084a72ff', 'stillair'],
+                                 '../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/WT_stillair_data_sham_translation' + str(TRANSLATION) + '.parquet': [3, '#084a72ff', 'stillair'],
                                }
 
-        self.CFD_casting = metadata = {'../unifying_algo_results/cfd_sim_steady_casting_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
-                                 '../unifying_algo_results/cfd_sim_unsteady_casting_translation' + str(TRANSLATION) + '.parquet': [2, '#2b75b3b3', 'unsteady'],
+        self.CFD_casting = metadata = {'../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/cfd_sim_steady_casting_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
+                                 '../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/cfd_sim_unsteady_casting_translation' + str(TRANSLATION) + '.parquet': [2, '#2b75b3b3', 'unsteady'],
                                  'None': [3, '#084a72ff', 'stillair'],
                                }
 
-        self.CFD_circling = metadata = {'../unifying_algo_results/cfd_sim_steady_circling_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
-                                 '../unifying_algo_results/cfd_sim_unsteady_circling_translation' + str(TRANSLATION) + '.parquet': [2, '#2b75b3b3', 'unsteady'], 
-                                 '../unifying_algo_results/cfd_sim_still_air_circle_translation' + str(TRANSLATION) + '.parquet': [3, '#084a72ff', 'stillair'],
+        self.CFD_circling = metadata = {'../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/cfd_sim_steady_circling_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
+                                 '../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/cfd_sim_unsteady_circling_translation' + str(TRANSLATION) + '.parquet': [2, '#2b75b3b3', 'unsteady'], 
+                                 '../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/cfd_sim_still_air_circle_translation' + str(TRANSLATION) + '.parquet': [3, '#084a72ff', 'stillair'],
                                }
 
-        self.unifying = metadata = {'../unifying_algo_results/new_unifying_laminar_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
-                         '../unifying_algo_results/new_unifying_unsteady_translation' + str(TRANSLATION) + '.parquet': [2, '#2b75b3b3', 'unsteady'],
-                         '../unifying_algo_results/new_unifying_stillair_translation' + str(TRANSLATION) + '.parquet': [3, '#084a72ff', 'stillair'],
+        self.unifying = metadata = {'../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/new_unifying_laminar_translation' + str(TRANSLATION) + '.parquet': [1, '#991128ff', 'laminar'],
+                         '../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/new_unifying_unsteady_translation' + str(TRANSLATION) + '.parquet': [2, '#2b75b3b3', 'unsteady'],
+                         '../../../../Data/Unifying_Algo_Results/Supplemental/generate_supplementary_figure/unifying_algo_results/new_unifying_stillair_translation' + str(TRANSLATION) + '.parquet': [3, '#084a72ff', 'stillair'],
                        }
 
 
@@ -121,19 +121,19 @@ def get_filename_for_wind_type(metadata, windtype):
 
 def get_trajec_filename_from_unifying_filename(unifying_filename):
     if 'cfd_sim' in unifying_filename:
-        return '../trajectory_data/cfd_sim_circling_casting_all_wind_conditions_preprocessed.parquet'
+        return '../../../../Data/Experimental_Fly_Data/cfd_sim_circling_casting_all_wind_conditions_preprocessed.parquet'
     elif 'new_unifying' in unifying_filename:
-        return '../trajectory_data/new_unifying.parquet'
+        return '../../../../Data/Experimental_Fly_Data/new_unifying.parquet'
     elif 'WT_laminar' in unifying_filename:
-        return '../trajectory_data/flies_laminar_wt_preprocessed_optotrigger_trimmed.hdf'
+        return '../../../../Data/Experimental_Fly_Data/flies_laminar_wt_preprocessed_optotrigger_trimmed.hdf'
     elif 'WT_stillair' in unifying_filename:
-        return '../trajectory_data/flies_stillair_wt_preprocessed_optotrigger_trimmed.hdf'
+        return '../../../../Data/Experimental_Fly_Data/flies_stillair_wt_preprocessed_optotrigger_trimmed.hdf'
     elif 'laminar_data' in unifying_filename:
-        return '../trajectory_data/flies_laminar_c1xwt_preprocessed_optotrigger_trimmed.hdf'
+        return '../../../../Data/Experimental_Fly_Data/flies_laminar_c1xwt_preprocessed_optotrigger_trimmed.hdf'
     elif 'stillair_data' in unifying_filename:
-        return '../trajectory_data/flies_stillair_c1xwt_preprocessed_optotrigger_trimmed.hdf'
+        return '../../../../Data/Experimental_Fly_Data/flies_stillair_c1xwt_preprocessed_optotrigger_trimmed.hdf'
     elif 'unsteady_top_on' in unifying_filename:
-        return '../trajectory_data/flies_splitflow_topon_c1xwt_preprocessed_optotrigger_trimmed.hdf'
+        return '../../../../Data/Experimental_Fly_Data/flies_splitflow_topon_c1xwt_preprocessed_optotrigger_trimmed.hdf'
     return None
 
 

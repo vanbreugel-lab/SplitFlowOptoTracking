@@ -12,7 +12,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Load the data
-    hdf_filename =  '../trajectory_data/flies_laminar_wt_preprocessed_optotrigger_trimmed.hdf'
+    hdf_filename =  '../../../../Data/Experimental_Fly_Data/flies_laminar_wt_preprocessed_optotrigger_trimmed.hdf'
     df_laminar = pd.read_hdf(hdf_filename)
 
     # How many trajectories to process (max)
@@ -45,7 +45,7 @@ if __name__ == '__main__':
                                                                  n_bootstraps=n_bootstraps,         
                                                                  use_cvx_affine=use_cvx_affine,      
                                                                  include_translation=include_translation)
-    unifying_algo_data.to_parquet(f'../unifying_algo_results/WT_laminar_data_flash_{translation_flag}.parquet')
+    unifying_algo_data.to_parquet(f'../../../../Data/Unifying_Algo_Results/Main/WT_laminar_data_flash_{translation_flag}.parquet')
 
 
     # Run analysis on SHAM data
@@ -61,4 +61,4 @@ if __name__ == '__main__':
                                                                  n_bootstraps=n_bootstraps,         
                                                                  use_cvx_affine=use_cvx_affine,      
                                                                  include_translation=include_translation)
-    unifying_algo_data.to_parquet(f'../unifying_algo_results/WT_laminar_data_sham_{translation_flag}.parquet')
+    unifying_algo_data.to_parquet(f'../../../../Data/Unifying_Algo_Results/Main/WT_laminar_data_sham_{translation_flag}.parquet')
