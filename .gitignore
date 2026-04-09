@@ -102,6 +102,7 @@ Temporary Items
 *.swo
 *.tmp
 *.bak
+README_dryad.md
 
 # Generated figure assets
 FigureGeneration/Main/fig_4_autoencoder/misc/
@@ -111,3 +112,6 @@ FigureGeneration/Main/fig_4_autoencoder/misc/
 # =====================
 Data/*
 !Data/download_from_dryad_and_unzip_here.txt
+
+# Trajectory simulation outputs
+TrajectorySimulations/generating_synthetic_test_trajectory_data/param_sweep/

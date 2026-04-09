@@ -1,0 +1,129 @@
+================================================================================
+ DATA DOWNLOAD INSTRUCTIONS
+================================================================================
+
+All data required to run the analyses and figure notebooks is hosted on Dryad:
+
+    https://doi.org/10.5061/dryad.x0k6djhwc
+
+Download each zip archive from Dryad and unzip it into this Data/ directory.
+After unzipping all archives, the directory structure should look as follows:
+
+================================================================================
+ EXPECTED DIRECTORY STRUCTURE AFTER DOWNLOAD
+================================================================================
+
+Data/
+├── download_from_dryad_and_unzip_here.txt   ← this file
+│
+├── wind_tunnel_data/                         ← from wind_tunnel_data.zip
+│   ├── laminar/
+│   │   ├── df_0.csv
+│   │   ├── df_10.csv
+│   │   └── ...  (df_40 used in Figure 1)
+│   ├── outdoor/
+│   │   └── ...
+│   └── split_flow/
+│       ├── df_H_RC.csv                       ← used in Figure 1
+│       ├── df_H_LC.csv                       ← used in Figure 1
+│       └── ...
+│
+├── CFD/                                      ← from 2D_PlanarSlices.zip,
+│   │                                            2D_PlumeData.zip,
+│   │                                            3D_vel_1.zip – 3D_vel_6.zip
+│   ├── 2D_PlanarSlices/
+│   │   ├── XY_steady/
+│   │   ├── XY_unsteady/
+│   │   └── XZslice/
+│   ├── 2D_PlumeData/
+│   │   ├── XY_steady_plume/
+│   │   ├── XY_unsteady_plume/
+│   │   └── XZ_slice_plume/
+│   └── 3D_Velocity_Fields/
+│       ├── 3D_vel_1/
+│       ├── 3D_vel_2/
+│       ├── 3D_vel_3/
+│       ├── 3D_vel_4/
+│       ├── 3D_vel_5/
+│       └── 3D_vel_6/
+│
+├── Experimental_Fly_Data/                    ← from Experimental_Fly_Data.zip
+│   └── preprocessed_hdfs/
+│       ├── all_nights_new_processing_protocol_bottom_laminar_09092024.hdf
+│       ├── all_nights_new_processing_protocol_top_laminar_09082024.hdf
+│       ├── training_laminar_df.hdf
+│       └── training_stillair_df.hdf
+│
+├── Simulated_Trajectory_Data/                ← from Simulated_Trajectory_Data.zip
+│   ├── casting_sim_constwind_n1000_fixed.hdf
+│   ├── casting_circling_sims_fixed.parquet
+│   ├── cfd_sim_results_casting.hdf
+│   ├── cfd_sim_results_circling.hdf
+│   ├── training_sims_6_classes.hdf
+│   ├── unifying_model_trajectories.parquet
+│   ├── new_unifying.parquet
+│   ├── steady_timeseries.hdf
+│   └── unsteady_timeseries.hdf
+│
+├── Animal_Trajectory_Data/                   ← from Animal_Trajectory_Data.zip
+│   ├── df_all_species.parquet
+│   ├── albatross/
+│   ├── cockroach/
+│   │   ├── wind100/
+│   │   │   ├── laminar/
+│   │   │   └── turbulent/
+│   │   └── ...
+│   ├── crabs/
+│   ├── d_melanogaster/
+│   ├── d_sechelia/
+│   ├── eels/
+│   ├── mosquitoes/
+│   ├── moths/
+│   │   ├── wind100/
+│   │   │   ├── laminar/
+│   │   │   └── turbulent/
+│   │   └── wind25/
+│   │       └── turbulent/
+│   ├── mouse/
+│   ├── nautical_search/
+│   ├── nautilus/
+│   ├── RL_agents/
+│   ├── sharks/
+│   ├── terns/
+│   └── walking_drosophila/
+│
+├── Unifying_Algo_Results/                    ← from Unifying_Algo_Results.zip
+│   ├── Main/
+│   │   └── *.parquet  (42 files)
+│   └── Supplemental/
+│       └── *.parquet  (42 files)
+│
+├── Fig1_Input_Data/                          ← from Fig1_Input_Data.zip
+│   ├── established_algorithm_example_trajectories.parquet
+│   ├── steady_timeseries.hdf
+│   ├── unsteady_timeseries.hdf
+│   └── misc/
+│       ├── new_unifying.parquet
+│       └── basic_plotting_examples/
+│           └── example_trajectories.parquet
+│
+└── Fig5_Input_Data/                          ← from Fig5_Input_Data.zip
+    ├── df_all_species.parquet
+    └── animal_trajectories/
+        ├── albatross/
+        ├── moth/
+        └── shark/
+
+================================================================================
+ NOTES
+================================================================================
+
+- Full variable descriptions for every file are in README_dryad.md (available
+  at the Dryad link above).
+
+- The 3D CFD velocity field archives (3D_vel_1.zip – 3D_vel_6.zip) are large
+  (~4 GB each) and are only needed if you intend to re-run the trajectory
+  simulations. Figure generation notebooks do not require them directly.
+
+- All paths in the analysis notebooks are set relative to the repo root and
+  assume data files are placed exactly as shown above.
