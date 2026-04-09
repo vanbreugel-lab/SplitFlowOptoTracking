@@ -128,29 +128,59 @@ def plot_feature(dfs, feature_name, ax=None):
     ax.set_ylabel(feature_name)
     
 
+def get_subplot(df, traj_id, ax, scale_bar=False):
+    lw = 1
+    ms = 2
+    t1 = df[df.obj_id_unique == traj_id]
+    pre = t1[t1['time stamp'].between(-500, 0)]
+    dur = t1[t1['time stamp'].between(0, 675)]
+    post = t1[t1['time stamp'].between(675, 4500)]
 
-def get_subplot(df, traj_id,ax):
-    ax = ax
-    lw=1
-    ms=2
-    t1 = df[df.obj_id_unique==traj_id]
-    pre=t1[t1['time stamp'].between(-500, 0)]
-    dur=t1[t1['time stamp'].between(0, 675)]
-    post = t1[t1['time stamp'].between(675,4500)]
-    
-    #ax.plot(pre['x'], pre['y'], color ='k',alpha= 0.8, linewidth =lw)
-    plot_arrowhead_trajectory(t1[t1['time stamp'].between(675,4500)].x.values, t1[t1['time stamp'].between(675,4500)].y.values,ax=ax)
-    ax.plot(pre['x'], pre['y'], color ='grey',alpha= 0.8, linewidth =lw)
-    ax.plot(dur['x'], dur['y'], color ='r', alpha =1, linewidth =lw)
-    
-    #ax.plot(post['x'], post['y'], color ='k', alpha = .8, linewidth = lw)
-    #ax.plot(pre['x'].iloc[0], pre['y'].iloc[0], '>', color='k', markersize=ms)
+    plot_arrowhead_trajectory(
+        t1[t1['time stamp'].between(675, 4500)].x.values,
+        t1[t1['time stamp'].between(675, 4500)].y.values,
+        ax=ax
+    )
+    ax.plot(pre['x'], pre['y'], color='grey', alpha=0.8, linewidth=lw)
+    ax.plot(dur['x'], dur['y'], color='r', alpha=1, linewidth=lw)
+
     ax.axis('off')
-    ax.set_xlim(-.5,.5)
-    ax.set_ylim(-.25,.25)
+    ax.set_xlim(-.5, .5)
+    ax.set_ylim(-.25, .25)
     ax.set_aspect('equal')
+
+    # --- Scale bar ---
+    if scale_bar:
+        x_extent_original = np.nanmax(t1['x']) - np.nanmin(t1['x'])
+        max_bar_original = 0.3 * x_extent_original
+        magnitude = 10 ** np.floor(np.log10(max_bar_original))
+        nice_steps = [1, 2, 5]
+        bar_size_original = magnitude
+        for step in nice_steps:
+            candidate = step * magnitude
+            if candidate <= max_bar_original:
+                bar_size_original = candidate
+
+        # Position in data coordinates (bottom-right of axes)
+        xlim = ax.get_xlim()
+        ylim = ax.get_ylim()
+        bar_x_end = xlim[1] - 0.05 * (xlim[1] - xlim[0])
+        bar_x_start = bar_x_end - bar_size_original
+        bar_y = ylim[0] + 0.08 * (ylim[1] - ylim[0])
+
+        ax.plot([bar_x_start, bar_x_end], [bar_y, bar_y],
+                color='k', linewidth=2, solid_capstyle='butt')
+
+        # Label — format as int if whole number, otherwise keep decimals
+        if bar_size_original == int(bar_size_original):
+            label = f"{int(bar_size_original)} m"
+        else:
+            label = f"{bar_size_original:.2g} m"
+
+        ax.text((bar_x_start + bar_x_end) / 2, bar_y - 0.02 * (ylim[1] - ylim[0]),
+                label, ha='center', va='top', fontsize=7, color='k')
+
     return ax
-        
     
 def plot_several_features(df, labels, cmap='YlOrBr', n=8,  ax=None):
     if ax is None:

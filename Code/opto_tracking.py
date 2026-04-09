@@ -12,8 +12,8 @@ from scipy.signal import resample
 from sklearn import linear_model
 from scipy.spatial import KDTree
 import time
-from kinematics import heading as calc_heading
-from kinematics import norm
+from splitflow.kinematics import heading as calc_heading
+from splitflow.kinematics import norm
 import pynumdiff
 
 import pandas as pd

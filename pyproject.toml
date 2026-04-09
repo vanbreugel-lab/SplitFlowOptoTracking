@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "splitflow"
+version = "0.1.0"
+
+[tool.setuptools]
+packages = ["splitflow"]
+
+[tool.setuptools.package-dir]
+splitflow = "Code"

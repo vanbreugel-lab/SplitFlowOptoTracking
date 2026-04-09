@@ -1,0 +1,94 @@
+\zeta \mapsto R = \small \begin{bmatrix} \cos(\zeta+\pi/2) & - \sin(\zeta+\pi/2) \\ \sin(\zeta+\pi/2) & \cos(\zeta+\pi/2) \end{bmatrix} \\
+
+\lambda \mapsto S = \small \begin{bmatrix} 1 & 0 \\ 0 & \lambda\end{bmatrix} \\
+
+\lambda = \sigma(\textstyle\sum \vec{w}) \\
+
+A = R S R^T \\
+
+\sigma(x) = \frac{1}{1 + e^{-s(x - m)}} \\
+
+
+\overbrace{\begin{bmatrix}
+\cos\psi_0\vphantom{\tilde{\psi}} & \sin\psi_0\vphantom{\tilde{\psi}} \\
+\cos\psi_1\vphantom{\tilde{\psi}} & \sin\psi_1\vphantom{\tilde{\psi}} \\
+\vdots & \vdots \\
+\cos\psi_n\vphantom{\tilde{\psi}} & \sin\psi_n\vphantom{\tilde{\psi}} \\
+\end{bmatrix}\\[0.5em]}_{\large \mathbf{\Psi_xy}} A^T = 
+\overbrace{\begin{bmatrix}
+\cos\tilde{\psi}_0 & \sin\tilde{\psi}_0 \\
+\cos\tilde{\psi}_1 & \sin\tilde{\psi}_1 \\
+\vdots & \vdots \\
+\cos\tilde{\psi}_n & \sin\tilde{\psi}_n \\
+\end{bmatrix}\\[0.5em]}_{\large \mathbf{\tilde{\Psi}_xy}}
+
+
+##############################################
+
+
+\psi=\omega t + b
+
+##############################################
+
+\begin{bmatrix}
+\cos\tilde{\psi}_0 & \sin\tilde{\psi}_0 & 1\\
+\cos\tilde{\psi}_1 & \sin\tilde{\psi}_1 & 1\\
+\vdots & \vdots  & \vdots \\
+\cos\tilde{\psi}_n & \sin\tilde{\psi}_n & 1\\
+\end{bmatrix}  
+T  = 
+\begin{bmatrix}
+\cos\hat{\psi}_0 & \sin\hat{\psi}_0 & 1\\
+\cos\hat{\psi}_1 & \sin\hat{\psi}_1 & 1\\
+\vdots & \vdots  & \vdots \\
+\cos\hat{\psi}_n & \sin\hat{\psi}_n & 1\\
+\end{bmatrix} \\\\
+
+T = \begin{bmatrix}
+1 & 0 & t_x\\
+0 & 1 & t_y\\
+0 & 0 & 1\\
+\end{bmatrix}
+
+\begin{bmatrix} 
+\mathbf{\tilde{\Psi}_xy} | 1
+\end{bmatrix} T^T = 
+\begin{bmatrix} 
+\mathbf{\hat{\Psi}_xy} | 1
+\end{bmatrix} 
+
+
+\mathbf{\Psi_xy}\\
+\mathbf{\tilde{\Psi}_xy}\\
+\mathbf{\hat{\Psi}_xy}\\
+
+
+
+############################################
+
+A=(\mathbf{\tilde{\Psi}_{xy}}\mathbf{\Psi_{xy}}^{\dagger})^T \\
+
+L = \boldsymbol{\tilde{\psi}} - (\omega \mathbf{t} + b + \mathbf{k}2\pi)\\
+
+\begin{aligned}
+\min_{\omega,b,\mathbf{k}} \quad & \|L(\omega,b,\mathbf{k})\|_h \\
+\text{s.t.} \quad & \omega, b \in \mathbb{R}, \quad \mathbf{k} \in \mathbb{Z}^n
+\end{aligned}
+
+\boldsymbol{\psi}=\omega\mathbf{t}+b\\
+\boldsymbol{\tilde{\psi}}
+
+
+
+
+L = \mathbf{\tilde{\Psi}_{xy}}A^T-\mathbf{\Psi_{xy}} \\
+A = \begin{bmatrix}e & f \\ f & g\end{bmatrix} \\
+\begin{aligned}
+\min_{e,f,g} \quad & \|L(e,f,g)\|_h \\
+\text{s.t.} \quad & e,f,g \in \mathbb{R}
+\end{aligned}
+
+############################################
+
+\mathbf{\dot{x}}=|v|\cos\boldsymbol{\psi} \\
+\mathbf{\dot{y}}=|v|\sin\boldsymbol{\psi} \\
