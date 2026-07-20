@@ -34,7 +34,7 @@ def extract_latent_representations(model, dataloader, representation_type='mu'):
     """
     latents = []
     labels = []
-    
+    model.eval()
     with torch.no_grad():
         for data, label, obj in dataloader:
             if representation_type == 'mu':
@@ -59,11 +59,12 @@ def create_classification_matrix_with_ood(predictions, class_label_dict=None, in
     Create classification matrix including OOD samples
     """
     
-    # Get all classes including OOD
-    all_classes = set()
+    # Seed all_classes from class_label_dict so every class always has a row,
+    # even if no sample was predicted as that class.
+    all_classes = set(class_label_dict.keys()) if class_label_dict is not None else set()
     for dataset_name, pred_data in predictions.items():
         all_classes.update(pred_data['numeric_labels'])
-    
+
     all_classes = sorted(list(all_classes))
     
     # Add OOD class if present
@@ -149,7 +150,7 @@ def plot_classification_matrix_with_ood(percentage_matrix, count_matrix, figsize
     if path is not None:
         fig.savefig(path, transparent=True)
 
-def predict_with_ood_rejection(model, train_loader, unlabeled_datasets, dataset_names=None, 
+def predict_with_ood_rejection(model, train_loader, test_loader, unlabeled_datasets, dataset_names=None, 
                              class_label_dict=None, confidence_threshold=0.7, 
                              distance_threshold=None):
     """
@@ -172,13 +173,14 @@ def predict_with_ood_rejection(model, train_loader, unlabeled_datasets, dataset_
     # Extract training representations
     train_latents, train_labels = extract_latent_representations(model, train_loader)
     test_latents, test_labels = extract_latent_representations(model, test_loader)
-    # Train classifier with calibration using Platt's method (sigmoid)
-    base_rf = RandomForestClassifier(n_estimators=1000, random_state=42)
+    # Train classifier with calibration 
+    base_rf = RandomForestClassifier(n_estimators=1000, n_jobs=-1, random_state=42)
     rf = CalibratedClassifierCV(base_rf, method='temperature', cv=5)
+
     #rf.fit(test_latents, test_labels)
     rf.fit(train_latents, train_labels)
     
-    print("Random Forest classifier calibrated using Platt's method (sigmoid)")
+    print("Random Forest classifier calibrated using temperature scaling.")
 
     # Generate dataset names if not provided
     if dataset_names is None:

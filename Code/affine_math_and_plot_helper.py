@@ -1,4 +1,5 @@
 import numpy as np
+from pathlib import Path
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
@@ -79,7 +80,7 @@ def get_wind(scenario, RANDOMNESS=False, SMOOTHING_WINDOW=11, dt=0.01, length=5)
     t = interp_t - interp_t[0]
     
     # load unsteady wind
-    unsteady_wind = pd.read_hdf('../Data/Fig1_Input_Data/unsteady_timeseries.hdf')
+    unsteady_wind = pd.read_hdf(str(Path(__file__).resolve().parents[1] / 'Data' / 'Fig1_Input_Data' / 'unsteady_timeseries.hdf'))
     cfd_t = unsteady_wind.Time.values
     cfd_xvel = unsteady_wind.xvel.values
     cfd_yvel = unsteady_wind.yvel.values
@@ -102,6 +103,18 @@ def get_wind(scenario, RANDOMNESS=False, SMOOTHING_WINDOW=11, dt=0.01, length=5)
     lam_wind_direction = np.arctan2(lam_yvel_smooth, lam_xvel_smooth)
     lam_wind_speed = (lam_xvel_smooth**2 + lam_yvel_smooth**2)**0.5
 
+    # generate low wind
+    if RANDOMNESS:
+        std = 0.05
+    else:
+        std = 0
+    low_xvel = -0.2 + np.random.normal(0, std, len(t))
+    low_yvel = 0 + np.random.normal(0, std, len(t))
+    low_xvel_smooth, _ = pynumdiff.savgoldiff(low_xvel, dt, [3, SMOOTHING_WINDOW, SMOOTHING_WINDOW])
+    low_yvel_smooth, _ = pynumdiff.savgoldiff(low_yvel, dt, [3, SMOOTHING_WINDOW, SMOOTHING_WINDOW])
+    low_wind_direction = np.arctan2(low_yvel_smooth, low_xvel_smooth)
+    low_wind_speed = (low_xvel_smooth**2 + low_yvel_smooth**2)**0.5
+
     
     
     # generate still air
@@ -118,6 +131,9 @@ def get_wind(scenario, RANDOMNESS=False, SMOOTHING_WINDOW=11, dt=0.01, length=5)
 
     if scenario == 'laminar':
         return t, lam_wind_direction, lam_wind_speed
+
+    if scenario == 'low':
+        return t, low_wind_direction, low_wind_speed
 
     if scenario == 'stillair':
         return t, still_wind_direction, still_wind_speed

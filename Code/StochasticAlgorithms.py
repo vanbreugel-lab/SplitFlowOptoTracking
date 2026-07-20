@@ -228,12 +228,17 @@ def generate_random_turn_trajectory(total_time=3.01, straight_duration=np.random
     
     
     return times, x, y, vx, vy, angles
-def levy_step(alpha=2, scale=0.03):
-    """Generate a step length from a Lévy distribution."""
+
+#def levy_step(alpha=2, scale=0.03):
+#    """Generate a step length from a Lévy distribution."""
+#    u = np.random.uniform(0, 1)
+#    v = np.random.uniform(0, 1)
+#    step = scale * (u ** (-1 / alpha)) * np.sin(alpha * v) / (np.cos(v) ** (1 / alpha))
+#    return np.abs(step)
+
+def levy_step(mu=2, l_min=0.03):
     u = np.random.uniform(0, 1)
-    v = np.random.uniform(0, 1)
-    step = scale * (u ** (-1 / alpha)) * np.sin(alpha * v) / (np.cos(v) ** (1 / alpha))
-    return np.abs(step)
+    return l_min * (1 - u) ** (-1 / (mu - 1))   # CCDF ∝ l^-(mu-1), PDF ∝ l^-mu
 
 def levy_flight_fruit_fly(n_steps=301, alpha=2, scale=0.03, turn_angle_std=0.2, dt=0.01):
     """Generate a Lévy flight trajectory resembling fruit fly movement and compute velocity."""

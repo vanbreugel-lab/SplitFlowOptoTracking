@@ -1191,16 +1191,21 @@ def plot_latent_space_with_labels(model, test_loader, labels, reduce='PCA', KDE=
             cbar2 = plt.colorbar(scatter2, ax=ax2, ticks=np.unique(real_true_labels))
         else:
             cmap_real = real_colors
-            from matplotlib import colors
-            divnorm = colors.TwoSlopeNorm(vmin=0.1, vcenter=0.25, vmax=0.4)
-            
-            im = ax1.scatter(real_latent_vectors[:, 0], real_latent_vectors[:, 1], 
-                       c=cmap_real, cmap="coolwarm", norm=divnorm, alpha=0.7)
-            im = ax2.scatter(real_latent_reduced[:, 0], real_latent_reduced[:, 1], 
-                       c=cmap_real, cmap="coolwarm", norm=divnorm, alpha=0.7)
-            
-            # Create discrete colorbar for the second plot
-            cbar2 = fig.colorbar(im, ax=ax2, fraction=0.03, label='mean altitude between 1.1-3s')   
+            if isinstance(cmap_real[0], str):
+                # Pre-computed hex/named colors — pass directly, no cmap or norm needed
+                ax1.scatter(real_latent_vectors[:, 0], real_latent_vectors[:, 1],
+                           c=list(cmap_real), alpha=0.7, rasterized=True)
+                im = ax2.scatter(real_latent_reduced[:, 0], real_latent_reduced[:, 1],
+                           c=list(cmap_real), alpha=0.7, rasterized=True)
+            else:
+                # Numeric array — original altitude behaviour
+                from matplotlib import colors as mcolors_mod
+                divnorm = mcolors_mod.TwoSlopeNorm(vmin=0.1, vcenter=0.25, vmax=0.4)
+                im = ax1.scatter(real_latent_vectors[:, 0], real_latent_vectors[:, 1],
+                           c=cmap_real, cmap="coolwarm", norm=divnorm, alpha=0.7)
+                im = ax2.scatter(real_latent_reduced[:, 0], real_latent_reduced[:, 1],
+                           c=cmap_real, cmap="coolwarm", norm=divnorm, alpha=0.7)
+                cbar2 = fig.colorbar(im, ax=ax2, fraction=0.03, label='mean altitude between 1.1-3s')
             
     plt.tight_layout()
     plt.show()

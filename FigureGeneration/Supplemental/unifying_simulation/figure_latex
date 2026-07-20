@@ -1,0 +1,14 @@
+S = \xi \begin{bmatrix} 1 & 0 \\ 0 & \lambda\end{bmatrix}
+
+R = \begin{bmatrix} -\sin\gamma & -\cos\gamma \\ \cos\gamma & -\sin\gamma \end{bmatrix}
+
+T = \begin{bmatrix} 
+1 & 0 & t_x \\ 
+0 & 1 & t_y \\
+0 & 0 & 1\\ 
+\end{bmatrix}
+
+\big[\mathbf{\tilde{\Psi}_{xy}}|1\big]=\big[\mathbf{{\Psi}_{xy}}[RSR^T]^T|1\big]T^T
+
+\mathbf{\tilde{\Psi}_{xy}} \;\;
+\mathbf{{\Psi}_{xy}}

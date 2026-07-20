@@ -1,5 +1,27 @@
 import argparse
+import sys
+from pathlib import Path
+
 import pandas as pd
+
+
+# Data locations. This script lives 4 levels under the repo root:
+#   FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/<this>.py
+_REPO_ROOT = Path(__file__).resolve().parents[4]
+_DATA = _REPO_ROOT / "Data"
+
+
+class _Config:
+    RAW_DATA_DIR = _DATA / "Experimental_Fly_Data"
+    SIMULATED_DATA_DIR = _DATA / "Simulated_Trajectory_Data"
+    PREPROCESSED_DATA_DIR = _DATA / "Unifying_Algo_Results" / "Supplemental"
+
+    def configure_gurobi_env(self):
+        pass  # Gurobi picked up from the default license location / GRB_LICENSE_FILE
+
+
+config = _Config()
+config.configure_gurobi_env()
 
 from align_course_direction_analysis import unifying_algo_analysis as uaa
 from align_course_direction_analysis import unifying_algo_plots as uap
@@ -12,7 +34,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Load the data
-    hdf_filename =  '../../../../Data/Experimental_Fly_Data/new_unifying.parquet'
+    hdf_filename = str(config.SIMULATED_DATA_DIR / 'new_unifying.parquet')
     df = pd.read_parquet(hdf_filename)
 
     # How many trajectories to process (max)
@@ -50,5 +72,5 @@ if __name__ == '__main__':
                                                                      n_bootstraps=n_bootstraps,         
                                                                      use_cvx_affine=use_cvx_affine,      
                                                                      include_translation=include_translation)
-        unifying_algo_data.to_parquet(f'../../../../Data/Unifying_Algo_Results/Main/new_unifying_{sim_exp}_{translation_flag}.parquet')
+        unifying_algo_data.to_parquet(str(config.PREPROCESSED_DATA_DIR / f'new_unifying_{sim_exp}_{translation_flag}.parquet'))
 

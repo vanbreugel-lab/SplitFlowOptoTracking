@@ -115,3 +115,22 @@ Data/*
 
 # Trajectory simulation outputs
 TrajectorySimulations/generating_synthetic_test_trajectory_data/param_sweep/
+
+# Trajectory animation script and generated videos
+FigureGeneration/Main/fig_3_trajectory_characteristics/generate_trajectory_videos.py
+FigureGeneration/Main/fig_3_trajectory_characteristics/trajectory_videos/
+
+# Redundant unifying-algorithm results (duplicated in Data/Unifying_Algo_Results/)
+FigureGeneration/Main/fig_5_unifying_algo_analysis/unifying_algo_results/
+
+# Personal/exploratory notebooks (not part of the published figures)
+FigureGeneration/Main/fig_1_math_figure/from_jaleesa/
+
+# Test outputs from re-running figure notebooks (originals kept under output_figs/)
+*_test.svg
+*_test.png
+# Source-paper PDFs and figure PDFs (not tracked in the code repo)
+*.pdf
+
+# find_augmented_shams data outputs (reference-only; the merged file lives in Data/Experimental_Fly_Data/)
+FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/find_augmented_shams/*.parquet

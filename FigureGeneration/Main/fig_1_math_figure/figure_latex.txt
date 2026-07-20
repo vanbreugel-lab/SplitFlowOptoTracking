@@ -92,3 +92,14 @@ A = \begin{bmatrix}e & f \\ f & g\end{bmatrix} \\
 
 \mathbf{\dot{x}}=|v|\cos\boldsymbol{\psi} \\
 \mathbf{\dot{y}}=|v|\sin\boldsymbol{\psi} \\
+
+############################################
+
+\mathbf{{\Psi}} = \begin{bmatrix}
+\sin\boldsymbol{\psi} & \cos\boldsymbol{\psi} \\
+\vdots & \vdots
+\end{bmatrix}
+
+\big[\mathbf{\hat{\Psi}}|1\big]=\big[\mathbf{{\Psi}}|1\big]A^T
+
+\boldsymbol{\psi} = \omega\boldsymbol{t}+b

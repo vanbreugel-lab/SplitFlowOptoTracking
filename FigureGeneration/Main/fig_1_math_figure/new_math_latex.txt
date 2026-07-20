@@ -1,0 +1,3 @@
+{\boldsymbol \Psi}=[\sin{\boldsymbol \psi} \;\; \cos{\boldsymbol \psi}] \;\;
+
+[\hat{{\boldsymbol \Psi}} | 1 ]= A [ {\boldsymbol \Psi} | 1 ]

@@ -1,0 +1,72 @@
+# requirements.txt — Python dependencies for the SplitFlowOptoTracking analyses
+# ---------------------------------------------------------------------------
+# Recommended: create a dedicated environment (Python 3.11), then:
+#     pip install -r requirements.txt
+#     pip install -e .            # installs the local `splitflow` package (Code/)
+#
+# The figure notebooks were developed and validated on Python 3.11.
+# ---------------------------------------------------------------------------
+
+# --- Core scientific stack ---
+numpy
+# IMPORTANT: pandas must be < 3.0.  pandas 3.0 makes Copy-on-Write mandatory,
+# which returns read-only arrays from DataFrame.values; the unifying-algorithm
+# alignment code (align_course_direction_analysis) does in-place array ops and
+# raises "output array is read-only" under pandas >= 3.0. Pin to the 2.2.x line.
+pandas<3.0
+scipy
+matplotlib
+scikit-learn        # sklearn.preprocessing (autoencoder, several figures)
+seaborn             # fig_4 autoencoder plots
+cvxpy               # unifying-algorithm mixed-integer quadratic program
+
+# --- Deep learning (fig_4 autoencoder / triplet VAE) ---
+torch
+optuna              # hyperparameter search notebook (fig_4/misc)
+
+# --- Optimization solver (REQUIRED for the unifying algorithm) ---
+# The unifying-algo fit is a MIQP solved with solver=cvxpy.GUROBI.
+# Gurobi is commercial but free for academics (https://www.gurobi.com/academia/).
+gurobipy
+
+# --- I/O backends (used at runtime, not imported by name) ---
+pyarrow             # pandas .read_parquet / .to_parquet (all *.parquet files)
+tables              # pandas .read_hdf (*.hdf); PyTables
+
+# --- Geometry / rendering used by specific figures ---
+shapely             # sup_fig_all_animal_trajectories (label collision geometry)
+cairosvg            # unifying_simulation/plot_simulation.ipynb (SVG -> PNG frames)
+
+# --- Undeclared transitive deps of the private lab repos ---
+h5py
+sympy
+opencv-python       # cv2, imported by braid_analysis / fly_plot_lib
+setuptools<81       # figurefirst needs pkg_resources (removed from setuptools>=81)
+networkx
+python-louvain      # provides `community`, imported by flystat.resampling
+
+# --- Jupyter (to run the .ipynb notebooks) ---
+jupyter
+ipykernel
+
+# --- Public lab / third-party packages ---
+pynumdiff           # https://github.com/florisvb/PyNumDiff (savgoldiff)
+figurefirst         # https://github.com/FlyRanch/figurefirst (SVG figure layout)
+
+# --- Private lab repositories (require access) ---
+# Provides: unifying_algo_analysis (uaa), unifying_algo_plots (uap)
+git+https://github.com/vanbreugel-lab/align_course_direction_analysis.git@1c1cf203ee0bbcc0287752a58943a52930eeb9d4
+# Provides: braid_analysis.flymath, braid_analysis.braid_analysis_plots (repo: braid_tools)
+git+https://github.com/vanbreugel-lab/braid_tools.git
+# Provides: fly_plot_lib.plot (fpl)
+git+https://github.com/florisvb/FlyPlotLib.git
+# Provides: flystat.resampling (used by fpl.scatter_box_violin_distribution)
+git+https://github.com/florisvb/FlyStat.git
+
+# ---------------------------------------------------------------------------
+# System dependency (NOT pip-installable):
+#   A LaTeX distribution is required for the notebooks that set
+#   matplotlib text.usetex=True (e.g. fig_1 B_figure_math_consolidate_params).
+#   Install a full TeX (MacTeX/TeX Live) system-wide, or into a conda env with:
+#       conda install -c conda-forge texlive-core
+# ---------------------------------------------------------------------------
