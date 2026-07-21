@@ -1,7 +1,7 @@
 
 # Overview
 
-This repository provides all relevant code used in the manuscript titled "Olfactory Search Behavior Across Flow Regimes Supports a Unifying Algorithm", written by authors Jaleesa Houle, Austin Lopez, Gaurav Kumar, David Stupski, Aditya Nair, and Floris van Breugel.
+This repository provides all relevant code used in the manuscript titled "Olfactory Search Behavior Across Flow Regimes Supports a Unifying Algorithm", written by authors Jaleesa Houle, Austin Lopez, Kevin Christie, Gaurav Kumar, David Stupski, Aditya Nair, and Floris van Breugel.
 
 The preprint is available at:
 
