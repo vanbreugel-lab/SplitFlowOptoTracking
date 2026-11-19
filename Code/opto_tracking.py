@@ -77,24 +77,24 @@ class BoolPlume(object):
     # for each time step, check if initial odor encounter time < duration.        
 ########################################################################################################################
 class SurgingAgent(object):
-    """
-    centerline:
-    Simple tracking agent that tracks a plume based on inferring its centerline
-    and is biased both toward the centerline and upwind, with the strength of
-    the upwind bias increasing with the certainty around the centerline location.
 
-    The equation for the agent's 3D motion is:
+    # cast_and_surge: casting bias switches off this long (s) after the last flash sample
+    baseline_after = 2.5
+    # cast_and_surge: per-agent casting frequency rv ~ N(mean, sd) (bias sign = sign(sin(rv pi t)): rv / 2 Hz)
+    cast_rv = (2, 0.35)
+    ellipse_max = 1
+    # sink_and_circle: per-trajectory draws r ~ N(radius, radius_sd), w ~ N(omega, omega_sd)
+    radius_sd = 0.05
+    omega_sd = 1.5
 
-    $\tau \dot{v} = -v + \eta + b$
+    both_ways = False
 
-    where v is the velocity, \tau is a time constant, \eta is i.i.d. 3D Gaussian
-    noise with identity covariance, and b is the bias term.
-    
-    
-    Tracking agent model with same base dynamics as Centerline-inferring model
-    except that plume-crossing triggers a brief upwind surge, and there is
-    no memory across multiple crossings.
-    """
+    saccade_circle = dict(sacc_dur=0.1, straight=(0.17, 0), turn_deg=(72, 30), drift=0.1, drift_sd=0.5, drift_tau=0.15,
+                          speed=(0.38, 0.07), speed_mod=0.25, speed_tau=0.4, sacc_slow=0.25, tau=0.03)
+
+    saccade_cast = dict(half_mean=0.6, half_sd=0.12, cast_angle=96, sacc_dur=0.1, straight=(0.10, 0.4), turn_deg=(100, 25),
+                        min_err=40, p_extra=0, drift_sd=0.3, drift_tau=0.15, speed=(0.33, 0.07), speed_mod=0.4,
+                        speed_tau=0.3, sacc_slow=0.25, tau=0.03, noise=0.03)
 
     def __init__(self, seed, tau, noise, bias,
             surge_amp, tau_surge, bounds):
@@ -149,11 +149,17 @@ class SurgingAgent(object):
     #    ag.track(plume=pl, wind=wind1, behavior=BEHAVIOR, start_pos=start_pos, start_vel=start_vel, duration=DURATION, dt=DT, reject_thresh=REJECT_THRESH, constant_noise=CONSTANT_NOISE,bias_sign=np.random.choice([-1,1]), )
         
         if behavior=='cast_and_surge':
-                return_dict = self.cast_and_surge(plume=plume, wind=wind, start_pos=start_pos, start_vel=start_vel, duration=duration, dt=dt, bias_sign=bias_sign,constant_noise=constant_noise, rv= np.random.normal(2,0.35))  #np.random.normal(2,0.5))
+                return_dict = self.cast_and_surge(plume=plume, wind=wind, start_pos=start_pos, start_vel=start_vel, duration=duration, dt=dt, bias_sign=bias_sign,constant_noise=constant_noise, rv= np.random.normal(*self.cast_rv))  #np.random.normal(2,0.5))
 
         elif behavior=='sink_and_circle':
             return_dict = self.sink_and_circle(plume, wind, start_pos, start_vel, duration, dt, bias_sign, reject_thresh, constant_noise, radius, omega,rv=np.random.normal(2,1)) #
-            
+
+        # saccadic circling / casting fitted to the Fig. 4 still-air / laminar flies (parameters: saccade_circle, saccade_cast)
+        elif behavior=='saccade_circle_v2':
+            return_dict = self.sink_and_circle_saccadic(plume, wind, start_pos, start_vel, duration, dt, bias_sign, reject_thresh)
+        elif behavior=='cast_and_surge_saccadic':
+            return_dict = self.cast_and_surge_saccadic(plume, wind, start_pos, start_vel, duration, dt, bias_sign)
+
 # two alternative behaviors I looked at but that are excluded from paper/analysis...            
         elif behavior=='saccade_circle':
             return_dict = self.sink_and_circle_saccade(plume, wind, start_pos, start_vel, duration, dt, bias_sign, reject_thresh, rv=np.random.normal(2.75,0.25))
@@ -164,16 +170,7 @@ class SurgingAgent(object):
 
 ########################################################################################################################    
     def cast_and_surge(self, plume, wind, start_pos, start_vel, duration, dt, bias_sign,constant_noise,rv,):
-        """
-        Track a plume using the basic algorithm.
 
-        :param plume: plume object with get_odor method
-        :param threshold: odor threshold for detection
-        :param start_pos: starting position
-        :param duration: duration of simulation
-        :param dt: numerical integration time step
-        :return:
-        """
         
         n_steps = int(duration / dt)
         ts = np.arange(n_steps) * dt
@@ -226,7 +223,7 @@ class SurgingAgent(object):
                     eta = np.random.normal(0, new_noise, (3,))
                 
                 #return to baseline behavior after 2 seconds
-                if (len(np.where(odors==1)[0]) != 0) and (np.abs(ts[t] - np.where(odors==1)[0][-1]*dt) > 2.5):
+                if (len(np.where(odors==1)[0]) != 0) and (np.abs(ts[t] - np.where(odors==1)[0][-1]*dt) > self.baseline_after):
                     b=0
                     
                 if constant_noise==True: 
@@ -343,8 +340,17 @@ class SurgingAgent(object):
         surge_vec = np.zeros((n_steps, 3))
         real_wind = np.zeros((n_steps, 3))
 
-        r= np.random.normal(radius,0.05)
-        w=np.random.normal(omega,1.5)
+        r= np.random.normal(radius,self.radius_sd)
+        w=np.random.normal(omega,self.omega_sd)
+        ell = np.eye(2)
+        if self.ellipse_max > 1:
+            aspect = np.exp(np.random.uniform(0, np.log(self.ellipse_max)))
+            phi = np.random.uniform(0, np.pi)
+            rot = np.array([[np.cos(phi), -np.sin(phi)], [np.sin(phi), np.cos(phi)]])
+            ell = rot @ np.diag([np.sqrt(aspect), 1 / np.sqrt(aspect)])
+            th = np.linspace(0, 2 * np.pi, 360, endpoint=False)          # keep the mean |b| of the circle
+            ell /= np.mean(np.sqrt(aspect * np.cos(th)**2 + np.sin(th)**2 / aspect))
+        self.aspect = 1 if self.ellipse_max <= 1 else aspect
         bool_checks = np.zeros(n_steps)
         noise_convo = np.zeros(n_steps)
 
@@ -364,9 +370,9 @@ class SurgingAgent(object):
                 d_cross = (crosswind[t] - crosswind[t-1]) / np.linalg.norm(crosswind[t] - crosswind[t-1])
                 d_upwind = (upwind[t] - upwind[t-1]) 
                 d_upwind = d_upwind / np.linalg.norm(d_upwind)
-                x1= r*np.cos(w*ts[t])*bias_sign
-                y1= r*np.sin(w*ts[t])*bias_sign 
-                z=-d_upwind[2]*dt 
+                turn = bias_sign if self.both_ways else 1
+                x1, y1 = ell @ (r * np.array([np.cos(w*ts[t]), turn * np.sin(w*ts[t])]) * bias_sign)
+                z=-d_upwind[2]*dt
                 b= np.array([x1,y1,0])
                 # before odor, no casting or upwind bias 
                 if np.all(odors[:t]==0):
@@ -445,12 +451,164 @@ class SurgingAgent(object):
             'casting':casting,
             'b_convo': b_convo,
             'noise_convo': noise_convo,
+            'aspect': self.aspect,
         }
 
         return return_dict
-   
-        
-    
+
+########################################################################################################################
+    def sink_and_circle_saccadic(self, plume, wind, start_pos, start_vel, duration, dt, bias_sign, reject_thresh):
+
+        p = self.saccade_circle
+        n_steps = int(duration / dt)
+        ts = np.arange(n_steps) * dt
+        vs = np.nan * np.zeros((n_steps, 3))
+        xs = np.nan * np.zeros((n_steps, 3))
+        bs = np.zeros((n_steps, 3))
+        odors = np.nan * np.zeros((n_steps,))
+        upwind = np.zeros((n_steps, 3))
+        crosswind = np.zeros((n_steps, 3))
+        real_wind = np.zeros((n_steps, 3))
+
+        # heading turn rate and speed, drawn ahead (they do not depend on the wind)
+        k = max(int(round(p['sacc_dur'] / dt)), 1)
+        prof = 1 - np.cos(2 * np.pi * (np.arange(k) + 0.5) / k)
+        w, slow = np.zeros(n_steps), np.zeros(n_steps)
+        m, cv = p['straight']
+        s = np.random.uniform(0, m + p['sacc_dur'])             # random phase of the first saccade
+        while s < duration:
+            i = int(s / dt)
+            seg = slice(i, min(i + k, n_steps))
+            ang = np.deg2rad(max(np.random.normal(*p['turn_deg']), 5))
+            w[seg] += bias_sign * ang * prof[:seg.stop - i] / (prof.sum() * dt)
+            slow[seg] = np.maximum(slow[seg], prof[:seg.stop - i] / 2)
+            s += p['sacc_dur'] + (np.random.gamma(1 / cv ** 2, m * cv ** 2) if cv > 0 else m)
+        w += bias_sign * p['drift'] + ou_noise(n_steps, p['drift_sd'], p['drift_tau'], dt)
+        heading = np.arctan2(start_vel[1], start_vel[0]) + np.cumsum(w) * dt
+        speed = (abs(np.random.normal(*p['speed'])) * np.exp(ou_noise(n_steps, p['speed_mod'], p['speed_tau'], dt))
+                 * (1 - p['sacc_slow'] * slow))
+
+        for t in range(n_steps):
+            if t == 0:
+                v = start_vel.copy()
+                x = start_pos.copy()
+            else:
+                eta = np.random.normal(0, self.noise, (3,))
+                d_upwind = (upwind[t] - upwind[t-1])
+                d_upwind = d_upwind / np.linalg.norm(d_upwind)
+                b = speed[t] * np.array([np.cos(heading[t]), np.sin(heading[t]), 0])
+                # during the flash, no circling bias (as sink_and_circle)
+                if self.odor==1 and (np.sum(odors[:t])<=20):
+                    b = 0
+                v += (dt / p['tau']) * (-v + eta + self.bias*b - reject_thresh*d_upwind)
+                x += v * dt
+            v, x = self.reflect_if_out_of_bounds(v, x)
+            if self.odor == False and plume.check_bounds(x):
+                self.odor = plume.get_odor('initial', ts[t])
+            bs[t] = b if t else 0
+            vs[t] = v
+            xs[t] = x
+            if wind.vector_field is not None:
+                wind.get_correct_wind_vec(agent_position=xs[t], t=t, ts=ts[t])
+            crosswind[t], upwind[t], real_wind[t] = wind.relative_upwind(vs[t], t=t)
+            odors[t] = self.odor
+            if self.odor==True:
+                self.odor = plume.get_odor(self.odor, ts[t])
+
+        return {'surges': np.zeros(n_steps), 'bs': bs, 'vs': vs, 'xs': xs, 'odors': odors, 'ts': ts,
+                'real_wind': real_wind, 'upwind': upwind, 'crosswind': crosswind}
+
+########################################################################################################################
+    def cast_and_surge_saccadic(self, plume, wind, start_pos, start_vel, duration, dt, bias_sign):
+
+        p = self.saccade_cast
+        n_steps = int(duration / dt)
+        ts = np.arange(n_steps) * dt
+        self.time = ts
+        half = np.clip(np.random.normal(p['half_mean'], p['half_sd'], 40), 0.2, 1.5)
+        switches = np.cumsum(half) - np.random.uniform(0, half[0])
+        clock = np.where(np.searchsorted(switches, ts) % 2 == 0, 1.0, -1.0)
+        k = max(int(round(p['sacc_dur'] / dt)), 1)
+        prof = 1 - np.cos(2 * np.pi * (np.arange(k) + 0.5) / k)
+        m, cv = p['straight']
+        base_speed = abs(np.random.normal(*p['speed']))
+        speed_mod = np.exp(ou_noise(n_steps, p['speed_mod'], p['speed_tau'], dt))
+        drift = ou_noise(n_steps, p['drift_sd'], p['drift_tau'], dt)
+        bs = np.nan * np.zeros((n_steps, 3))
+        surges = np.zeros(n_steps)
+        b_convo = np.zeros(n_steps)
+        vs = np.nan * np.zeros((n_steps, 3))
+        xs = np.nan * np.zeros((n_steps, 3))
+        odors = np.nan * np.zeros((n_steps,))
+        upwind = np.zeros((n_steps, 3))
+        crosswind = np.zeros((n_steps, 3))
+        real_wind = np.zeros((n_steps, 3))
+        heading, side, due, turn, slow, rev = None, 0, 0, [], [], 0
+        for t in range(n_steps):
+            if t == 0:
+                b = 0
+                v = start_vel.copy()
+                x = start_pos.copy()
+                d_upwind = np.array([-.4, 0, 0])
+            else:
+                d_upwind = (upwind[t] - upwind[t - 1]) / np.linalg.norm(upwind[t] - upwind[t - 1])
+                casting = (not np.all(odors[:t] == 0) and self.odor != 1 and b_convo[t] != 0 and not (
+                    np.abs(ts[t] - np.where(odors == 1)[0][-1] * dt) > self.baseline_after))
+                if casting:
+                    if heading is None:                            # casting starts from the current flight direction
+                        heading = np.arctan2(v[1], v[0])
+                    # upwind along wind_vector, as the surge direction (relative_upwind's U_para_hat)
+                    W = np.asarray(wind.wind_vector, dtype=float).ravel()[:2]
+                    up = np.arctan2(W[1], W[0]) if np.linalg.norm(W) > 0 else np.pi
+                    sgn = clock[t] * bias_sign
+                    leg = up + sgn * np.deg2rad(p['cast_angle'])
+                    if sgn != side:                                # side switch: a saccade is due now, turning
+                        side, due = sgn, min(due, t)               # through upwind or downwind (50/50)
+                        rev = np.random.choice([-1, 1])
+                    if t >= due and not turn:
+                        err = np.angle(np.exp(1j * (leg - heading)))
+                        size = np.deg2rad(max(np.random.normal(*p['turn_deg']), 5))
+                        if abs(err) <= np.deg2rad(p['min_err']):
+                            rev = 0
+                        d = rev or np.sign(err)                    # turn direction; the last saccade lands on the leg
+                        left = np.mod(d * err, 2 * np.pi)
+                        ang = (d * min(left, size) if abs(err) > np.deg2rad(p['min_err']) else
+                               np.random.choice([-1, 1]) * size if np.random.uniform() < p['p_extra'] else 0)
+                        if ang:
+                            turn, slow = list(ang * prof / prof.sum()), list(prof / 2)
+                        due = t + k + int(round((np.random.gamma(1 / cv ** 2, m * cv ** 2) if cv > 0 else m) / dt))
+                    heading += (turn.pop(0) if turn else 0) + drift[t] * dt
+                    sl = slow.pop(0) if slow else 0
+                    b = self.bias * base_speed * speed_mod[t] * (1 - p['sacc_slow'] * sl) * np.array(
+                        [np.cos(heading), np.sin(heading), 0])
+                    tau, noise = p['tau'], p['noise']
+                else:
+                    b, tau, noise = 0, self.tau, self.noise
+                eta = np.random.normal(0, noise, (3,))
+                v += (dt / tau) * (-v + eta + b + surges[t] * d_upwind)
+                x += v * dt
+            v, x = self.reflect_if_out_of_bounds(v, x)
+            if self.odor == False:
+                if plume.check_bounds(x):
+                    self.odor = plume.get_odor('initial', ts[t])
+            bs[t] = b
+            vs[t] = v
+            xs[t] = x
+            if wind.vector_field is not None:
+                wind.get_correct_wind_vec(agent_position=xs[t], t=t, ts=ts[t])
+            crosswind[t], upwind[t], real_wind[t] = wind.relative_upwind(vs[t], t=t)
+            odors[t] = self.odor
+            if self.odor == True:
+                c = 30
+                ts_ = ts[t + c:] - ts[t + c]
+                surges[t + c:] += (self.surge_amp_ * ts_ * np.exp(-ts_ / self.tau_surge))
+                b_convo[:t] = 0
+                self.odor = plume.get_odor(self.odor, ts[t])
+            if self.odor == False:
+                b_convo[t:] = clock[t]
+        return {'surges': surges, 'bs': bs, 'vs': vs, 'xs': xs, 'odors': odors, 'ts': ts, 'real_wind': real_wind,
+                'b_convo': b_convo}
+
 ########################################################################################################################
     def sink_and_circle_saccade(self, plume, wind, start_pos, start_vel, duration, dt, bias_sign, reject_thresh, rv):
         """
@@ -573,7 +731,7 @@ class SurgingAgent(object):
             
             
             #start_time = time.time()
-            crosswind[t], upwind[t] = wind.relative_upwind(vs[t], t=t)
+            crosswind[t], upwind[t], _ = wind.relative_upwind(vs[t], t=t)
             
             #end_time = time.time()
             #print('total time to get cross + up:', start_time - end_time)
@@ -722,7 +880,7 @@ class SurgingAgent(object):
  
             
             #calculate crosswind/upwind for fly
-            crosswind[t], upwind[t] = wind.relative_upwind(vs[t], t=t)
+            crosswind[t], upwind[t], _ = wind.relative_upwind(vs[t], t=t)
             #print('cross:', crosswind[t], 'up:', upwind[t])
 
             #save values to dict
@@ -733,9 +891,6 @@ class SurgingAgent(object):
             #print('bool check:', bool_checks[t])
             # add new surge force if hit has occurred
             if self.odor==True:
-                # compute alpha function starting at current time point
-                # and add it to surges array
-                #c=45
                 c=25
                 ts_ = ts[t+c:] - ts[t+c]
                 surges[t+c:] += (self.surge_amp_*ts_*np.exp(-ts_/self.tau_surge))
@@ -778,6 +933,15 @@ class SurgingAgent(object):
 
     
  ########################################################################################################################   
+def ou_noise(n, sd, tau, dt):
+    # stationary Ornstein-Uhlenbeck series: n steps, standard deviation sd, time constant tau (s)
+    x = np.zeros(n)
+    a = np.exp(-dt / tau)
+    for i in range(1, n):
+        x[i] = a * x[i - 1] + np.sqrt(1 - a ** 2) * sd * np.random.normal()
+    return x
+
+
 class WindObs(object):
     
     def __init__(self, condition, speed=0.4, vector=None, vector_field=None, wind_positions=None, wind_data_type='real'):
@@ -947,7 +1111,7 @@ def run_sims(SEED, BEHAVIOR,
         # make trajectory
         if BEHAVIOR=='cast_and_surge':
             traj = ag.track(plume=pl, wind=wind1, behavior=BEHAVIOR, start_pos=start_pos, start_vel=start_vel, duration=DURATION, dt=DT, reject_thresh=REJECT_THRESH, constant_noise=CONSTANT_NOISE,bias_sign=np.random.choice([-1,1]), )
-        if BEHAVIOR=='sink_and_circle':
+        if BEHAVIOR in ('sink_and_circle', 'saccade_circle_v2', 'cast_and_surge_saccadic'):
             traj = ag.track(plume=pl, wind=wind1, behavior=BEHAVIOR, start_pos=start_pos, start_vel=start_vel, duration=DURATION, dt=DT, reject_thresh=REJECT_THRESH, radius=RADIUS, omega=OMEGA, constant_noise=CONSTANT_NOISE, bias_sign=np.random.choice([-1,1]),)
             
             

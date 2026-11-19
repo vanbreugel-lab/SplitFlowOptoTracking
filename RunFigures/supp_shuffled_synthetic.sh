@@ -6,7 +6,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/_common.sh"
 
 begin_figure supp_shuffled_synthetic "Supplemental: unifying analysis on shuffled / synthetic data"
-D=FigureGeneration/Supplemental/Supplemental_Figure_Shuffled_Synthetic_UAA
+D=FigureGeneration/Supplemental/supp_fig_13_shuffled_synthetic_uaa
 
 run_notebook "$D" A_shuffled_synthetic_align_course_directions.ipynb
 run_notebook "$D" B_shuffled_trajectories.ipynb

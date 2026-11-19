@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Supplemental: altitude-sorted trajectories
+# Supplemental: altitude-sorted trajectories (no longer in the SI; not run by run_all.sh)
 # Runs the plotting notebooks for this figure (no data re-analysis).
 # Final SVG: see figures.yaml (id: supp_sorted_trajectories).
 
 source "$(dirname "${BASH_SOURCE[0]}")/_common.sh"
 
 begin_figure supp_sorted_trajectories "Supplemental: altitude-sorted trajectories"
-D=FigureGeneration/Supplemental/sup_fig_sorted_trajectories
+D=FigureGeneration/Supplemental/unused_altitude_sorted_trajectories
 
 run_notebook "$D" supp_All_Trajectories_sorted.ipynb
 

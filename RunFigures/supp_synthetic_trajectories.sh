@@ -8,7 +8,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/_common.sh"
 
 begin_figure supp_synthetic_trajectories "Supplemental: synthetic trajectories"
-D=FigureGeneration/Supplemental/sup_fig_synthetic_trajectories
+D=FigureGeneration/Supplemental/supp_fig_05_synthetic_trajectories
 
 run_notebook "$D" combined_synthetic_trajectories.ipynb
 

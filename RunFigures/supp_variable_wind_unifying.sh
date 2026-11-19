@@ -6,7 +6,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/_common.sh"
 
 begin_figure supp_variable_wind_unifying "Supplemental: variable wind, unifying analysis"
-D=FigureGeneration/Supplemental/supp_fig_variable_wind_unifying
+D=FigureGeneration/Supplemental/supp_fig_12_variable_wind_unifying
 
 # AB and D draw one condition per run (layers unifying_<label>, MI_<condition>);
 # C draws both. All write the same SVG, so run them in sequence.

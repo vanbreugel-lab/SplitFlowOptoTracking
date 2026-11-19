@@ -166,10 +166,9 @@ directory (Jupyter's default), so no path edits are needed.
 │   │   ├── fig_3_trajectory_characteristics/
 │   │   │   └── f3_raw_trajectories.ipynb
 │   │   ├── fig_4_autoencoder/
-│   │   │   ├── f4_autoencoder.ipynb
-│   │   │   ├── triplet_vae_6_classes_70_feats.pth   # Trained model weights
-│   │   │   └── misc/
-│   │   │       └── optuna_hyperparam_search_multiobj_6class.ipynb
+│   │   │   ├── make_f4.py                           # Builds Figure 4 (data and model: Data/final_vae_data/)
+│   │   │   ├── f4_template.svg                      # figurefirst layout
+│   │   │   └── output_figs/f4_autoencoder.svg       # final figure
 │   │   └── fig_5_unifying_algo_analysis/
 │   │       ├── analysis_scripts/                    # scripts used to generate the data in Unifying_Algo_Results
 │   │       │   ├── analyze_NEW_unifying_sims.py
@@ -191,46 +190,31 @@ directory (Jupyter's default), so no path edits are needed.
 │   │               ├── albatross/
 │   │               ├── moth/
 │   │               └── shark/
-│   └── Supplemental/
-│       ├── sup_fig_all_animal_trajectories/
-│       │   ├── animal_trajectories_and_alignment.ipynb
-│       │   └── animal_data/                         # Per-species figure notebooks
-│       │       ├── albatross/
-│       │       ├── cockroach/
-│       │       ├── crabs/
-│       │       ├── d_melanogaster/
-│       │       ├── d_sechelia/
-│       │       ├── eels/
-│       │       ├── mosquitoes/
-│       │       ├── moths/
-│       │       ├── mouse/
-│       │       ├── nautical_search/
-│       │       ├── nautilus/
-│       │       ├── RL_agents/
-│       │       ├── sharks/
-│       │       ├── terns/
-│       │       └── walking_drosophila/
-│       ├── sup_fig_altitude_response/
-│       │   └── f3_altitude_responses.ipynb
-│       ├── sup_fig_extra_real_trajectories/
-│       │   └── S3_sample_real_trajectories.ipynb
-│       ├── sup_fig_sorted_trajectories/
-│       │   ├── supp_All_Trajectories_sorted.ipynb
-│       │   └── supplemental_autoencoder_altitude_colored.ipynb
-│       ├── sup_fig_synthetic_trajectories/
-│       │   └── S5_sample_simulated_trajectories.ipynb
-│       ├── sup_fig_tunnel_methods/
-│       │   ├── CFD_plots.ipynb
-│       │   └── wind_tunnel_plot_maker.ipynb
-│       ├── sup_fig_unifying_analysis/
-│       │   └── generate_supplementary_figure/
-│       │       ├── C_figure_align_course_directions.ipynb
-│       │       ├── D_figure_unifying_algo_results_slope_axis.ipynb
-│       │       ├── make_figure_align_course_directions.py
-│       │       ├── make_figure_unifying_algo_results_slope_axis.py
-│       │       └── run_all_figures.sh
-│       └── sup_fig_vertical_split/
-│           └── S1_verticalsplit.ipynb
+│   ├── Supplemental/                   # one folder per SI figure, numbered in SI order (RunFigures/figures.yaml)
+│   │   ├── supp_fig_01_tunnel_methods/          # S1  additional wind tunnel / CFD analysis
+│   │   ├── supp_fig_02_altitude_response/       # S2  altitude responses
+│   │   ├── supp_fig_03_vertical_split/          # S3  vertical split
+│   │   ├── supp_fig_04_real_trajectories/       # S4  example real fly trajectories
+│   │   ├── supp_fig_05_synthetic_trajectories/  # S5  example synthetic trajectories
+│   │   ├── supp_fig_06_reconstruction/          # S6  VAE reconstructions + reconstruction error, real vs synthetic
+│   │   ├── supp_fig_07_pca_rf_classifier/       # S7  random forest on the first k = 2-10 principal components
+│   │   ├── supp_fig_08_real_fly_vae/            # S8  VAE + random forest trained on real flies only
+│   │   ├── supp_fig_09_variable_wind_speed/     # S9  variable wind speed
+│   │   ├── supp_fig_10_own_fit_r2_pvalues/      # S10 own-fit R^2 and p-values
+│   │   ├── supp_fig_11_unifying_flies_shams/    # S11 unifying framework, WT and sham flies
+│   │   ├── supp_fig_12_variable_wind_unifying/  # S12 unifying framework, all variable wind flash flies
+│   │   ├── supp_fig_13_shuffled_synthetic_uaa/  # S13 unifying algorithm on shuffled and synthetic trajectories
+│   │   ├── supp_fig_14_all_animal_trajectories/ # S14 example trajectories from all species
+│   │   ├── supp_fig_15_all_animal_slopes/       # S15 all-animal summary, slope vs movement speed
+│   │   ├── unifying_simulation/                 # supplementary movies (unifying algorithm animations)
+│   │   ├── unused_altitude_sorted_trajectories/ # no longer in the SI
+│   │   └── unused_course_direction_response/    # no longer in the SI
+│   │
+│   └── VAE_pipeline/                   # Fig. 4 / SI S6-S8 (inputs: Data/final_vae_data/; see VAE_pipeline/README.md)
+│       ├── vae_utils.py                # shared by the figure scripts: data loading, encoding, random forest
+│       ├── generate_synthetic_data.py  # regenerates the synthetic training set
+│       ├── generate_cfd_data.py        # regenerates the CFD casting / circling test sets
+│       └── train_vae.py                # trains the autoencoders, refits the random forest
 │
 │
 ├── TrajectorySimulations/
@@ -260,6 +244,13 @@ Notebooks are provided for a step-by-step walkthrough of trajectory generation:
 Note: simulations using 3D CFD velocity fields can take a while to run. The CFD 3D data archives (`3D_vel_1.zip` – `3D_vel_6.zip`, ~4 GB each) are only required if re-running these simulations from scratch.
 
 # Generating the figures
+
+`RunFigures/` regenerates every manuscript figure (`RunFigures/run_all.sh`, or one
+figure, e.g. `RunFigures/fig4.sh`) and collects the final SVG/PDF/PNGs
+(`RunFigures/collect_final_figures.sh`); see `RunFigures/README.md`. The figure ids,
+SI numbers and output files are listed in `RunFigures/figures.yaml`. Figure 4 and
+SI Figures S6-S8 are built by scripts that use `FigureGeneration/VAE_pipeline/` and read
+their data from `Data/final_vae_data/` (see the VAE_pipeline README).
 
 Each figure is generated by a Jupyter notebook in `FigureGeneration/`. Notebooks
 read their inputs from `Data/` via **relative paths** (e.g. `../../../Data/...`),

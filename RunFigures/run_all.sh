@@ -15,19 +15,21 @@ RUN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 FIGURES=(
     fig1 fig2 fig3 fig4 fig5
-    supp_tunnel_methods
-    supp_altitude_response
-    supp_course_direction
-    supp_extra_real_trajectories
-    supp_synthetic_trajectories
-    supp_sorted_trajectories
-    supp_unifying_analysis_flies
-    supp_variable_wind_unifying
-    supp_variable_wind_surge
-    supp_shuffled_synthetic
-    supp_own_fit
-    supp_all_animal_trajectories
-    supp_all_animal_slopes
+    supp_tunnel_methods            # S1
+    supp_altitude_response         # S2
+    supp_vertical_split            # S3
+    supp_extra_real_trajectories   # S4
+    supp_synthetic_trajectories    # S5
+    supp_reconstruction            # S6
+    supp_pca_rf_classifier         # S7
+    supp_real_fly_vae              # S8
+    supp_variable_wind_surge       # S9
+    supp_own_fit                   # S10
+    supp_unifying_analysis_flies   # S11
+    supp_variable_wind_unifying    # S12
+    supp_shuffled_synthetic        # S13
+    supp_all_animal_trajectories   # S14
+    supp_all_animal_slopes         # S15
 )
 
 SELECTED=()

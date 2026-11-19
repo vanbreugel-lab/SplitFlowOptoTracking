@@ -6,7 +6,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/_common.sh"
 
 begin_figure supp_unifying_analysis_flies "Supplemental: unifying analysis, all WT split-flow flies"
-D=FigureGeneration/Supplemental/sup_fig_unifying_analysis
+D=FigureGeneration/Supplemental/supp_fig_11_unifying_flies_shams
 
 # A and B draw one row (layers <label>_course / <label>_stats) per run; C draws one
 # <condition>_mae panel per run. All write the same SVG, so run them in sequence.

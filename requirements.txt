@@ -36,7 +36,7 @@ pyarrow             # pandas .read_parquet / .to_parquet (all *.parquet files)
 tables              # pandas .read_hdf (*.hdf); PyTables
 
 # --- Geometry / rendering used by specific figures ---
-shapely             # sup_fig_all_animal_trajectories (label collision geometry)
+shapely             # supp_fig_14_all_animal_trajectories (label collision geometry)
 cairosvg            # unifying_simulation/plot_simulation.ipynb (SVG -> PNG frames)
 
 # --- Undeclared transitive deps of the private lab repos ---

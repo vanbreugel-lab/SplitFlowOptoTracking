@@ -6,7 +6,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/_common.sh"
 
 begin_figure supp_variable_wind_surge "Supplemental: variable wind, surge"
-D=FigureGeneration/Supplemental/supp_fig_variable_wind_surge
+D=FigureGeneration/Supplemental/supp_fig_09_variable_wind_speed
 
 # One run per column (layers course*_flash / course*_sham).
 for fs in flash sham; do

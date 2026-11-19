@@ -8,7 +8,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/_common.sh"
 
 begin_figure supp_tunnel_methods "Supplemental: wind tunnel methods / CFD"
-D=FigureGeneration/Supplemental/sup_fig_tunnel_methods
+D=FigureGeneration/Supplemental/supp_fig_01_tunnel_methods
 
 # Order matters: this notebook starts tunnel_methods_supplement.svg from
 # tunnel_methods_supplement_template.svg and fills panels A-H ...

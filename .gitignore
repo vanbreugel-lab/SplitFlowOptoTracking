@@ -142,3 +142,10 @@ __marimo__/
 
 # Executed notebooks + logs from RunFigures/*.sh
 RunFigures/logs/
+
+# Manuscript sources (Overleaf)
+pnas_template_overleaf_files/
+
+# VAE pipeline: caches (rebuilt from Data/final_vae_data) and train_vae.py outputs (retrained models, classifications)
+FigureGeneration/VAE_pipeline/cache/
+FigureGeneration/VAE_pipeline/output/

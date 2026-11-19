@@ -141,25 +141,9 @@ def generate_random_turns_variable_straights(total_time=3.01, straight_duration_
     return times, x, y, vx, vy, angles
 
 def generate_random_turn_trajectory(total_time=3.01, straight_duration=np.random.normal(0.3,0.15), direction=None, dt=0.01, 
-                              min_angle=60, max_angle=120, turn_duration=0.12, meanspeed=np.random.normal(.4, .15)):
-    """
-    Generate a smooth trajectory with controlled turns and velocity information.
-    
-    Parameters:
-    - total_time: total duration in seconds
-    - straight_duration: duration of straight movements (300ms default)
-    - dt: time step (0.01s default)
-    - min_angle: minimum turn angle in degrees (60 default)
-    - max_angle: maximum turn angle in degrees (80 default)
-    - turn_duration: time over which turn is completed (0.1s default)
-    - speed: constant speed of movement (1.0 default)
-    
-    Returns:
-    - times: array of time points
-    - x, y: arrays of coordinates
-    - vx, vy: arrays of x and y velocities
-    - angles: array of movement angles (radians)
-    """
+                              min_angle=60, max_angle=120, turn_duration=0.12, meanspeed=np.random.normal(.4, .15),
+                              random_phase=False):
+
     # Convert angles to radians
     min_angle_rad = np.deg2rad(min_angle)
     max_angle_rad = np.deg2rad(max_angle)
@@ -187,10 +171,11 @@ def generate_random_turn_trajectory(total_time=3.01, straight_duration=np.random
     turn_start_angle = 0
     turn_target_angle = 0
     turn_progress = 0
-    
+    phase = np.random.randint(steps_per_segment) if random_phase else 0
+
     for i in range(1, total_steps):
         # Check if we should start a new turn
-        if not turning and (i % steps_per_segment == 0 or i == 1):
+        if not turning and ((i + phase) % steps_per_segment == 0 or (i == 1 and not random_phase)):
             turning = True
             turn_start_angle = current_angle
             # Randomly choose turn direction (left or right)

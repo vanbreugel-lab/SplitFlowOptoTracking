@@ -6,7 +6,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/_common.sh"
 
 begin_figure supp_all_animal_trajectories "Supplemental: all animal trajectories and alignment"
-D=FigureGeneration/Supplemental/sup_fig_all_animal_trajectories
+D=FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories
 
 run_notebook "$D" animal_trajectories_and_alignment.ipynb
 

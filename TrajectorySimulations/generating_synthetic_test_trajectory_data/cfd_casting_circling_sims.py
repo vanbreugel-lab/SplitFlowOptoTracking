@@ -8,6 +8,21 @@ Run casting and circling simulations for all four conditions:
 
 Then merge, filter, subsample, and save the final parquet.
 
+Generators and parameters are those of the final Fig. 4 casting and circling classes (training set c405nr_c7p_castmix;
+FigureGeneration/VAE_pipeline/generate_synthetic_data.py) and of its CFD test sets (generate_cfd_data.py, which
+writes casting_circling_sims_cfd_v2.parquet and imports FastWindObs from this file):
+  Casting   half the trajectories from each of two generators (casting_original / casting_t of the training set):
+              'casting'    the original cast_and_surge (periodic sign(sin) bias clock), NOISE 1   (CASTING)
+              'casting_t'  cast_and_surge with each bias half-period drawn N(0.6, 0.2) s (clipped 0.2-1.5 s), NOISE 0.5,
+                           plus a slow along-wind wander (OU, sd 0.25, tau 0.5 s)   (CASTING_T / CASTING_T_CLOCK;
+                           generate_synthetic_data.cast_and_surge_clock)
+  Circling  smooth circling 'smooth_t4p': sink_and_circle with NOISE 0.3, BIAS 1.8, OMEGA 4.05, circling amplitude x
+            exp(OU, sd 0.3, tau 0.4 s), a random circling phase per agent, left / right 50/50   (SMOOTH /
+            SMOOTH_MOD; generate_synthetic_data.sink_and_circle_mod). The saccadic half of the training circling class is
+            not simulated here (generate_cfd_data.py leaves it out of the CFD test sets too)
+One 675 ms flash from 0 ms. CFD trajectories are seeded per trajectory as generate_cfd_data.py (SEED + 10000 x
+condition index + trajectory index), so with the same seeds and N they are its trajectories.
+
 Key optimizations over the notebook version (CFD sections only)
 ---------------------------------------------------------------
 1. CFD data is stored as a (N_time, N_points, 3) float32 numpy array
@@ -31,8 +46,14 @@ import sys
 import numpy as np
 import pandas as pd
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+sys.path.insert(0, os.path.join(HERE, '..', '..', 'Code'))          # opto_tracking, kinematics
+# final casting / circling generators that are not in Code/ (generate_synthetic_data patches the opto_tracking imported
+# above)
+sys.path.append(os.path.join(HERE, '..', '..', 'FigureGeneration', 'VAE_pipeline'))
 import opto_tracking
+import generate_synthetic_data as GS
 from splitflow import FeatureFunctions
 from kinematics import heading as calc_heading
 
@@ -48,51 +69,62 @@ NICE_LEVEL = 10
 
 BOUNDS = [(-0.5, 0.5), (-0.25, 0.25), (0, 0.5)]
 
-# Casting – laminar (constant wind)
+# Final casting / circling generators (see the module docstring). COMPONENT names the generator: use_generator() sets
+# opto_tracking.SurgingAgent to it before a run (class-level, so forked workers inherit it).
+# Source of each value: FigureGeneration/VAE_pipeline/generate_synthetic_data.py (CASTING, CASTING_T,
+# CASTING_T_CLOCK, SMOOTH, SMOOTH_MOD) and generate_cfd_data.py (GENERATORS: seeds, N, wind rejection)
+CASTING_T_CLOCK  = dict(half_mean=0.6, half_sd=0.2, slow_x_sd=0.25, slow_x_tau=0.5)   # casting_t bias clock (CASTING_T_CLOCK)
+CIRCLING_AMP_MOD = dict(sd=0.3, tau=0.4, random_phase=True)                         # smooth_t4p (SMOOTH_MOD)
+
+# Casting – laminar (constant wind): 'casting' (NOISE 1) + 'casting_t' (NOISE 0.5), 500 each
 CASTING_LAMINAR = dict(
+    COMPONENT     = 'casting',
     BEHAVIOR      = 'cast_and_surge',
     SEED          = 2177,
-    N_TRAJS       = 1000,
+    N_TRAJS       = 500,
     DURATION      = 3.21,
     DT            = 0.01,
     TAU           = 0.25,
     TAU_SURGE     = 0.02,
-    NOISE         = 1.5,
+    NOISE         = 1,
     BIAS          = 0.7,
     SURGE_AMP     = 0.42,
     REJECT_THRESH = 0,
     RADIUS        = 0,
     OMEGA         = 0,
 )
+CASTING_T_LAMINAR = dict(CASTING_LAMINAR, COMPONENT='casting_t', SEED=3001, NOISE=0.5)
 
-# Circling – still air (constant wind, zero net flow)
+# Circling – still air (constant wind, zero net flow): smooth_t4p
 CIRCLING_NOWIND = dict(
+    COMPONENT     = 'smooth_t4p',
     BEHAVIOR      = 'sink_and_circle',
-    SEED          = 2177,
+    SEED          = 4301,
     N_TRAJS       = 1000,
     DURATION      = 3.21,
     DT            = 0.01,
     TAU           = 0.25,
     TAU_SURGE     = 0.25,
-    NOISE         = 0.7,
-    BIAS          = 1.85,
+    NOISE         = 0.3,
+    BIAS          = 1.8,
     SURGE_AMP     = 0,
     REJECT_THRESH = 0,
     RADIUS        = 0.3,
     OMEGA         = 4.05,
 )
 
-# Circling – CFD wind
+# Circling – CFD wind: smooth_t4p, wind rejection 0.3 once the flash has ended
 CIRCLING_CFD = dict(
+    COMPONENT     = 'smooth_t4p',
     BEHAVIOR      = 'sink_and_circle',
-    SEED          = 5613,
-    N_TRAJS       = 1000,
+    SEED          = 23001,
+    N_TRAJS       = 500,
     DURATION      = 3.21,
     DT            = 0.01,
     TAU           = 0.25,
-    TAU_SURGE     = 0,
-    NOISE         = 0.7,
-    BIAS          = 1.85,
+    TAU_SURGE     = 0.25,
+    NOISE         = 0.3,
+    BIAS          = 1.8,
     SURGE_AMP     = 0,
     REJECT_THRESH = 0.3,
     RADIUS        = 0.3,
@@ -100,16 +132,17 @@ CIRCLING_CFD = dict(
     BOUNDS        = BOUNDS,
 )
 
-# Casting – CFD wind
+# Casting – CFD wind: 'casting' + 'casting_t', 500 each per condition
 CASTING_CFD = dict(
+    COMPONENT     = 'casting',
     BEHAVIOR      = 'cast_and_surge',
-    SEED          = 5612,
-    N_TRAJS       = 1000,
+    SEED          = 21001,
+    N_TRAJS       = 500,
     DURATION      = 3.21,
     DT            = 0.01,
     TAU           = 0.25,
     TAU_SURGE     = 0.02,
-    NOISE         = 1.5,
+    NOISE         = 1,
     BIAS          = 0.7,
     SURGE_AMP     = 0.42,
     REJECT_THRESH = 0,
@@ -117,6 +150,24 @@ CASTING_CFD = dict(
     OMEGA         = 0,
     BOUNDS        = BOUNDS,
 )
+CASTING_T_CFD = dict(CASTING_CFD, COMPONENT='casting_t', SEED=22001, NOISE=0.5)
+
+ORIG_CAST_AND_SURGE = opto_tracking.SurgingAgent.cast_and_surge
+
+
+def use_generator(component):
+    """Set opto_tracking.SurgingAgent to a final casting / circling generator (as generate_cfd_data GENERATORS)."""
+    A = opto_tracking.SurgingAgent
+    if component == 'casting':
+        A.cast_and_surge = ORIG_CAST_AND_SURGE
+    elif component == 'casting_t':
+        GS.use_clock(**CASTING_T_CLOCK)
+    elif component == 'smooth_t4p':
+        GS.use_amp_mod(**CIRCLING_AMP_MOD)
+        A.both_ways = True
+    else:
+        raise ValueError(component)
+
 
 # ── GLOBAL WIND DATA (set before forking, inherited copy-on-write) ─────────────
 
@@ -291,9 +342,9 @@ def _run_one_traj(args):
         tau_surge=params['TAU_SURGE'],
         bounds=params['BOUNDS'],
     )
-    pl = opto_tracking.BoolPlume(
+    pl = opto_tracking.BoolPlume(               # one 675 ms flash from 0 ms (time stamp), as generate_cfd_data
         bounds=np.array(params['BOUNDS']),
-        lastflash=-4.8,
+        lastflash=-2.8,
     )
 
     start_pos = np.array([
@@ -340,7 +391,8 @@ def _trajs_to_df(results, params, directory):
         veldf['time stamp']    = time_axis
         veldf['heading']       = np.arctan2(veldf['yvel'], veldf['xvel'])
         veldf['ground speed']  = np.hypot(veldf['xvel'], veldf['yvel'])
-        veldf['obj_id_unique'] = f"{today}_{directory}_{traj_idx}"
+        veldf['obj_id_unique'] = f"{today}_{params['COMPONENT']}_{directory}_{traj_idx}"
+        veldf['component']     = params['COMPONENT']
         veldf['vel_condition'] = directory
         dfs.append(posdf.join([veldf, winddf]))
     return pd.concat(dfs, ignore_index=True)
@@ -348,17 +400,21 @@ def _trajs_to_df(results, params, directory):
 
 # ── RUN CFD SIMULATIONS ───────────────────────────────────────────────────────
 
-def run_cfd_sims(params):
+def run_cfd_sims(params_list):
     """
     Run simulations for all CFD velocity conditions using fast wind lookup
     and fork-based multiprocessing.  Returns a concatenated DataFrame.
+    params_list: one parameter dict or a list of them (generators of one class), all run on each condition once loaded.
+    Trajectory i of condition c is seeded SEED + 10000 c + i (generate_cfd_data).
     """
+    if isinstance(params_list, dict):
+        params_list = [params_list]
     global _g_velocities, _g_ux, _g_uy, _g_uz, _g_grid_index
 
     ctx = mp.get_context('fork')
     all_dfs = []
 
-    for directory in DIRECTORIES:
+    for c_i, directory in enumerate(DIRECTORIES):
         print(f"{'='*60}")
         print(f"Condition: {directory}")
 
@@ -366,17 +422,19 @@ def run_cfd_sims(params):
          _g_ux, _g_uy, _g_uz,
          _g_grid_index) = preprocess_cfd(directory)
 
-        worker_args = [
-            (i, params['SEED'], params)
-            for i in range(params['N_TRAJS'])
-        ]
+        for params in params_list:
+            use_generator(params['COMPONENT'])        # class-level, inherited by the forked workers
+            worker_args = [
+                (i, params['SEED'] + 10000 * c_i, params)
+                for i in range(params['N_TRAJS'])
+            ]
 
-        with ctx.Pool(N_WORKERS) as pool:
-            results = pool.map(_run_one_traj, worker_args, chunksize=20)
+            with ctx.Pool(N_WORKERS) as pool:
+                results = pool.map(_run_one_traj, worker_args, chunksize=20)
 
-        df = _trajs_to_df(results, params, directory)
-        all_dfs.append(df)
-        print(f"  {df['obj_id_unique'].nunique()} trajs completed for {directory}")
+            df = _trajs_to_df(results, params, directory)
+            all_dfs.append(df)
+            print(f"  {params['COMPONENT']}: {df['obj_id_unique'].nunique()} trajs completed for {directory}")
 
         del _g_velocities, _g_ux, _g_uy, _g_uz, _g_grid_index
         _g_velocities = _g_ux = _g_uy = _g_uz = _g_grid_index = None
@@ -395,27 +453,30 @@ def main():
     # ── 1. Casting – laminar (constant wind) ──────────────────────────────────
     print("\n" + "="*60)
     print("Casting – laminar (constant wind)")
-    p = CASTING_LAMINAR
-    sim_results = opto_tracking.run_sims(
-        BEHAVIOR=p['BEHAVIOR'],
-        wind_condition='constant',
-        SEED=p['SEED'], N_TRAJS=p['N_TRAJS'],
-        DURATION=p['DURATION'], DT=p['DT'],
-        TAU=p['TAU'], NOISE=p['NOISE'], BIAS=p['BIAS'],
-        SURGE_AMP=p['SURGE_AMP'], TAU_SURGE=p['TAU_SURGE'],
-        REJECT_THRESH=p['REJECT_THRESH'],
-        CONSTANT_NOISE=True,
-        BOUNDS=BOUNDS, wind_data=None, vector_field=None,
-        wind_positions=None, wind_data_type='CFD',
-    )
-    casting_laminar_df = opto_tracking.convert_and_save_sims(
-        sim_results,
-        f"sim_results/SimResults_tau_{p['TAU_SURGE']}_noise_{p['NOISE']}_bias_{p['BIAS']}"
-        f"_surgeamp_{p['SURGE_AMP']}_tau_{p['TAU']}_tausurge_{p['TAU_SURGE']}"
-        f"_n_{p['N_TRAJS']}_seed_{p['SEED']}_",
-        f"{today}_{p['BEHAVIOR']}_constantwind",
-        remove_wall_hits=False, save=True,
-    )
+    casting_laminar_dfs = []
+    for p in [CASTING_LAMINAR, CASTING_T_LAMINAR]:             # the two casting generators, 500 each
+        use_generator(p['COMPONENT'])
+        sim_results = opto_tracking.run_sims(
+            BEHAVIOR=p['BEHAVIOR'],
+            wind_condition='constant',
+            SEED=p['SEED'], N_TRAJS=p['N_TRAJS'],
+            DURATION=p['DURATION'], DT=p['DT'],
+            TAU=p['TAU'], NOISE=p['NOISE'], BIAS=p['BIAS'],
+            SURGE_AMP=p['SURGE_AMP'], TAU_SURGE=p['TAU_SURGE'],
+            REJECT_THRESH=p['REJECT_THRESH'],
+            CONSTANT_NOISE=True,
+            BOUNDS=BOUNDS, wind_data=None, vector_field=None,
+            wind_positions=None, wind_data_type='CFD',
+        )
+        casting_laminar_dfs.append(opto_tracking.convert_and_save_sims(
+            sim_results,
+            f"sim_results/SimResults_tau_{p['TAU_SURGE']}_noise_{p['NOISE']}_bias_{p['BIAS']}"
+            f"_surgeamp_{p['SURGE_AMP']}_tau_{p['TAU']}_tausurge_{p['TAU_SURGE']}"
+            f"_n_{p['N_TRAJS']}_seed_{p['SEED']}_",
+            f"{today}_{p['COMPONENT']}_constantwind",
+            remove_wall_hits=False, save=True,
+        ).assign(component=p['COMPONENT']))
+    casting_laminar_df = pd.concat(casting_laminar_dfs, ignore_index=True)
     casting_laminar_df = FeatureFunctions.get_normed_pos_groupby(casting_laminar_df)
     casting_laminar_df.to_hdf('sim_results/casting_sim_constwind_n1000.hdf', key='n')
     print("Saved: sim_results/casting_sim_constwind_n1000.hdf")
@@ -424,6 +485,7 @@ def main():
     print("\n" + "="*60)
     print("Circling – still air (no wind)")
     p = CIRCLING_NOWIND
+    use_generator(p['COMPONENT'])
     sim_results = opto_tracking.run_sims(
         BEHAVIOR=p['BEHAVIOR'],
         wind_condition='constant',
@@ -442,9 +504,9 @@ def main():
         f"sim_results/SimResults_tau_{p['TAU_SURGE']}_noise_{p['NOISE']}_bias_{p['BIAS']}"
         f"_surgeamp_{p['SURGE_AMP']}_tau_{p['TAU']}_tausurge_{p['TAU_SURGE']}"
         f"_rejectthresh_{p['REJECT_THRESH']}_n_{p['N_TRAJS']}_seed_{p['SEED']}_",
-        f"{today}_{p['BEHAVIOR']}_constantwind",
+        f"{today}_{p['COMPONENT']}_constantwind",
         remove_wall_hits=False, save=True,
-    )
+    ).assign(component=p['COMPONENT'])
     circling_nowind_df = FeatureFunctions.get_normed_pos_groupby(circling_nowind_df)
     circling_nowind_df.to_hdf('sim_results/circle_sim_nowind_n1000.hdf', key='n')
     print("Saved: sim_results/circle_sim_nowind_n1000.hdf")
@@ -462,7 +524,7 @@ def main():
     # ── 4. Casting – CFD wind ─────────────────────────────────────────────────
     print("\n" + "="*60)
     print("Casting – CFD wind")
-    casting_cfd_df = run_cfd_sims(CASTING_CFD)
+    casting_cfd_df = run_cfd_sims([CASTING_CFD, CASTING_T_CFD])
     casting_cfd_df = FeatureFunctions.get_normed_pos_groupby(casting_cfd_df)
     casting_cfd_df.to_hdf(
         f'sim_results/cfd_sim_results_merged_casting_{today}', key='wind'
