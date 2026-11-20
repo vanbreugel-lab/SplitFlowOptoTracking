@@ -64,8 +64,7 @@ Data/
 │   ├── real_model_test_sets.parquet
 │   ├── real_3class_sliding_vae_seed42.pth
 │   ├── real_test_classification.parquet
-│   ├── real_model_seed_matrices.parquet
-│   └── README.md
+│   └── real_model_seed_matrices.parquet
 │
 ├── Animal_Trajectory_Data/                   ← from Animal_Trajectory_Data.zip
 │   ├── df_all_species.parquet

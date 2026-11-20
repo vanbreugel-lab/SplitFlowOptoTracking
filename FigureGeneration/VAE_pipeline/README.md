@@ -6,7 +6,7 @@ This folder has the code for the triplet-VAE analysis:
 * training the autoencoders and the random-forest classifier;
 * the shared module that the figure scripts import.
 
-All inputs are in `Data/Fig4_vae_data/`, the Dryad package (see its `README.md`). It holds the training and test sets as
+All inputs are in `Data/Fig4_vae_data/`, the Dryad package (see `README_dryad.md`). It holds the training and test sets as
 parquet files, the two trained models and the classification matrices of the 10 real-fly models of SI Fig. S8E.
 
 ## Figure scripts
