@@ -8,8 +8,8 @@ Run casting and circling simulations for all four conditions:
 
 Then merge, filter, subsample, and save the final parquet.
 
-Generators and parameters are those of the final Fig. 4 casting and circling classes (training set c405nr_c7p_castmix;
-FigureGeneration/VAE_pipeline/generate_synthetic_data.py) and of its CFD test sets (generate_cfd_data.py, which
+Generators and parameters are those of the final Fig. 4 casting and circling classes
+(FigureGeneration/VAE_pipeline/generate_synthetic_data.py) and of its CFD test sets (generate_cfd_data.py, which
 writes casting_circling_sims_cfd_v2.parquet and imports FastWindObs from this file):
   Casting   half the trajectories from each of two generators (casting_original / casting_t of the training set):
               'casting'    the original cast_and_surge (periodic sign(sin) bias clock), NOISE 1   (CASTING)
