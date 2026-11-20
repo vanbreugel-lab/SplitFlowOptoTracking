@@ -51,19 +51,21 @@ Data/
 │   └── preprocessed_hdfs/
 │       ├── all_nights_new_processing_protocol_bottom_laminar_09092024.hdf
 │       ├── all_nights_new_processing_protocol_top_laminar_09082024.hdf
-│       ├── training_laminar_df.hdf
-│       └── training_stillair_df.hdf
+│       ├── training_laminar_df.parquet
+│       └── training_stillair_df.parquet
 │
-├── Simulated_Trajectory_Data/                ← from Simulated_Trajectory_Data.zip
-│   ├── casting_sim_constwind_n1000_fixed.hdf
-│   ├── casting_circling_sims_fixed.parquet
-│   ├── cfd_sim_results_casting.hdf
-│   ├── cfd_sim_results_circling.hdf
-│   ├── training_sims_6_classes.hdf
-│   ├── unifying_model_trajectories.parquet
-│   ├── new_unifying.parquet
-│   ├── steady_timeseries.hdf
-│   └── unsteady_timeseries.hdf
+├── Fig4_vae_data/                            ← from Fig4_vae_data.zip
+│   ├── synthetic_training_simple.parquet
+│   ├── synthetic_model_test_sets.parquet
+│   ├── synthetic_sliding_vae_seed42.pth
+│   ├── synthetic_test_classification.parquet
+│   ├── cfd_test_simple.parquet
+│   ├── real_training.parquet
+│   ├── real_model_test_sets.parquet
+│   ├── real_3class_sliding_vae_seed42.pth
+│   ├── real_test_classification.parquet
+│   ├── real_model_seed_matrices.parquet
+│   └── README.md
 │
 ├── Animal_Trajectory_Data/                   ← from Animal_Trajectory_Data.zip
 │   ├── df_all_species.parquet
@@ -109,6 +111,8 @@ Data/
 │
 └── Fig5_Input_Data/                          ← from Fig5_Input_Data.zip
     ├── df_all_species.parquet
+    ├── new_unifying.parquet
+    ├── cfd_sim_circling_casting_all_wind_conditions_preprocessed.parquet
     └── animal_trajectories/
         ├── albatross/
         ├── moth/

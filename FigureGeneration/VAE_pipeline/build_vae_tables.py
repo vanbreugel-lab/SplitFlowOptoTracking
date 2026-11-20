@@ -1,7 +1,7 @@
-"""Build the VAE data tables of Data/final_vae_data/ from the source data in Data/.
+"""Build the VAE data tables of Data/Fig4_vae_data/ from the source data in Data/.
 
 Usage (from this directory): python build_vae_tables.py
-Writes (Data/final_vae_data/): real_training_rebuilt.parquet, real_model_test_sets_rebuilt.parquet,
+Writes (Data/Fig4_vae_data/): real_training_rebuilt.parquet, real_model_test_sets_rebuilt.parquet,
 synthetic_model_test_sets_rebuilt.parquet
 """
 import os
@@ -15,7 +15,7 @@ from vae_utils import (DATA, FEATS, WINDOWS, N_T, REAL_SOURCES, REAL_CLASSES, SY
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 FLIES = os.path.join(HERE, '..', '..', 'Data', 'Experimental_Fly_Data')
-SIMS = os.path.join(HERE, '..', '..', 'Data', 'Simulated_Trajectory_Data')
+FIG5 = os.path.join(HERE, '..', '..', 'Data', 'Fig5_Input_Data')
 TOP_ON = 'all_nights_new_processing_protocol_top_laminar_09082024.hdf'
 BOTTOM_ON = 'all_nights_new_processing_protocol_bottom_laminar_09092024.hdf'
 COLS = ['obj_id_unique', 'time stamp', 'x', 'y', 'z', 'xvel', 'yvel']
@@ -128,9 +128,10 @@ def save(df, name):
 def cfd_and_unifying():
     # CFD casting / circling test sets (300 each, ids <behaviour>_<n>_<vel_k>_<flow>; generate_cfd_data.py) and the
     # unifying-algorithm simulations
-    cfd = pd.read_parquet(os.path.join(SIMS, 'casting_circling_sims_cfd_v2.parquet')).rename(
-        columns={'vel_condition': 'cfd_velocity_field'})
-    uni = pd.read_parquet(os.path.join(SIMS, 'new_unifying.parquet'))
+    cfd = pd.read_parquet(os.path.join(DATA, 'cfd_test_simple.parquet')).astype({'class': str})
+    cfd['dataset_name'] = cfd.flow.astype(str) + ' ' + cfd['class']
+    cfd['cfd_velocity_field'] = cfd.obj_id_unique.str.extract(r'(vel_\d)', expand=False)
+    uni = pd.read_parquet(os.path.join(FIG5, 'new_unifying.parquet'))
     uni['time stamp'] = (uni['time_relative_to_flash'] * 1000).round()
     uni['obj_id_unique'] = uni.obj_id_unique.map(lambda s: s.decode() if isinstance(s, bytes) else s)
     sets = []
@@ -210,10 +211,10 @@ def synthetic_tests(sf, sims):
     unsteady = scored(sf['Unsteady, flash'])          # Fig. 4 unsteady flash: 99% part of a 99/1 split
     unsteady = unsteady[train_test_split(np.arange(len(unsteady)), test_size=0.01, random_state=44,
                                          stratify=np.zeros(len(unsteady)))[0]]
-    sets = [('flash', 'Still air, flash', read('training_stillair_df_n250.parquet')[COLS]),   # validation flies
+    sets = [('flash', 'Still air, flash', read('training_stillair_df.parquet')[COLS]),   # validation flies
             ('flash', 'Unsteady, flash', part(sf['Unsteady, flash'], unsteady)),
             ('flash', 'Steady, flash', part(sf['Steady, flash'], scored(sf['Steady, flash']))),
-            ('flash', 'Laminar, flash', read('training_laminar_df_n250.parquet')[COLS])]
+            ('flash', 'Laminar, flash', read('training_laminar_df.parquet')[COLS])]
     for name, d in [('Still air, sham', still[is_sham(still)]), ('Unsteady, sham', sf['Unsteady, sham']),
                     ('Steady, sham', sf['Steady, sham']), ('Laminar, sham', lam[is_sham(lam)])]:
         sets.append(('sham', name, part(d, scored(d))))

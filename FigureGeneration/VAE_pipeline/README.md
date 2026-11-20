@@ -6,7 +6,7 @@ This folder has the code for the triplet-VAE analysis:
 * training the autoencoders and the random-forest classifier;
 * the shared module that the figure scripts import.
 
-All inputs are in `Data/final_vae_data/`, the Dryad package (see its `README.md`). It holds the training and test sets as
+All inputs are in `Data/Fig4_vae_data/`, the Dryad package (see its `README.md`). It holds the training and test sets as
 parquet files, the two trained models and the classification matrices of the 10 real-fly models of SI Fig. S8E.
 
 ## Figure scripts
@@ -25,7 +25,7 @@ Each script writes `output_figs/<name>_test.svg` next to the finished, hand-edit
 ## Files
 
 ```
-vae_utils.py                 shared by the figure scripts and train_vae.py: data loading from Data/final_vae_data,
+vae_utils.py                 shared by the figure scripts and train_vae.py: data loading from Data/Fig4_vae_data,
                              windowing, encoding, reconstruction, the random forest, the synthetic model's cached results
 generate_synthetic_data.py   1. regenerates the synthetic training set (synthetic_training_simple.parquet format); also the
                                 generators the trajectory notebooks import (use_clock, use_amp_mod, levy_walk, ...)
@@ -46,7 +46,7 @@ Generates a synthetic training set: six classes (casting, circling, random turns
 python generate_synthetic_data.py [--seed S] [--n N]    
 ```
 
-* **Output:** `Data/final_vae_data/synthetic_training_regenerated.parquet` (`--out`). 
+* **Output:** `Data/Fig4_vae_data/synthetic_training_regenerated.parquet` (`--out`). 
 * **Format:** exactly that of `synthetic_training_simple.parquet`: generic ids `casting_1` … `casting_10000`, `circling_1` …, `class`, `time stamp`, `x`, `y`, `xvel`, `yvel`.
 * **Runtime:** about 2 min on 8 workers.
 
@@ -67,14 +67,14 @@ fields. The wind lookup is `cfd_casting_circling_sims.FastWindObs`. From these r
 
 Set `CFD_DIR` to the folder that holds `3D_vel_1.zip` … `3D_vel_6.zip`; the default is `Data/CFD/3D_Velocity_Fields`.
 
-* **Output:** `Data/final_vae_data/cfd_test_sets_regenerated.parquet` (and `..._all.parquet`, every simulated
+* **Output:** `Data/Fig4_vae_data/cfd_test_sets_regenerated.parquet` (and `..._all.parquet`, every simulated
   trajectory).
 
 ### 3. `train_vae.py`
 
-Trains either autoencoder from the parquet files in `Data/final_vae_data/` (through `vae_utils`), refits the calibrated
+Trains either autoencoder from the parquet files in `Data/Fig4_vae_data/` (through `vae_utils`), refits the calibrated
 random forest and writes the test-set classification tables (`output/<kind>_test_classification.parquet`; the shipped
-models' tables are `Data/final_vae_data/<kind>_test_classification.parquet`).
+models' tables are `Data/Fig4_vae_data/<kind>_test_classification.parquet`).
 
 ```
 python train_vae.py train synthetic|real [--seed 42] [--epochs 250] [--threads 5]

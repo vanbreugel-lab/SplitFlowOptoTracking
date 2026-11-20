@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Figure 4: autoencoder
-# Draws the figure from the synthetic-trained autoencoder and its data in Data/final_vae_data/ (the Dryad package;
+# Draws the figure from the synthetic-trained autoencoder and its data in Data/Fig4_vae_data/ (the Dryad package;
 # FigureGeneration/VAE_pipeline/vae_utils.py). Latents and random-forest probabilities are cached in
 # FigureGeneration/VAE_pipeline/cache/ after the first run (a few minutes).
 # Final SVG: see figures.yaml (id: fig4).

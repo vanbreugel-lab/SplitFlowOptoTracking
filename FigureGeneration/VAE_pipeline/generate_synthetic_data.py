@@ -1,9 +1,9 @@
 """
 Generate the synthetic training set of the autoencoder in Fig 4, in the format of
-Data/final_vae_data/synthetic_training_simple.parquet (obj_id_unique casting_1 ..., class, time stamp, x, y, xvel, yvel)
+Data/Fig4_vae_data/synthetic_training_simple.parquet (obj_id_unique casting_1 ..., class, time stamp, x, y, xvel, yvel)
 
 Usage (from this directory): python generate_synthetic_data.py [--seed S] [--n N] [--published] [--out PATH] [--workers N]
-Writes: Data/final_vae_data/synthetic_training_regenerated.parquet 
+Writes: Data/Fig4_vae_data/synthetic_training_regenerated.parquet 
 """
 import contextlib
 import io
@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.join(HERE, '..', '..', 'Code'))
 import opto_tracking                                
 import StochasticAlgorithms as SA
 
-OUT = os.path.join(HERE, '..', '..', 'Data', 'final_vae_data', 'synthetic_training_regenerated.parquet')
+OUT = os.path.join(HERE, '..', '..', 'Data', 'Fig4_vae_data', 'synthetic_training_regenerated.parquet')
 N_WORKERS = 8
 T = 4.0
 TT = T + 0.0100001                                          # int(TT / 0.01) = 401 steps (4.01 / 0.01 rounds down to 400)

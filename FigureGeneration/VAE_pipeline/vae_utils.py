@@ -15,7 +15,7 @@ from sklearn.model_selection import train_test_split
 import splitflow.TripletLoss as CCL
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-DATA = os.path.join(HERE, '..', '..', 'Data', 'final_vae_data')
+DATA = os.path.join(HERE, '..', '..', 'Data', 'Fig4_vae_data')
 CACHE = os.path.join(HERE, 'cache')
 MODELS = {'synthetic': 'synthetic_sliding_vae_seed42.pth', 'real': 'real_3class_sliding_vae_seed42.pth'}
 

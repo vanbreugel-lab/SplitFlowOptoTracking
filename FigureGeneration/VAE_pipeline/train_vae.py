@@ -3,7 +3,7 @@
 
 Usage (from this directory):
     python train_vae.py train synthetic|real [--seed 42] [--epochs 250] [--threads 5]
-    python train_vae.py classify synthetic|real [--model PATH.pth]   (default: the shipped model in Data/final_vae_data)
+    python train_vae.py classify synthetic|real [--model PATH.pth]   (default: the shipped model in Data/Fig4_vae_data)
     python train_vae.py seeds real [--seeds 0-9] [--epochs 250] [--threads 5]   (real_model_seed_matrices.parquet format)
 
     """

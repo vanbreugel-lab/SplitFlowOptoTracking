@@ -13,7 +13,7 @@ _DATA = _REPO_ROOT / "Data"
 
 class _Config:
     RAW_DATA_DIR = _DATA / "Experimental_Fly_Data"
-    SIMULATED_DATA_DIR = _DATA / "Simulated_Trajectory_Data"
+    SIMULATED_DATA_DIR = _DATA / "Fig5_Input_Data"
     PREPROCESSED_DATA_DIR = _DATA / "Unifying_Algo_Results" / "Supplemental"
 
     def configure_gurobi_env(self):

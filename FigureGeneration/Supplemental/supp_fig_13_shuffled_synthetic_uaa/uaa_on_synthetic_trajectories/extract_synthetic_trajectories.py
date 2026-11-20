@@ -24,7 +24,7 @@ import pandas as pd
 from braid_analysis import flymath
 
 REPO_ROOT = Path(__file__).resolve().parents[4]  # <repo>/FigureGeneration/Supplemental/supp_fig_13_shuffled_synthetic_uaa/<this dir>/<this file>
-SRC_PARQUET = REPO_ROOT / 'Data' / 'Simulated_Trajectory_Data' / 'synthetic_training_simple.parquet'
+SRC_PARQUET = REPO_ROOT / 'Data' / 'Fig4_vae_data' / 'synthetic_training_simple.parquet'
 OUT_DIR = REPO_ROOT / 'Data' / 'Synthetic_Flies_for_Unifying'
 
 N_TRAJECS = 200

@@ -20,7 +20,7 @@ import opto_tracking
 from cfd_casting_circling_sims import FastWindObs
 
 CFD_DIR = os.environ.get('CFD_DIR', os.path.join(HERE, '..', '..', 'Data', 'CFD', '3D_Velocity_Fields'))
-OUT = os.path.join(HERE, '..', '..', 'Data', 'final_vae_data', 'cfd_test_sets_regenerated.parquet')
+OUT = os.path.join(HERE, '..', '..', 'Data', 'Fig4_vae_data', 'cfd_test_sets_regenerated.parquet')
 CONDITIONS = [f'vel_{i}' for i in range(1, 7)]
 N_WORKERS = int(os.environ.get('N_WORKERS', mp.cpu_count() // 2))
 DURATION, DT, BOUNDS = 3.21, 0.01, [(-0.5, 0.5), (-0.25, 0.25), (0, 0.5)]

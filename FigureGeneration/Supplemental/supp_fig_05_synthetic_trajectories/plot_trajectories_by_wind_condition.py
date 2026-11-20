@@ -85,7 +85,7 @@ plt.rcParams["mathtext.fontset"] = "cm"
 
 DATA_PATH = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
-    "../../../Data/Simulated_Trajectory_Data/new_unifying.parquet",
+    "../../../Data/Fig5_Input_Data/new_unifying.parquet",
 )
 df = pd.read_parquet(DATA_PATH)
 
