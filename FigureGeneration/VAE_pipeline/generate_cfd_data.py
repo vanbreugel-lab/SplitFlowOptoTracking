@@ -97,23 +97,25 @@ def natural(s):
 def test_sets(D, scale=1.0):
     # the steady / unsteady test sets drawn from every trajectory D, renamed as the test-set parquet
     rng = np.random.default_rng(0)
-    zr = D.groupby('simulation_id').agg(min=('z', 'min'), max=('z', 'max'), generator=('generator', 'first'))
+    zr = D.groupby('simulation_id').agg(min=('z', 'min'), max=('z', 'max'), generator=('generator', 'first'),
+                                        vel=('cfd_velocity_field', 'first'))
     out = []
     for beh, mix in TEST_SETS.items():
+        n0 = 0                                              # ids <behaviour>_<n>_<vel_k>_<flow>: steady first
         for flow, ok in [('steady', zr['min'] > 0.25), ('unsteady', zr['max'] < 0.25)]:
             picked = []
             for comp, k in mix.items():
                 ids = zr.index[ok & (zr.generator == comp)].tolist()
                 picked += list(rng.choice(ids, min(max(1, int(round(k * scale))), len(ids)), replace=False)) if ids else []
-            names = {o: f'cfd_{flow}_{beh}_{i + 1}' for i, o in enumerate(sorted(picked, key=natural))}
+            names = {o: f'{beh}_{n0 + i + 1}_{zr.vel[o]}_{flow}' for i, o in enumerate(sorted(picked, key=natural))}
+            n0 += len(picked)
             d = D[D.simulation_id.isin(names)]
             out.append(d.assign(obj_id_unique=d.simulation_id.map(names), test_set=f'CFD {beh}, {flow}'))
             print(f'CFD {beh}, {flow}: {len(picked)}', flush=True)
     T = pd.concat(out, ignore_index=True)
     rank = {o: i for i, o in enumerate(sorted(T.obj_id_unique.unique(), key=natural))}
     T = T.sort_values(['obj_id_unique', 'time stamp'], key=lambda s: s.map(rank) if s.name == 'obj_id_unique' else s)
-    return T[['obj_id_unique', 'test_set', 'generator', 'cfd_velocity_field', 'simulation_id', 'time stamp', 'x', 'y', 'z',
-              'xvel', 'yvel']].reset_index(drop=True)
+    return T[['obj_id_unique', 'test_set', 'cfd_velocity_field', 'time stamp', 'x', 'y', 'z', 'xvel', 'yvel']].reset_index(drop=True)
 
 
 if __name__ == '__main__':

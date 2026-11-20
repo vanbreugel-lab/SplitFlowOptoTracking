@@ -38,6 +38,7 @@ REAL_SOURCES = {'Still air flash': ['Event still air flash', 'Varwind 12% flash'
                 'Sham': ['Event still air sham', 'Varwind 12% sham', 'Event laminar sham', 'Varwind 40% sham',
                          'Varwind 90% sham']}
 REAL_CLASSES = list(REAL_SOURCES)
+VARWIND_SPEED = {12: 0.0, 20: 0.03, 23: 0.1, 28: 0.2, 40: 0.3, 90: 0.6}     # variable-wind fan setting (%) -> m/s
 
 
 def fill_gaps(df):
@@ -118,12 +119,17 @@ def real_training(wins=WINDOWS):
     return Xs, ok, info['class'].to_numpy(), info.source.to_numpy(), info.split.to_numpy(), info.index.to_numpy()
 
 
-def real_split(y, split):
-    rng = np.random.default_rng(42)
+def balanced_split(y, seed=42):
+    # classes balanced by drawing flies, then a stratified 80/20 split; both with the seed
+    rng = np.random.default_rng(seed)
     idx = np.arange(len(y))
     n = min((y == c).sum() for c in REAL_CLASSES)
     flies = np.sort(np.concatenate([rng.choice(idx[y == c], n, replace=False) for c in REAL_CLASSES]))
-    tr, va = train_test_split(flies, test_size=0.2, random_state=42, stratify=[REAL_CLASSES.index(c) for c in y[flies]])
+    return train_test_split(flies, test_size=0.2, random_state=seed, stratify=[REAL_CLASSES.index(c) for c in y[flies]])
+
+
+def real_split(y, split):
+    tr, va = balanced_split(y, 42)
     assert (split[tr] == 'train').all() and (split[va] == 'held-out test').all() and \
         (split == 'train').sum() == len(tr), 'the split of real_training.parquet is not reproduced'
     return tr, va

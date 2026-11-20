@@ -40,8 +40,8 @@ ROW_COLORS = {0: 'orangered', 1: 'darkcyan', 2: 'orchid', 3: '#dfa45cff', 4: '#a
 EXAMPLES = {
     'synthetic': {0: 'casting_5681', 1: 'circling_7411', 2: 'random_turns_9746', 3: 'brownian_2816',
                   4: 'levy_flight_7289', 5: 'run_and_tumble_9020'},
-    'CFD circling, unsteady': ['cfd_unsteady_circling_240', 'cfd_unsteady_circling_274', 'cfd_unsteady_circling_22'],
-    'CFD casting, unsteady': ['cfd_unsteady_casting_26', 'cfd_unsteady_casting_49', 'cfd_unsteady_casting_59'],
+    'CFD circling, unsteady': ['circling_540_vel_5_unsteady', 'circling_574_vel_6_unsteady', 'circling_322_vel_1_unsteady'],
+    'CFD casting, unsteady': ['casting_326_vel_1_unsteady', 'casting_349_vel_2_unsteady', 'casting_359_vel_2_unsteady'],
     'Unifying, still air': ['unifying_stillair_62', 'unifying_stillair_151', 'unifying_stillair_96'],
     'Unifying, unsteady': ['unifying_unsteady_41', 'unifying_unsteady_162', 'unifying_unsteady_148'],
     'Unifying, laminar': ['unifying_laminar_5', 'unifying_laminar_183', 'unifying_laminar_3'],

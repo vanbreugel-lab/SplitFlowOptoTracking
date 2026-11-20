@@ -31,6 +31,8 @@ generate_synthetic_data.py   1. regenerates the synthetic training set (syntheti
                                 generators the trajectory notebooks import (use_clock, use_amp_mod, levy_walk, ...)
 generate_cfd_data.py         2. regenerates the CFD casting / circling test sets (needs the CFD velocity fields)
 train_vae.py                 3. trains either autoencoder from the parquet files; refits the RF and classifies the test sets
+build_vae_tables.py          how real_training, real_model_test_sets and synthetic_model_test_sets were built from the
+                             source data in Data/ (writes <name>_rebuilt.parquet)
 cache/                       (not tracked) synthetic_model.pkl: latents and RF probabilities; rebuilt from the parquet
                              files if missing
 output/                      (not tracked) train_vae.py outputs
@@ -77,9 +79,11 @@ models' tables are `Data/final_vae_data/<kind>_test_classification.parquet`).
 ```
 python train_vae.py train synthetic|real [--seed 42] [--epochs 250] [--threads 5]
 python train_vae.py classify synthetic|real [--model PATH.pth]
+python train_vae.py seeds real [--seeds 0-9] [--epochs 250]
 ```
 
 * A retrained model is equivalent to the shipped one, not identical.
+* `seeds`: one real-fly model per seed (own balancing and split), written as `output/real_model_seed_matrices.parquet`.
 
 ## Final models
 
