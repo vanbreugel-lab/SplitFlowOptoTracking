@@ -28,6 +28,7 @@ plt.rcParams.update({'font.size': MIN_PT, 'svg.fonttype': 'none', 'axes.spines.t
                      'axes.spines.right': False, 'font.family': 'sans-serif', 'font.sans-serif': ['Helvetica'],
                      'axes.linewidth': 0.5, 'legend.fontsize': MIN_PT, 'axes.titlesize': MIN_PT,
                      'axes.labelsize': MIN_PT, 'xtick.labelsize': MIN_PT, 'ytick.labelsize': MIN_PT})
+V.reproducible_svg()
 OUT = os.path.join(HERE, 'output_figs')
 MAX_PTS = 400                     # points drawn per group (random subsample; n in the legend is the whole group)
 PAD = 0.12                        # PCA limits: 0.5-99.5th percentile of the training flies + this fraction per side
@@ -58,7 +59,19 @@ LETTER_PT = 8                     # panel letters (bold)
 
 # panel A: Fig. 4A's region of the template (mm: x, y, width, height), its scale here, the template text removed (class
 # labels and numerals, A and B; the tops of Fig. 4's C / D labels and of D's colour strip, inside the crop)
-A_CROP, A_SCALE = (19, 24.5, 115, 50.5), 1.0
+A_CROP, A_SCALE = (14.88, 24.5, 135.0, 50.5), 1.191
+A_AT = (0.0, 0.0219)              # its top left on the page, inches
+# panel A's own layout, page pt (x right, y down from the top left): the example flies (inputs ai, reconstructions ao;
+# centres, drawn at their template size, i.e. not enlarged with A), class labels (right-aligned, baseline) with their
+# numerals below, and the numerals on the inset's contours
+A_TRAJ = {'ai1': (17.4, 47.7), 'ai2': (57.05, 48.4), 'ai3': (17.9, 89.7), 'ai4': (50.25, 89.85), 'ai5': (51.2, 125.45),
+          'ai6': (22.6, 134.95), 'ao1': (407.0, 44.8), 'ao2': (443.5, 46.4), 'ao3': (400.3, 85.0), 'ao4': (435.6, 84.0),
+          'ao5': (435.3, 117.5), 'ao6': (408.2, 127.6)}
+A_LABELS = [(25.1, 30.1), (27.6, 71.8), (21.3, 115.6)]                 # per class (V.REAL_CLASSES order)
+A_NUMERALS = [(8.5, 35.4), (7.5, 77.2), (7.4, 121.8)]
+INSET_NUMERALS = [(219.7, 111.4), (258.4, 112.3), (245.6, 159.7)]
+ROMAN = ['i', 'ii', 'iii']
+INK = (0, 0, 0, 0.886)
 A_DROP = ['text2145', 'text2145-0', 'text2145-0-9', 'text2145-0-9-8', 'text2145-0-9-8-2', 'text2145-0-9-8-2-0',
           'text2145-7', 'text2145-7-0', 'text2145-7-4', 'text2145-7-01', 'text2145-7-5', 'text2145-7-5-2', 'text2199',
           'text2199-4', 'text2199-5', 'text12636', 'text2199-5-4', 'text2145-7-6', 'g329893']
@@ -68,14 +81,19 @@ NS = {'': 'http://www.w3.org/2000/svg', 'xlink': 'http://www.w3.org/1999/xlink',
       'inkscape': 'http://www.inkscape.org/namespaces/inkscape', 'figurefirst': 'http://flyranch.github.io/figurefirst/',
       'sodipodi': 'http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd'}
 
-# layout (inches): page area W x at most MAX_H
-W, MAX_H = 6.5, 7.0
+# layout (inches): content W x at most MAX_H, top left of a letter page
+W, MAX_H, PAGE = 6.5, 9.0, (8.5, 11)
 A_W, A_H = A_CROP[2] / 25.4 * A_SCALE, A_CROP[3] / 25.4 * A_SCALE
+A_GAP = 0.0956                    # A to the B-D titles
 COL_W = W / 3                     # B, C, D: one column each, two PCA panels per column
-PCA_LEFT, PCA_W, PCA_H = 0.17, 1.22, 1.12     # PCA axes in its column (PC2 label left, legend right)
+PCA_LEFT, PCA_W, PCA_H = 0.17, 1.22, 1.12     # PCA axes in its column (PC2 label left)
 PCA_ROW = 0.15 + PCA_H + 0.12 + 0.1           # title, axes, PC1 label, gap
+# legends: offset of each panel's legend (B top, B bottom, C top, ...), pt (right, down), from just right of the axes
+LEGEND_SHIFT = [(-29.444, 58.888), (-27.777, 61.666), (-16.046, 34.464), (-12.912, 33.211), (-10.026, 33.211),
+                (-7.520, 53.890)]
+DIVIDERS = [(134.2, 187.2, 393.2), (297.9, 186.6, 392.6)]             # between B, C and D: x, y top, y bottom (pt)
 CELL_W, CELL_H, STRIP = 0.158, 0.13, 0.05     # matrix cells, colour strips
-MAT_LEFT, MAT_HEAD, MAT_BELOW = 0.62, 0.3, 1.0   # matrix: row labels, section labels above, column labels below
+MAT_LEFT, MAT_HEAD, MAT_BELOW = 0.5578, 0.3, 1.0   # matrix: row labels, section labels above, column labels below
 
 
 def contours(ax, P, tr, y, classes, lw=0.5):
@@ -86,16 +104,16 @@ def contours(ax, P, tr, y, classes, lw=0.5):
         sns.kdeplot(x=P[m, 0], y=P[m, 1], levels=4, thresh=0.1, color=COLORS[c], linewidths=lw, ax=ax)
 
 
-def pca_panel(ax, title, groups, n_title, P, tr, y, classes, pca, lim, rng):
+def pca_panel(ax, title, groups, P, tr, y, classes, pca, lim, rng, legend_shift):
     contours(ax, P, tr, y, classes)
     for name, (Q, col) in groups.items():
         show = Q if len(Q) <= MAX_PTS else Q[rng.choice(len(Q), MAX_PTS, replace=False)]
-        ax.scatter(*show.T, s=1.5, lw=0, color=col, alpha=0.75, label=name if n_title else f'{name} ({len(Q)})',
-                   rasterized=True)
-    ax.legend(frameon=False, markerscale=2.5, loc='upper left', bbox_to_anchor=(1.02, 1), handlelength=0.8,
-              handletextpad=0.3, borderaxespad=0, labelspacing=0.3)
-    n = len(next(iter(groups.values()))[0])
-    ax.set_title(f'{title} ({n} each)' if n_title else title, pad=2)
+        ax.scatter(*show.T, s=1.5, lw=0, color=col, alpha=0.75, label=f'{name} ({len(Q)})', rasterized=True)
+    dx, dy = legend_shift
+    ax.legend(frameon=False, markerscale=2.5, loc='upper left',
+              bbox_to_anchor=(1.02 + dx / 72 / PCA_W, 1 - dy / 72 / PCA_H), handlelength=0.8, handletextpad=0.3,
+              borderaxespad=0, labelspacing=0.3)
+    ax.set_title(title, pad=2, fontweight='bold')
     ax.set_xlim(*lim[0])
     ax.set_ylim(*lim[1])
     ax.set_xticks([]), ax.set_yticks([])
@@ -106,23 +124,23 @@ def pca_panel(ax, title, groups, n_title, P, tr, y, classes, pca, lim, rng):
 def model_data():
     # the seed-42 model, its training flies (1.1-3.0 s windows, class, training / held-out indices in the original
     # order), the PCA of the training flies' latents, their projections, and the B-D panels:
-    # [(title, {name: (points, colour)}, n in the title)]
+    # [(title, {name: (points, colour)})]
     model = V.load_model('real')
     (X,), _, y, _, split, _ = V.real_training(V.WINDOWS[:1])
     tr, te = V.real_split(y, split)
     Z = encode(model, X).astype(np.float64)
-    pca = PCA(n_components=2).fit(Z[tr])
+    pca = PCA(n_components=2, random_state=0).fit(Z[tr])
     P = pca.transform(Z)
     tests = V.test_sets('real')
     proj = lambda g: pca.transform(encode(model, tests[g][0]).astype(np.float64))    # real flies
     one = lambda g: pca.transform(encode(model, tests[g][0]))                        # simulated trajectories
     panels = [                                                                 # by column: B, C, D
-        ('split flow, flash', {n: (proj(g), c) for g, (n, c) in SPLIT_FLASH.items()}, False),
-        ('split flow, sham', {n: (proj(g), c) for g, (n, c) in SPLIT_SHAM.items()}, False),
-        ('variable wind, flash', {f'{s} m/s': (proj(f'{s} m/s flash'), c) for s, c in zip(SPEEDS, SPEED_COLORS)}, False),
-        ('variable wind, sham', {f'{s} m/s': (proj(f'{s} m/s sham'), c) for s, c in zip(SPEEDS, SPEED_COLORS)}, False),
-        ('synthetic algorithms', {n: (one(g), c) for g, (n, c) in SYNTHETIC.items()}, True),
-        ('unifying algorithm', {n: (one(g), c) for g, (n, c) in UNIFYING.items()}, True),
+        ('split flow, flash', {n: (proj(g), c) for g, (n, c) in SPLIT_FLASH.items()}),
+        ('split flow, sham', {n: (proj(g), c) for g, (n, c) in SPLIT_SHAM.items()}),
+        ('variable wind, flash', {f'{s} m/s': (proj(f'{s} m/s flash'), c) for s, c in zip(SPEEDS, SPEED_COLORS)}),
+        ('variable wind, sham', {f'{s} m/s': (proj(f'{s} m/s sham'), c) for s, c in zip(SPEEDS, SPEED_COLORS)}),
+        ('synthetic algorithms', {n: (one(g), c) for g, (n, c) in SYNTHETIC.items()}),
+        ('unifying algorithm', {n: (one(g), c) for g, (n, c) in UNIFYING.items()}),
     ]
     return model, X, y, tr, te, P, pca, panels
 
@@ -195,6 +213,18 @@ def panel_a(model, X, y, te, P, tr, path):
     # Fig. 4A filled with this model (figurefirst on make_f4's flattened template); written to path (full page)
     layout = fifi.svg_to_axes.FigureLayout(F4.flat_template(), autogenlayers=True, make_mplfigures=True, hide_layers=[])
     fig = layout.figures['A1']
+    k_pt = A_SCALE * 72 / 25.4                                                 # template mm -> page pt
+    tw, th = fig.get_size_inches() * 25.4                                      # the template page, mm
+
+    def frac(x_pt, y_pt):                                                      # page pt -> template figure fraction
+        return ((x_pt - A_AT[0] * 72) / k_pt + A_CROP[0]) / tw, 1 - ((y_pt - A_AT[1] * 72) / k_pt + A_CROP[1]) / th
+
+    for name, (cx, cy) in A_TRAJ.items():                                      # A_TRAJ centres, template size
+        ax = layout.axes[('A1' if name.startswith('ai') else 'A2', name)]
+        p = ax.get_position()
+        fx, fy = frac(cx, cy)
+        ax.set_position([fx - p.width / A_SCALE / 2, fy - p.height / A_SCALE / 2, p.width / A_SCALE,
+                         p.height / A_SCALE])
     for k, c in enumerate(V.REAL_CLASSES):                                     # rows 1-2, 3-4, 5-6
         Xc = X[te[y[te] == c]]
         order = np.argsort(F4.reconstruct(model, Xc)[2])
@@ -202,9 +232,11 @@ def panel_a(model, X, y, te, P, tr, path):
         for j, q in enumerate(A_PICKS):
             F4.draw_reconstruction(layout.axes[('A1', f'ai{2 * k + j + 1}')], layout.axes[('A2', f'ao{2 * k + j + 1}')],
                                    model, Xc[order[int(round(q * (len(order) - 1)))]], color, lw=F4.A_LINE_WIDTH)
-        p1, p2 = (layout.axes[('A1', f'ai{2 * k + j}')].get_position() for j in (1, 2))
-        fig.text(p1.x0 - 0.003, (p1.y1 + p2.y0) / 2, NAMES[c], ha='right', va='center', fontsize=MIN_PT / A_SCALE,
-                 color=color, family='Helvetica')
+        fig.text(*frac(*A_LABELS[k]), NAMES[c], ha='right', va='baseline', fontsize=MIN_PT / A_SCALE, color=color,
+                 family='Helvetica')
+        for f, at in ((fig, A_NUMERALS[k]), (layout.figures['Z'], INSET_NUMERALS[k])):   # (the inset is on top)
+            f.text(*frac(*at), ROMAN[k], ha='center', va='baseline', fontsize=MIN_PT / A_SCALE, color=INK,
+                   family='Helvetica')
     ax = layout.axes[('Z', 'z1')]                                               # inset: as B-D's contours
     contours(ax, P, tr, y, V.REAL_CLASSES, lw=0.4)
     ax.axis('off')
@@ -279,6 +311,8 @@ def compose(mpl_svg, a_svg, out, x_in, y_in):
     inner.extend(list(A))
     root.remove(g)                                                             # beneath the matplotlib
     root.insert(1, g)                                                          # content (panel letter A)
+    root.set('width', f'{PAGE[0]}in'), root.set('height', f'{PAGE[1]}in')      # the content at the top left of a
+    root.set('viewBox', f'0 0 {PAGE[0] * 72:g} {PAGE[1] * 72:g}')              # letter page
     ET.ElementTree(root).write(out, xml_declaration=True, encoding='utf-8')
 
 
@@ -317,7 +351,7 @@ if __name__ == '__main__':
     counts, col_names, col_colors = mean_counts()
 
     HM_H = CELL_H * len(counts)
-    FIG_H = A_H + 0.06 + 2 * PCA_ROW + MAT_HEAD + HM_H + STRIP + MAT_BELOW
+    FIG_H = A_AT[1] + A_H + A_GAP + 2 * PCA_ROW + MAT_HEAD + HM_H + STRIP + MAT_BELOW
     assert FIG_H <= MAX_H + 1e-9, f'figure {FIG_H:.2f} in tall, more than {MAX_H}'
     fig = plt.figure(figsize=(W, FIG_H))
     lo, hi = np.percentile(P[tr], 0.5, axis=0), np.percentile(P[tr], 99.5, axis=0)
@@ -325,23 +359,21 @@ if __name__ == '__main__':
     lim = [(lo[d] - pad[d], hi[d] + pad[d]) for d in range(2)]
     rng = np.random.default_rng(0)
 
-    # A (composed in below) and the training classes' key to its right
+    # A (composed in below)
     label(fig, FIG_H, 0, FIG_H, 'A')
-    fig.legend([plt.Rectangle((0, 0), 1, 1, fc=(*to_rgb(COLORS[c]), 0.25), ec=COLORS[c], lw=0.5) for c in classes],
-               [f'{c} ({(y[tr] == c).sum()})' for c in classes], title='training flies (contours in A-D)',
-               frameon=False, loc='upper left', bbox_to_anchor=((A_W + 0.2) / W, 1 - 0.75 / FIG_H), handlelength=0.8,
-               handleheight=0.8, handletextpad=0.3, borderaxespad=0, labelspacing=0.3, title_fontsize=MIN_PT,
-               alignment='left')
 
-    # B-D: one column each, two panels per column
-    for k, (title, groups, n_title) in enumerate(panels):
+    # B-D: one column each, two panels per column, divided by lines
+    for k, (title, groups) in enumerate(panels):
         c, r = divmod(k, 2)
-        top = FIG_H - A_H - 0.06 - r * PCA_ROW
+        top = FIG_H - A_AT[1] - A_H - A_GAP - r * PCA_ROW
         x = c * COL_W + PCA_LEFT
         ax = fig.add_axes([x / W, (top - 0.15 - PCA_H) / FIG_H, PCA_W / W, PCA_H / FIG_H])
-        pca_panel(ax, title, groups, n_title, P, tr, y, classes, pca, lim, rng)
+        pca_panel(ax, title, groups, P, tr, y, classes, pca, lim, rng, LEGEND_SHIFT[k])
         if r == 0:
             label(fig, FIG_H, c * COL_W, top + 0.02, 'BCD'[c])
+    for x, y0, y1 in DIVIDERS:
+        fig.lines.append(plt.Line2D([x / 72 / W] * 2, [1 - y0 / 72 / FIG_H, 1 - y1 / 72 / FIG_H], color='k', lw=0.5,
+                                    transform=fig.transFigure))
 
     # E: classification matrix, mean of 10 seeds
     m_y0 = MAT_BELOW + STRIP
@@ -350,11 +382,11 @@ if __name__ == '__main__':
 
     os.makedirs(OUT, exist_ok=True)
     os.makedirs(V.CACHE, exist_ok=True)
-    path = os.path.join(OUT, 'supplemental_realdata_VAE_test')
+    path = os.path.join(OUT, 'supplemental_realdata_VAE')
     fig.savefig(f'{path}_mpl.svg', transparent=True, dpi=300)       # no tight bbox: panel A is placed in inches
     plt.close(fig)
     panel_a(model, X, y, te, P, tr, f'{path}_A.svg')
-    compose(f'{path}_mpl.svg', f'{path}_A.svg', f'{path}.svg', 0.0, 0.0)
+    compose(f'{path}_mpl.svg', f'{path}_A.svg', f'{path}.svg', *A_AT)
     os.remove(f'{path}_mpl.svg'), os.remove(f'{path}_A.svg')
-    render(f'{path}.svg', W, FIG_H)
-    print(f'{path}: {W} x {FIG_H:.2f} in')
+    render(f'{path}.svg', *PAGE)
+    print(f'{path}: {W} x {FIG_H:.2f} in content on a {PAGE[0]} x {PAGE[1]} in page')

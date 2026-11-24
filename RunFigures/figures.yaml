@@ -40,7 +40,8 @@ main:
     name: Figure_4
     title: Autoencoder
     script: fig4.sh
-    # make_f4.py writes output_figs/f4_autoencoder_test.svg; f4_autoencoder.svg is the finished copy
+    # written by make_f4.py from f4_template.svg, finishing included (the former hand-finished copy is this
+    #   file's previous version in git history)
     svg: FigureGeneration/Main/fig_4_autoencoder/output_figs/f4_autoencoder.svg
 
   - id: fig5
@@ -90,21 +91,21 @@ supplemental:
     name: Figure_S6
     title: Autoencoder reconstructions and reconstruction error, real vs synthetic
     script: supp_reconstruction.sh
-    # script writes output_figs/supplemental_reconstruction_losses_test.svg
+    # written by the script (previous copy: this file's previous version in git history)
     svg: FigureGeneration/Supplemental/supp_fig_06_reconstruction/output_figs/supplemental_reconstruction_losses.svg
 
   - id: supp_pca_rf_classifier
     name: Figure_S7
     title: Random forest on the first k principal components (k = 2-10)
     script: supp_pca_rf_classifier.sh
-    # script writes output_figs/supplemental_pca_2_to_10_rf_test.svg; the finished copy is hand-edited
+    # written by the script, finishing included (former hand-finished copy: previous version in git history)
     svg: FigureGeneration/Supplemental/supp_fig_07_pca_rf_classifier/output_figs/supplemental_pca_2_to_10_rf.svg
 
   - id: supp_real_fly_vae
     name: Figure_S8
     title: Autoencoder trained on real flies
     script: supp_real_fly_vae.sh
-    # script writes output_figs/supplemental_realdata_VAE_test.svg; the finished copy is hand-edited
+    # written by the script, finishing included (former hand-finished copy: previous version in git history)
     svg: FigureGeneration/Supplemental/supp_fig_08_real_fly_vae/output_figs/supplemental_realdata_VAE.svg
 
   - id: supp_variable_wind_surge

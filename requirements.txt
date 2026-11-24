@@ -17,6 +17,7 @@ pandas<3.0
 scipy
 matplotlib
 scikit-learn        # sklearn.preprocessing (autoencoder, several figures)
+scikit-image        # imported as `skimage` (fig_4 latent-space isosurfaces, marching_cubes)
 seaborn             # fig_4 autoencoder plots
 cvxpy               # unifying-algorithm mixed-integer quadratic program
 statsmodels

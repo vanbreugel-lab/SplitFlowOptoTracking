@@ -16,6 +16,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', 'VAE_pipeline'))
 import vae_utils as V
 from vae_utils import reconstruct, LABELS, CLASS_COLORS
+V.reproducible_svg()
 
 OUT = os.path.join(HERE, 'output_figs')
 # real-fly groups: name in the figure -> test set; colours as Fig. 4
@@ -203,7 +204,7 @@ if __name__ == '__main__':
     E = pd.concat(rows, ignore_index=True)
     real, shams = list(FIG4), list(SHAMS)
 
-    path = os.path.join(OUT, 'supplemental_reconstruction_losses_test')
+    path = os.path.join(OUT, 'supplemental_reconstruction_losses')
     summary_figure(E, ex, syn, real, colors, path)
 
     # table: median [IQR] per group, effect size vs all held-out synthetic windows

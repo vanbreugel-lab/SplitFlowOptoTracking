@@ -146,6 +146,14 @@ def load_model(kind):
     return model
 
 
+def reproducible_svg(salt='splitflow'):
+    # identical SVG bytes on every run: matplotlib otherwise salts its clip-path / marker ids with a random uuid and
+    # stamps the save time. Call after any plt.rcdefaults()
+    import matplotlib
+    matplotlib.rcParams['svg.hashsalt'] = salt
+    os.environ.setdefault('SOURCE_DATE_EPOCH', '0')
+
+
 def normalize(X):
     flat = X.reshape(len(X), -1).astype(np.float64)
     mean, sd = flat.mean(1, keepdims=True), flat.std(1, keepdims=True)

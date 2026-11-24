@@ -10,7 +10,8 @@ source "$(dirname "${BASH_SOURCE[0]}")/_common.sh"
 begin_figure fig4 "Figure 4: autoencoder"
 D=FigureGeneration/Main/fig_4_autoencoder
 
-# Writes output_figs/f4_autoencoder_test.svg (from f4_template.svg); output_figs/f4_autoencoder.svg is the finished figure.
+# Writes the finished output_figs/f4_autoencoder.svg from f4_template.svg (its finishing layers and make_f4.py's
+# FINISH_3D / FINISH_2D). The former hand-finished copy is the file's previous version in git history.
 run_python "$D" make_f4.py
 
 end_figure

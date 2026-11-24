@@ -12,6 +12,7 @@ import vae_utils as V
 import splitflow.RFClassifier as RF
 
 plt.rcParams.update({'font.size': 7, 'svg.fonttype': 'none', 'axes.spines.top': False, 'axes.spines.right': False})
+V.reproducible_svg()
 OUT = os.path.join(HERE, 'output_figs')
 STACKED = (2, 3, 4, 5, 10)                       # numbers of components shown (with the full latent)
 SPEEDS = ['0', '0.03', '0.1', '0.2', '0.3', '0.6']
@@ -44,28 +45,37 @@ def helvetica_bold(ttc='/System/Library/Fonts/Helvetica.ttc'):
     font_manager.fontManager.addfont(path)
 
 
-def matrix_figure(counts, path, W=6.5, H=7.0):
-    # the matrices stacked, W x H inches (a letter page inside 1 in margins): row labels, column labels and the
-    # percentage colour bar on the last panel only; each panel titled with its name and lettered A, B, ...; sections
-    # separated by lines; Helvetica, >= 6 pt
+# layout on the letter page, pt from the top left (the published, formerly hand-finished, layout): heatmaps, the
+# class / test-set colour strips left of and below them, the colour bar right of the last; titles and letters above
+PAGE = (612, 792)
+HM_X, HM_W, HM_H = 118.13, 376.10, 69.81
+HM_TOP = [83.10, 167.02, 252.48, 337.95, 423.42, 511.98]
+STRIP_W, STRIP_H = 2.72, 2.60
+CB_X, CB_W = 498.89, 3.10
+TITLE_X, TITLE_BASE = 293.6, [80.54, 164.46, 249.74, 335.96, 419.68, 507.53]
+LETTER_X, LETTER_BASE = 75.0, [81.09, 162.45, 244.89, 328.72, 409.89, 495.06]
+INK = (0, 0, 0, 0.886)                                     # titles and letters
+
+
+def matrix_figure(counts, path):
+    # the matrices stacked on a letter page: row labels, column labels and the percentage colour bar on the last panel
+    # only; each panel titled with its name and lettered A, B, ...; sections separated by lines; Helvetica 6/8/10 pt
     rows = list(next(iter(counts.values())).index)
     cols = [c for _, g in GROUPS for c in g]
-    left, right, bottom, strip, gap = 0.72, 0.5, 1.0, 0.035, 0.17
-    cell_w = (W - left - strip - right) / len(cols)
-    cell_h = (H - bottom) / len(counts) - strip - gap
-    cell_h /= len(rows)
-    fs = dict(cell=6, label=6, name=7, letter=10)
+    assert len(counts) == len(HM_TOP)
+    fs = dict(cell=6, label=6, name=8, letter=10)
     helvetica_bold()
     plt.rcParams.update({'font.family': 'Helvetica', 'pdf.fonttype': 42})
-    hm_w, hm_h = cell_w * len(cols), cell_h * len(rows)
-    fig = plt.figure(figsize=(W, H))
+    W, H = PAGE
+    box = lambda x, top, w, h: [x / W, 1 - (top + h) / H, w / W, h / H]          # page pt (y down) -> figure fraction
+    fig = plt.figure(figsize=(W / 72, H / 72))
     for i, (name, cnt) in enumerate(counts.items()):
         last = i == len(counts) - 1
-        y0 = H - (i + 1) * (hm_h + strip + gap)
-        ax_hm = fig.add_axes([(left + strip) / W, (y0 + strip) / H, hm_w / W, hm_h / H])
-        ax_y = fig.add_axes([left / W, (y0 + strip) / H, strip / W, hm_h / H])
-        ax_x = fig.add_axes([(left + strip) / W, y0 / H, hm_w / W, strip / H])
-        ax_cb = fig.add_axes([(left + strip + hm_w + 0.06) / W, (y0 + strip) / H, 0.04 / W, hm_h / H]) if last else None
+        top = HM_TOP[i]
+        ax_hm = fig.add_axes(box(HM_X, top, HM_W, HM_H))
+        ax_y = fig.add_axes(box(HM_X - STRIP_W, top, STRIP_W, HM_H))
+        ax_x = fig.add_axes(box(HM_X, top + HM_H, HM_W, STRIP_H))
+        ax_cb = fig.add_axes(box(CB_X, top, CB_W, HM_H)) if last else None
         cnt = cnt[cols]
         named = {k: f'{k} ({cnt[k].sum()})' for k in cols}
         cnt = cnt.rename(index={'Levy flight': 'Lévy flight'})
@@ -80,12 +90,15 @@ def matrix_figure(counts, path, W=6.5, H=7.0):
             for ax in (ax_x, ax_y, ax_cb):
                 ax.tick_params(labelsize=fs['label'], length=1.5, pad=1, width=0.4)
             ax_cb.yaxis.label.set_size(fs['label'])
+            ax_cb.yaxis.label.set_rotation(270)                   # reads top to bottom
+            ax_cb.yaxis.label.set_va('bottom')
         for x0 in np.cumsum([len(g) for _, g in GROUPS])[:-1]:
             ax_hm.axvline(x0, color='k', lw=0.6)
-        ax_hm.set_title(name, fontsize=fs['name'], fontweight='bold', pad=2)
-        fig.text(0.02 / W, (y0 + strip + hm_h + gap * 0.3) / H, 'ABCDEFGHIJ'[i], fontsize=fs['letter'],
-                 fontweight='bold', va='bottom')
-    for e in ['pdf', 'svg']:                                  # the stated page area exactly
+        fig.text(TITLE_X / W, 1 - TITLE_BASE[i] / H, name, fontsize=fs['name'], color=INK, ha='center',
+                 va='baseline')
+        fig.text(LETTER_X / W, 1 - LETTER_BASE[i] / H, 'ABCDEFGHIJ'[i], fontsize=fs['letter'], fontweight='bold',
+                 color=INK, ha='center', va='baseline')
+    for e in ['pdf', 'svg']:                                  # the whole page
         fig.savefig(f'{path}.{e}', bbox_inches=None, transparent=True)
     plt.close(fig)
 
@@ -94,7 +107,7 @@ def main():
     r = V.synthetic_results()
     Z_tr, y_tr, Z_te, y_te = r['Z_train'], r['y_train'], r['Z_held'], r['y_held']
     names = [V.LABELS[c] for c in range(len(V.LABELS))]
-    pca = PCA().fit(Z_tr)
+    pca = PCA(random_state=0).fit(Z_tr)
     ev_cum = np.cumsum(pca.explained_variance_ratio_)
     counts = {}
     for k in list(STACKED) + [None]:
@@ -111,8 +124,8 @@ def main():
               f'CFD circling steady / unsteady {pct.loc["Circling", "CFD circling, steady"]:.1f} / '
               f'{pct.loc["Circling", "CFD circling, unsteady"]:.1f}%', flush=True)
         counts[name] = c
-    matrix_figure(counts, os.path.join(OUT, 'supplemental_pca_2_to_10_rf_test'))
-    print(os.path.join(OUT, 'supplemental_pca_2_to_10_rf_test.svg'))
+    matrix_figure(counts, os.path.join(OUT, 'supplemental_pca_2_to_10_rf'))
+    print(os.path.join(OUT, 'supplemental_pca_2_to_10_rf.svg'))
 
 
 if __name__ == '__main__':

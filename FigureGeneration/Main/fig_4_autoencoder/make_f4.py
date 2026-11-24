@@ -23,6 +23,7 @@ import splitflow.RFClassifier as RF
 from scipy.stats import gaussian_kde
 from matplotlib.colors import to_rgb
 from matplotlib.patches import Rectangle
+from matplotlib.transforms import Affine2D, Bbox, ScaledTranslation
 from mpl_toolkits.mplot3d import proj3d
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection, Line3DCollection
 from skimage.measure import marching_cubes
@@ -31,6 +32,7 @@ plt.rcdefaults()
 plt.rcParams.update({'font.size': 6, 'text.usetex': False, 'ps.usedistiller': 'xpdf', 'font.family': 'sans-serif',
                      'font.sans-serif': ['Helvetica'], 'font.weight': 'normal', 'mathtext.fontset': 'custom',
                      'mathtext.rm': 'Helvetica', 'mathtext.it': 'Helvetica:italic'})
+V.reproducible_svg()
 
 TEMPLATE = os.path.join(HERE, 'f4_template.svg')
 
@@ -91,12 +93,28 @@ FOCAL_3D = 2.0
 ZOOM_3D = 1.35                                             
 ZOOM_INSET_3D = 0.85                                    
 SHIFT_3D = (-0.1, 0.0)                                     
-PANEL_SHIFT_3D = {'b2': (-0.12, 0.0)}                      
+PANEL_SHIFT_3D = {'b2': (-0.12, 0.0)}
+# finishing of the published figure (formerly done by hand in Inkscape), as page transforms in pt (x right, y down):
+# X' = s X + (tx, ty) on the 3D drawing and its clip area. Panel C left, E left, G and the inset B (enlarged)
+FINISH_3D = {'b1': (1, -10.612715, 0.910405), 'c1': (1, -9, 0), 'd1': (1, -9.378866, -19.820324),
+             'd2': (1, -8.854473, -21.160162), 'd3': (1, -9, -21), 'z1': (1.1839877, -38.720401, -37.288418)}
+# 2D panels: ('move', dx, dy) or ('rotate', degrees clockwise, cx, cy), page pt. A: reconstructions nudged, the
+# Brownian example turned 90 deg (input and reconstruction); E, G: example trajectories; D, F, H: the matrices
+FINISH_2D = {('A1', 'ai6'): ('rotate', 90, 100.45742, 202.45504), ('A2', 'ao6'): ('rotate', 90, 364.23521, 194.58719),
+             ('A2', 'ao1'): ('move', 4.5, 7.5), ('A2', 'ao2'): ('move', 6, 6), ('A2', 'ao3'): ('move', 3, 4.5),
+             ('A2', 'ao4'): ('move', 3, 3), ('A2', 'ao5'): ('move', 6, 0),
+             **{('C2', n): ('move', -9, 0) for n in ['c_t1', 'c_t2', 'c_t3']},
+             **{('D2', n): ('move', -10.5, 0) for n in ['d1a', 'd1b', 'd1c']},
+             **{('D2', n): ('move', -6, 0) for n in ['d2a', 'd2b', 'd2c']},
+             **{('D2', n): ('move', -9, 0) for n in ['d3a', 'd3b', 'd3c']},
+             ('E2', 'e1c'): ('move', -7.5, 1.5), ('E2', 'e1a'): ('move', -1.5, 1.5),
+             ('RF1', 'rf1'): ('move', 0, -3), ('RF2', 'rf2'): ('move', 0, -4.5), ('RF3', 'rf3'): ('move', 0, -1.5)}
+PAGE_PT = (612, 792)                                       # every figurefirst figure is the whole letter page
 GRID_3D = 8                                               
 LIGHT_3D = dict(ambient=0.62, diffuse=0.45, specular=0.12, shininess=20, up=0.6, left=0.4)  
-AXIS_KEY = dict(origin=(0.005, 0.089), arrows=[(0.104, -0.055), (0.095, 0.046), (0.0, 0.1375)],
+AXIS_KEY = dict(origin=(-0.172827, 0.113207), arrows=[(0.104, -0.055), (0.095, 0.046), (0.0, 0.1375)],
                 labels=[('left', 'center', (0.004, -0.012)), ('left', 'center', (0.004, 0.012)),
-                        ('center', 'bottom', (-0.02, 0.012))])
+                        ('center', 'bottom', (0.042781, 0.017459))])
 KEY_PANELS = ('b1',)                                       
 KEY_FONT = 6                                   
 
@@ -273,6 +291,31 @@ def axes_3d(fig, pos, full, shift, a, b, zoom):
     return ax
 
 
+def page_transform(bbox, s, tx, ty):
+    # an axes position (figure fraction, y up) under the page transform X' = s X + (tx, ty) (pt, y down)
+    W, H = PAGE_PT
+    x0, y0 = s * bbox.x0 * W + tx, s * (1 - bbox.y1) * H + ty
+    return Bbox.from_bounds(x0 / W, 1 - (y0 + s * bbox.height * H) / H, s * bbox.width, s * bbox.height)
+
+
+def finish_2d(layout):
+    # FINISH_2D: moves (the axes) and quarter turns (its lines, about a page point; unclipped)
+    W, H = PAGE_PT
+    for (layer, name), (kind, *p) in FINISH_2D.items():
+        ax = layout.axes[(layer, name)]
+        if kind == 'move':
+            ax.set_position(page_transform(ax.get_position(), 1, *p))
+        else:
+            deg, cx, cy = p                                 # (display units follow the dpi the SVG is drawn at)
+            fig = ax.figure
+            c = np.array([cx / W, 1 - cy / H]) * fig.get_size_inches()
+            turn = (ScaledTranslation(*-c, fig.dpi_scale_trans) + Affine2D().rotate_deg(-deg) +
+                    ScaledTranslation(*c, fig.dpi_scale_trans))
+            for line in ax.lines:
+                line.set_transform(line.get_transform() + turn)
+                line.set_clip_on(False)
+
+
 def projected_mm(ax, xyz, page_in):
    
     x2, y2, _ = proj3d.proj_transform(*xyz, ax.get_proj())
@@ -316,6 +359,10 @@ def pca_panels_3d(layout, pca, P_tr, y_sub, Z_sets):
         full = np.array(panel_inches(layout, layer, name)) if name == 'z1' else canvas
         shift = np.array(SHIFT_3D) + np.array(PANEL_SHIFT_3D.get(name, (0, 0)))
         ax = axes_3d(fig, pos, full, shift, a, b, ZOOM_3D * (1 if name != 'z1' else ZOOM_INSET_3D))
+        fs = FINISH_3D.get(name, (1, 0, 0))[0]
+        if name in FINISH_3D:
+            ax.set_position(page_transform(ax.get_position(), *FINISH_3D[name]))
+            pos = page_transform(pos, *FINISH_3D[name])
         objects = [(depth(P_tr[y_sub == c]), train_meshes[c], to_rgb(V.CLASS_COLORS[c]), V.LABELS[c]) for c in classes]
         points, tests = [], []
         for g, color in groups:
@@ -334,7 +381,7 @@ def pca_panels_3d(layout, pca, P_tr, y_sub, Z_sets):
         if name == 'z1':                                    # class numerals just above each class's median
             for c in classes:
                 m = np.median(P_tr[y_sub == c], 0)
-                ax.text(m[0], m[1], m[2] + 0.06 * (b - a)[2], NUMERALS[c], fontsize=6, ha='center', va='bottom',
+                ax.text(m[0], m[1], m[2] + 0.06 * (b - a)[2], NUMERALS[c], fontsize=6 * fs, ha='center', va='bottom',
                         zorder=z + 1)
         clip = Rectangle((pos.x0, pos.y0), pos.width, pos.height, transform=fig.transFigure, facecolor='none')
         for art in ax.collections + ax.texts:
@@ -374,7 +421,7 @@ def main(out):
             ax = layout.axes[(layer, name)]
             draw_reconstruction(ax, ax, model, r['X_sets'][g][ids.index(oid)], SET_COLORS[g], recon_color=RECON_COLOR)
 
-    pca = PCA(n_components=3).fit(r['Z_train'])
+    pca = PCA(n_components=3, random_state=0).fit(r['Z_train'])
     print(f'  PCA explained variance: {pca.explained_variance_ratio_.round(3)}')
     sub = np.concatenate([np.where(r['y_train'] == c)[0][:KDE_PER_CLASS] for c in np.unique(r['y_train'])])
     targets = pca_panels_3d(layout, pca, pca.transform(r['Z_train'][sub]), r['y_train'][sub], r['Z_sets'])
@@ -394,7 +441,8 @@ def main(out):
     plt.rcParams['font.size'] = 6
     pct = counts / counts.sum() * 100
     print(pct[[c for _, _, cols, _, _ in MATRICES for c in cols]].round(1).to_string())
-    for layer in ['A1', 'A2', 'B', 'C', 'C2', 'D1', 'D2', 'E2', 'Z', 'RF1', 'RF2', 'RF3', 'CBHEATMAP']:
+    finish_2d(layout)
+    for layer in ['A1', 'A2', 'B', 'C', 'C2', 'D1', 'D2', 'E2', 'Z', 'RF1', 'RF2', 'RF3']:   # (not D's colour bar)
         layout.append_figure_to_layer(layout.figures[layer], layer, cleartarget=True)
     layout.write_svg(out)
     aim_arrows(out, targets)
@@ -402,4 +450,4 @@ def main(out):
 
 
 if __name__ == '__main__':
-    main(os.path.join(HERE, 'output_figs', 'f4_autoencoder_test.svg'))
+    main(os.path.join(HERE, 'output_figs', 'f4_autoencoder.svg'))
