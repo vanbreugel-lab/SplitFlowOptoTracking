@@ -129,6 +129,10 @@ FigureGeneration/Main/fig_1_math_figure/from_jaleesa/
 # Test outputs from re-running figure notebooks (originals kept under output_figs/)
 *_test.svg
 *_test.png
+# RunFigures/compare_svg.py's diff images (written next to the compared SVG)
+FigureGeneration/**/output_figs/compare/
+# local backups of the former hand-finished figures (the committed versions are in git history)
+FigureGeneration/**/output_figs/hand_finished/
 # Source-paper PDFs and figure PDFs (not tracked in the code repo)
 *.pdf
 
