@@ -133,7 +133,8 @@ def _clean(ax, ylim, yticks, yticklabels, ylabel, xticks, xticklabels, xlim, rot
     ax.set_xlim(*xlim)
     ax.set_xlabel(xlabel, labelpad=1)
     ax.tick_params(axis='both', pad=2)
-    fifi.mpl_functions.adjust_spines(ax, ['left', 'bottom'], tick_length=2.5,
+    # pass the ticks so the spines stop at the first/last tick (smart bounds)
+    fifi.mpl_functions.adjust_spines(ax, ['left', 'bottom'], tick_length=2.5, xticks=xticks, yticks=yticks,
                                      spine_locations={'left': 5, 'bottom': 5}, linewidth=0.5)
     fifi.mpl_functions.set_fontsize(ax, 6)
     # tick labels last: adjust_spines resets their rotation and color
@@ -147,8 +148,8 @@ def _clean(ax, ylim, yticks, yticklabels, ylabel, xticks, xticklabels, xlim, rot
 
 def clean_column_labels(ax_p, ax_r2, xticks, xticklabels, xlim, show_ylabel=True, rotation=0, ticklabel_colors=None,
                         xlabel=''):
-    """p-value row: no x tick labels; R2 row: tick labels (and optional xlabel) as in r2_summary.svg."""
-    _clean(ax_p, LOG10P_LIM, LOG10P_TICKS, LOG10P_TICKLABELS, P_LABEL if show_ylabel else '',
-           xticks, [''] * len(xticks), xlim, 0, None, '', reference=np.log10(P_REFERENCE))
+    """R2 row (top): no x tick labels; p-value row (bottom): tick labels (and optional xlabel) as in r2_summary.svg."""
     _clean(ax_r2, R2_LIM, R2_TICKS, R2_TICKLABELS, R2_LABEL if show_ylabel else '',
-           xticks, xticklabels, xlim, rotation, ticklabel_colors, xlabel, reference=0)
+           xticks, [''] * len(xticks), xlim, 0, None, '', reference=0)
+    _clean(ax_p, LOG10P_LIM, LOG10P_TICKS, LOG10P_TICKLABELS, P_LABEL if show_ylabel else '',
+           xticks, xticklabels, xlim, rotation, ticklabel_colors, xlabel, reference=np.log10(P_REFERENCE))
