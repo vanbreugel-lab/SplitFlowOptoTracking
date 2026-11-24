@@ -147,7 +147,9 @@ supplemental:
     name: Figure_S15
     title: All-animal summary and slope vs movement speed
     script: supp_all_animal_slopes.sh
-    svg: FigureGeneration/Supplemental/supp_fig_15_all_animal_slopes/supp_fig_all_animal_slopes_test.svg
+    # the notebook fills a copy of supp_fig_all_animal_slopes.svg (template and finished figure) and writes
+    #   supp_fig_all_animal_slopes_test.svg; copy the test file over it to adopt a rerun
+    svg: FigureGeneration/Supplemental/supp_fig_15_all_animal_slopes/supp_fig_all_animal_slopes.svg
 
 unused:
   - id: supp_course_direction
