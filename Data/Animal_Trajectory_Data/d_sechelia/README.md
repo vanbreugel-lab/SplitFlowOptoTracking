@@ -5,14 +5,14 @@
 Takagi S, Sancer G, Abuin L, Stupski SD, Arguello JR, Prieto-Godino LL, Stern DL, Cruchet S, Alvarez-Ocana R, Wienecke CFR, van Breugel F, Jeanne JM, Auer TO, Benton R (2024). Olfactory sensory neuron population expansions influence projection neuron adaptation and enhance odour tracking. *Nature Communications*.
 
 - DOI: https://doi.org/10.1038/s41467-024-50808-w
-- Data repository: none public for the tracking data (the paper provides Source Data and other data on request). The trajectories here come from the wind tunnel tracking file `dsec07_noni.csv`, which is not included.
+- Data repository: none public for the tracking data (the paper provides Source Data and other data on request). The trajectories here come from the wind tunnel tracking file `raw/dsec07_noni.csv`.
 - Paper: `paper/Takagi_2024_NatCommun.pdf` (kept locally for reference; not redistributed and not committed)
 
 ## Files
 
 | What | Where |
 |---|---|
-| Raw data | single trajectories (object ids 1384 and 3661) cut from the tracking file Files: `raw/d_sechelia_1384.parquet`, `raw/d_sechelia_3661.parquet` |
+| Raw data | `raw/dsec07_noni.csv`: the wind tunnel tracking file of the noni experiment (all trajectories; columns obj_id, frame, timestamp, x, y, z, velocities). `raw/d_sechelia_1384.parquet` and `raw/d_sechelia_3661.parquet`: the two single trajectories (object ids 1384 and 3661) cut from it |
 | Hand-labeled data | none; the raw data are tracked positions |
 | Cleaned trajectory | `d_sechelia_1384_trajec.parquet`, `d_sechelia_3661_trajec.parquet` |
 | Unifying analysis | `d_sechelia_1384_unifying_analysis.parquet`, `d_sechelia_3661_unifying_analysis.parquet` |
@@ -27,5 +27,5 @@ saves the fit as `<name>_unifying_analysis.parquet`. File locations are listed i
 
 ## Notes
 
-- `explore_data.ipynb` is the notebook that cut `raw/d_sechelia_1384.parquet` out of `dsec07_noni.csv`; it cannot be rerun without that file.
+- `explore_data.ipynb` browses `raw/dsec07_noni.csv` and cuts out `raw/d_sechelia_1384.parquet`. `raw/d_sechelia_3661.parquet` holds the rows with `obj_id == 3661` of the same file.
 - Only `d_sechelia_3661` is in `df_all_species.parquet` (used in the figures).

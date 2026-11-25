@@ -172,6 +172,7 @@ files:
   animal.raw.d_mel_laminar:   Animal_Trajectory_Data/d_melanogaster/raw/d_mel_laminar_20220927_170437_3462_123.parquet
   animal.raw.d_mel_stillair:  Animal_Trajectory_Data/d_melanogaster/raw/d_mel_stillair_20220815_162329_5322_124.parquet
   animal.raw.d_mel_unsteady:  Animal_Trajectory_Data/d_melanogaster/raw/d_mel_unsteady_20240110_164820_11858_151.parquet
+  animal.raw.d_sechelia_tracking: Animal_Trajectory_Data/d_sechelia/raw/dsec07_noni.csv   # all tracked trajectories of the noni experiment
   animal.raw.d_sechelia_1384: Animal_Trajectory_Data/d_sechelia/raw/d_sechelia_1384.parquet
   animal.raw.d_sechelia_3661: Animal_Trajectory_Data/d_sechelia/raw/d_sechelia_3661.parquet
   animal.raw.walking_fly_0_4: Animal_Trajectory_Data/walking_drosophila/raw/walking_fly_0_4.parquet
@@ -370,7 +371,3 @@ not_yet_located:
     values: {line: [chrimson, acv]}
     root: repo
     used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/walking_drosophila/walking_fly.ipynb]
-  local.d_sechelia_raw:
-    path: FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/d_sechelia/actual_data/dsec07_noni.csv
-    root: repo
-    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/d_sechelia/explore_data.ipynb]
