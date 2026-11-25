@@ -36,6 +36,10 @@ files:
   fly.splitflow_topon_c1xwt_sham_augmented:
     path: Experimental_Fly_Data/flies_splitflow_topon_c1xwt_preprocessed_optotrigger_trimmed_SHAM_AUGMENTED_merged.parquet
     made_by: FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/find_augmented_shams/find_augmented_shams.ipynb
+  fly.splitflow_topon_wt_sham_augmented:   # never made; no figure or fit reads it (the WT sham fits use the real WT shams)
+    path: Experimental_Fly_Data/flies_splitflow_topon_wt_preprocessed_optotrigger_trimmed_SHAM_AUGMENTED_merged.parquet
+    made_by: FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/find_augmented_shams/find_augmented_shams_wt_data.ipynb
+    optional: true
   fly.varwind:                Experimental_Fly_Data/flies_varwind_C1WT_combined_optotrigger_fancontrol_trimmed.parquet
   fly.all_nights_top_laminar:    Experimental_Fly_Data/all_nights_new_processing_protocol_top_laminar_09082024.hdf
   fly.all_nights_bottom_laminar: Experimental_Fly_Data/all_nights_new_processing_protocol_bottom_laminar_09092024.hdf
