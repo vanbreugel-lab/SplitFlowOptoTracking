@@ -162,3 +162,6 @@ pnas_template_overleaf_files/
 # VAE pipeline: caches (rebuilt from Data/Fig4_vae_data) and train_vae.py outputs (retrained models, classifications)
 FigureGeneration/VAE_pipeline/cache/
 FigureGeneration/VAE_pipeline/output/
+
+# Data files that no code reads, moved out of Data/ (see Data/check_data.sh --unlisted)
+UNLISTED_DATA/
