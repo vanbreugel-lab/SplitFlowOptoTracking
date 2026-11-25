@@ -22,7 +22,11 @@ RunFigures/collect_final_figures.sh         # all figures
 
 ## Notes
 
-- `run_all.sh --dry-run` only checks that every notebook and script exists.
+- `check_code_data.sh` checks, without running anything, that every script and notebook in the repository
+  (not only the ones run here) asks for data that is listed in `Data/data_paths.yaml` and is on disk.
+  `Data/check_data.sh` checks `Data/` against the same list. `run_all.sh` runs both first and stops if
+  either fails (`SKIP_DATA_CHECKS=1` skips them).
+- `run_all.sh --dry-run` only checks that the data is in place and that every notebook and script exists.
 - Executed notebooks and logs go to `RunFigures/logs/<id>/`. The source notebooks are not modified.
 - Fig 5 needs a Gurobi license (`GRB_LICENSE_FILE`), and Fig 1 needs LaTeX.
 - Some figures are built from a `*_template.svg`. Make hand edits in the template, not in the output SVG.

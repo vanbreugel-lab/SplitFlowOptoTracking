@@ -95,7 +95,7 @@ Data/
 │
 ├── Unifying_Algo_Results/                    ← from Unifying_Algo_Results.zip
 │   │                                           (one folder per dataset; flash and sham fits
-│   │                                            together; layout in Code/unifying_results.py)
+│   │                                            together; layout in data_paths.yaml)     
 │   ├── c1xwt_laminar/  c1xwt_stillair/  c1xwt_unsteady/
 │   ├── c1xwt_variable_wind_series/
 │   ├── wt_laminar/  wt_stillair/  wt_unsteady/
@@ -133,5 +133,6 @@ Data/
   (~4 GB each) and are only needed if you intend to re-run the trajectory
   simulations. Figure generation notebooks do not require them directly.
 
-- All paths in the analysis notebooks are set relative to the repo root and
-  assume data files are placed exactly as shown above.
+- The code looks every data file up in data_paths.yaml (in this directory). Run
+  Data/check_data.sh to check that everything it lists is in place. If you put a
+  file somewhere else, change its line in data_paths.yaml; no code needs editing.

@@ -3,9 +3,10 @@
 #
 # Usage:
 #   RunFigures/run_all.sh             # run everything (slow: hours)
-#   RunFigures/run_all.sh --dry-run   # only check that all notebooks/scripts exist
+#   RunFigures/run_all.sh --dry-run   # only check the data and that all notebooks/scripts exist
 #   RunFigures/run_all.sh fig5 supp_own_fit   # run only these figures
 #
+# The data checks run first (Data/check_data.sh, RunFigures/check_code_data.sh; SKIP_DATA_CHECKS=1 skips them).
 # A failing figure does not stop the others; a summary is printed at the end
 # and the exit code is non-zero if any figure failed.
 # Afterwards, run RunFigures/collect_final_figures.sh to gather the SVG/PDF/PNGs.
@@ -36,11 +37,26 @@ SELECTED=()
 for arg in "$@"; do
     case "$arg" in
         --dry-run) export DRY_RUN=1 ;;
-        -h|--help) sed -n '2,13p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,14p' "$0"; exit 0 ;;
         *) SELECTED+=("${arg%.sh}") ;;
     esac
 done
 [[ ${#SELECTED[@]} -gt 0 ]] && FIGURES=("${SELECTED[@]}")
+
+# First check that the data is in place and that all code can find it (seconds; see the two scripts).
+if [[ "${SKIP_DATA_CHECKS:-0}" != 1 ]]; then
+    if ! bash "$RUN_DIR/../Data/check_data.sh" > /dev/null; then
+        echo "ERROR: data is missing. Run Data/check_data.sh for the list (SKIP_DATA_CHECKS=1 to run anyway)." >&2
+        exit 1
+    fi
+    if ! bash "$RUN_DIR/check_code_data.sh" > /dev/null; then
+        echo "ERROR: some code cannot find its data. Run RunFigures/check_code_data.sh for the list" \
+             "(SKIP_DATA_CHECKS=1 to run anyway)." >&2
+        exit 1
+    fi
+    echo "data checks passed (Data/check_data.sh, RunFigures/check_code_data.sh)"
+    echo
+fi
 
 passed=(); failed=()
 t0=$SECONDS
