@@ -33,6 +33,10 @@ files:
   fly.laminar_wt:             Experimental_Fly_Data/flies_laminar_wt_preprocessed_optotrigger_trimmed.hdf
   fly.stillair_wt:            Experimental_Fly_Data/flies_stillair_wt_preprocessed_optotrigger_trimmed.hdf
   fly.splitflow_topon_wt:     Experimental_Fly_Data/flies_splitflow_topon_wt_preprocessed_optotrigger_trimmed.parquet
+  # Why augmented shams: a sham for the unsteady (top-on) condition must stay below z = 0.26 m for the whole
+  # trajectory, and only about 3 of the recorded shams do. find_augmented_shams.ipynb therefore searched the raw
+  # recordings of the same C1xWT nights with looser conditions than the live trigger used, to find more
+  # lights-off trajectories that stay below the split.
   fly.splitflow_topon_c1xwt_sham_augmented:
     path: Experimental_Fly_Data/flies_splitflow_topon_c1xwt_preprocessed_optotrigger_trimmed_SHAM_AUGMENTED_merged.parquet
     made_by: FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/find_augmented_shams/find_augmented_shams.ipynb
@@ -310,12 +314,12 @@ unifying_results:
 # ======================================================================================
 # ======================================================================================
 #
-#   NOT YET LOCATED
+#   NOT IN DATA  (not public, to be downloaded, or not yet located)
 #
 #   Files the code refers to that are NOT in Data/ on this machine. Nothing the figure
 #   scripts (RunFigures/) run needs them; they are the raw inputs of hand-run notebooks
 #   and of the simulation / regeneration scripts. The checks list them every time but
-#   do not fail because of them. When you find one, put it at `path` (or change `path`)
+#   do not fail because of them. When you get one, put it at `path` (or change `path`)
 #   and move the entry up into `files:` or `directories:`.
 #
 #   used_by:  the code that reads the file
@@ -326,31 +330,24 @@ unifying_results:
 not_yet_located:
 
   # ---------------------------------------------------------------- raw fly recordings (lab server)
+  # NOT PUBLICLY AVAILABLE because of their size. The notebooks that read them are kept for reference only.
   fly.raw.splitflow_topon_c1xwt_nights:
     path: /media/caveman/Vorchard1/jaleesa_unsteady/fly_data/horizontal_split_top_on
     kind: directory
     used_by: [FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/find_augmented_shams/find_augmented_shams.ipynb]
-    note: one folder per night, each with preprocessed_data/*_preprocessed.hdf and optotrigger_light_stimulus.hdf
+    note: not publicly available (size); one folder per night, each with preprocessed_data/*_preprocessed.hdf and optotrigger_light_stimulus.hdf
   fly.raw.splitflow_topon_wt_nights:
     path: /media/caveman/Vorchard1/kevin_split_flow_data/wildtypes
     kind: directory
     used_by: [FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/find_augmented_shams/find_augmented_shams_wt_data.ipynb]
-    note: one folder per night, each with preprocessed_data/*_preprocessed.hdf and optotrigger_light_stimulus.hdf
+    note: not publicly available (size); one folder per night, each with preprocessed_data/*_preprocessed.hdf and optotrigger_light_stimulus.hdf
 
   # ---------------------------------------------------------------- CFD velocity fields and simulation inputs
   cfd.velocity_fields_3d:
     path: CFD/3D_Velocity_Fields
     kind: directory
     used_by: [FigureGeneration/VAE_pipeline/generate_cfd_data.py]
-    note: 3D_vel_1.zip ... 3D_vel_6.zip from Dryad (~4 GB each); the CFD_DIR environment variable overrides this
-  sim.casting_constwind_fixed:
-    path: Experimental_Fly_Data/casting_sim_constwind_n1000_fixed.parquet
-    used_by: [FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/preprocess_cfd_data.py]
-    note: an .hdf version is in Data/Simulated_Trajectory_Data/misc_ignore/
-  sim.casting_constwind_fixed_preprocessed:
-    path: Experimental_Fly_Data/casting_sim_constwind_n1000_fixed_preprocessed.parquet
-    used_by: [FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/preprocess_cfd_data.py]
-    note: written by preprocess_cfd_data.py from sim.casting_constwind_fixed
+    note: download 3D_vel_1.zip ... 3D_vel_6.zip from Dryad (~4 GB each); the CFD_DIR environment variable overrides this
 
   # ---------------------------------------------------------------- expected next to the code (root: repo)
   # These notebooks and scripts read files from their own folder; the files are not there.
@@ -371,3 +368,5 @@ not_yet_located:
     values: {line: [chrimson, acv]}
     root: repo
     used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/walking_drosophila/walking_fly.ipynb]
+    note: download from Zenodo, https://zenodo.org/records/6863832 (Matheson et al. 2022; a 24 GB split archive). Only needed to
+          re-cut the example trajectory; the trajectory used in the paper is in Data (animal.raw.walking_fly_0_4).

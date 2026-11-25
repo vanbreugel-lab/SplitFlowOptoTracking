@@ -47,13 +47,8 @@ once, unless you have time to wait.
 | `analyze_varwind_combined.py` | `flies_varwind_C1WT_combined_optotrigger_fancontrol_trimmed.parquet` | `varwind_N{n_trajecs}_{flash,sham}_{wind_speed}_translation{Bool}.parquet` |
 | `analyze_cfd_sims.py` | `flies_laminar_c1xwt_preprocessed_optotrigger_trimmed.hdf`, `cfd_sim_circling_casting_all_wind_conditions_preprocessed.parquet` | `cfd_sim_{condition}_translation{Bool}.parquet` |
 | `analyze_NEW_unifying_sims.py` | `new_unifying.parquet` | `new_unifying_{sim_exp}_translation{Bool}.parquet` |
-| `preprocess_cfd_data.py` | `casting_sim_constwind_n1000_fixed.parquet` (not currently in `raw_data/` — see note below) | `casting_sim_constwind_n1000_fixed_preprocessed.parquet` (in `raw_data/`, feeds `analyze_cfd_sims.py`'s CFD input after further processing) |
-
-`preprocess_cfd_data.py`'s raw input was not found anywhere in the source
-repository during reorganization; place it in `raw_data/` before running that
-script.
 
 ## find_augmented_shams/
 
-Reference-only provenance notebooks — not runnable outside the original lab.
+Reference-only provenance notebooks. The raw recordings they read are not publicly available due to size constraints.
 See `find_augmented_shams/README.md`.

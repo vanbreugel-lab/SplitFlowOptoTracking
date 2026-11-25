@@ -5,7 +5,7 @@
 Matheson AMM, Lanz AJ, Medina AM, Licata AM, Currier TA, Syed MH, Nagel KI (2022). A neural circuit for wind-guided olfactory navigation. *Nature Communications* 13:4613.
 
 - DOI: https://doi.org/10.1038/s41467-022-32247-7
-- Data repository: Zenodo: https://doi.org/10.5281/zenodo.6863832 (the trajectory here was cut from `MatchedOrco_chrimson.mat`, which is not included)
+- Data repository: Zenodo: https://zenodo.org/records/6863832 (DOI 10.5281/zenodo.6863832). The trajectory here was cut from `MatchedOrco_chrimson.mat` in that record, which is not included here; the record is a 24 GB split archive that has to be downloaded and reassembled to get the file.
 - Paper: `paper/Matheson_2022_NatCommun.pdf` (kept locally for reference; not redistributed and not committed)
 
 ## Files
@@ -27,4 +27,4 @@ saves the fit as `<name>_unifying_analysis.parquet`. File locations are listed i
 
 ## Notes
 
-- `walking_fly.ipynb` is the notebook that cut `raw/walking_fly_0_4.parquet` out of `MatchedOrco_chrimson.mat`; it cannot be rerun without that file.
+- `walking_fly.ipynb` is the notebook that cut `raw/walking_fly_0_4.parquet` out of `MatchedOrco_chrimson.mat`; it cannot be rerun without that file (download it from the Zenodo record above and put it next to the notebook). The figures only need `raw/walking_fly_0_4.parquet`, which is included.

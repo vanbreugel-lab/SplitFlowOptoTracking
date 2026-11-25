@@ -18,7 +18,7 @@ Usage:  python RunFigures/check_code_data.py [-v] [paths ...]
     paths           limit the scan to these files or folders (default: the whole repository)
 
 Exit code 1 if a lookup has an unknown key, a required file is missing, or a hard-coded data path is found.
-Files listed under NOT YET LOCATED in the config are reported but do not fail the test.
+Files listed under NOT IN DATA in the config are reported but do not fail the test.
 """
 import argparse
 import ast
@@ -346,7 +346,7 @@ def main():
         print()
 
     print('lookups resolved to existing data: %d' % totals['ok'])
-    print('lookups of files listed as NOT YET LOCATED: %d' % totals['located_later'])
+    print('lookups of files listed under NOT IN DATA: %d' % totals['located_later'])
     if totals['optional']:
         print('lookups of optional, not yet generated files: %d' % totals['optional'])
     if totals['dynamic']:
@@ -361,7 +361,7 @@ def main():
         print('FAILED')
         return 1
     print('OK: every data lookup in the code resolves to data that is in place'
-          + (' (apart from the files not yet located).' if totals['located_later'] else '.'))
+          + (' (apart from the files listed under NOT IN DATA).' if totals['located_later'] else '.'))
     return 0
 
 

@@ -1,24 +1,25 @@
 # find_augmented_shams
 
-This directory is provided **for reference/provenance only**. The two
-notebooks here will **not run** for anyone outside the original lab: they
-read raw per-session fly-tracking recordings from an external drive path
-hardcoded to the original author's machine
-(`/media/caveman/Vorchard1/jaleesa_unsteady/fly_data/...` and
-`/media/caveman/Vorchard1/kevin_split_flow_data/wildtypes/...`). That raw,
-per-session recording data is not included in this repository and is not
-published on Dryad.
+**For reference only.** The two notebooks here read the raw per-night fly-tracking recordings, which are **not
+publicly available due to size constraints** (they are not in `Data/` and not on Dryad). The notebooks are kept
+because they document how the augmented shams were found. Their locations on the lab server are listed in
+`Data/data_paths.yaml` (`fly.raw.splitflow_topon_c1xwt_nights`, `fly.raw.splitflow_topon_wt_nights`).
 
-- `find_augmented_shams.ipynb` — documents how the six date-stamped
-  `*_SHAM_AUGMENTED.parquet` files in this directory, and their merge into
-  `flies_splitflow_topon_c1xwt_preprocessed_optotrigger_trimmed_SHAM_AUGMENTED_merged.parquet`,
-  were produced from the top-on split-flow C1xWT sessions.
-- `find_augmented_shams_wt_data.ipynb` — the analogous notebook for the
-  wildtype split-flow dataset.
+## Why augmented shams
 
-**You do not need to run either notebook.** Their output —
-`flies_splitflow_topon_c1xwt_preprocessed_optotrigger_trimmed_SHAM_AUGMENTED_merged.parquet`
-— is already included in `../../raw_data/`, which is what
-`analyze_unsteady_exp_top_on_sham_augmented.py` and the figure notebooks
-actually read via `config.py`. The parquet files sitting alongside these
-notebooks are kept only so the merge step above is reproducible to read.
+A sham trajectory for the unsteady (split flow, top on) condition must stay below z = 0.26 m, in the unsteady
+part of the flow, for the whole trajectory. Only about 3 of the recorded sham events do. `find_augmented_shams.ipynb`
+therefore searches the raw recordings of the same C1xWT nights with looser conditions than the live trigger
+allowed, and keeps lights-off trajectories that stay below the split. This gives the sham set used for the
+unsteady condition in the figures.
+
+## Files
+
+- `find_augmented_shams.ipynb`: makes one `*_SHAM_AUGMENTED.parquet` file per night from the C1xWT top-on nights
+  and merges them into `flies_splitflow_topon_c1xwt_preprocessed_optotrigger_trimmed_SHAM_AUGMENTED_merged.parquet`
+  (key `fly.splitflow_topon_c1xwt_sham_augmented`).
+- `find_augmented_shams_wt_data.ipynb`: the same search for the wild-type nights. Its output was never used: the
+  wild-type sham fits use the recorded wild-type shams.
+
+**You do not need to run either notebook.** The merged C1xWT file is in `Data/Experimental_Fly_Data/`, which is what
+`analyze_unsteady_exp_top_on_sham_augmented.py` and the figure notebooks read.

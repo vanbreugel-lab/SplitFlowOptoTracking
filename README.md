@@ -42,7 +42,7 @@ Two checks, both quick and neither needing Gurobi:
 | `RunFigures/check_code_data.sh` | Does every data lookup in every script and notebook (including those the figure scripts never run) use a key that exists and point at a file that exists? Also reports any hard-coded data path. `-v` lists every lookup. |
 
 Run both after downloading the data and after reorganizing `Data/`; `RunFigures/run_all.sh` runs them first.
-The section **NOT YET LOCATED** at the bottom of `data_paths.yaml` lists files the code refers to that are
+The section **NOT IN DATA** at the bottom of `data_paths.yaml` lists files the code refers to that are
 not part of the data on this machine (raw inputs of hand-run notebooks and of the simulation scripts). The
 checks print them but do not fail because of them.
 
@@ -211,11 +211,7 @@ themselves, so run them from their own directory (Jupyter's default).
 │   │           ├── B_figure_example_trajectories.ipynb
 │   │           ├── C_figure_align_course_directions.ipynb
 │   │           ├── D_figure_unifying_algo_results_slope_axis.ipynb
-│   │           ├── E_variable_wind_slope_axis_ratio.ipynb
-│   │           └── animal_trajectories/
-│   │               ├── albatross/
-│   │               ├── moth/
-│   │               └── shark/
+│   │           └── E_variable_wind_slope_axis_ratio.ipynb
 │   ├── Supplemental/                   # one folder per SI figure, numbered in SI order (RunFigures/figures.yaml)
 │   │   ├── supp_fig_01_tunnel_methods/          # S1  additional wind tunnel / CFD analysis
 │   │   ├── supp_fig_02_course_direction_response/ # S2  course direction responses

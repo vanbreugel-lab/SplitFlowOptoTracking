@@ -97,7 +97,7 @@ def _is_directory(section, e):
 def _missing_message(key, section, e, path):
     msg = "%s not found (data entry '%s' in %s)." % (path, key, config_file())
     if section == 'not_yet_located':
-        msg += ' It is listed under NOT YET LOCATED: this file has not been found on this machine.'
+        msg += ' It is listed under NOT IN DATA: it is not public, has to be downloaded, or has not been located (see the note in data_paths.yaml).'
         if e.get('note'):
             msg += ' Note: %s.' % e['note']
     elif e.get('made_by'):
@@ -431,7 +431,7 @@ def main(argv=None):
     not_located = by('not_located')
     if not_located or by('located'):
         print('\n' + '=' * 100)
-        print('NOT YET LOCATED (%d) - raw inputs of hand-run notebooks and simulation scripts; no figure script needs them'
+        print('NOT IN DATA (%d) - raw inputs of hand-run notebooks and simulation scripts; no figure script needs them'
               % len(not_located))
         print('=' * 100)
         last_key = None

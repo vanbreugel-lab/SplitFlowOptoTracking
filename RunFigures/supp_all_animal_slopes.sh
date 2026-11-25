@@ -12,6 +12,4 @@ D=FigureGeneration/Supplemental/supp_fig_15_all_animal_slopes
 # the finished supp_fig_all_animal_slopes.svg.
 run_notebook "$D" HI_slope_vs_speed_over_length.ipynb
 
-# Not included: the per-species notebooks in animal_trajectories/ (data analysis).
-
 end_figure
