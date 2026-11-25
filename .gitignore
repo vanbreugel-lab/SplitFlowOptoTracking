@@ -115,6 +115,12 @@ Data/*
 # the list of data files the code uses, and the script that checks Data/ against it
 !Data/data_paths.yaml
 !Data/check_data.sh
+# the per-animal READMEs (source paper and what each file is); the data and the papers' PDFs stay untracked
+!Data/Animal_Trajectory_Data/
+Data/Animal_Trajectory_Data/*
+!Data/Animal_Trajectory_Data/*/
+Data/Animal_Trajectory_Data/*/*
+!Data/Animal_Trajectory_Data/*/README.md
 
 # Trajectory simulation outputs
 TrajectorySimulations/generating_synthetic_test_trajectory_data/param_sweep/

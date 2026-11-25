@@ -92,19 +92,89 @@ files:
     made_by: TrajectorySimulations/generate_unifying_algo_trajectories/generate_unifying_trajectories.py
   sim.cfd_casting_circling:   Simulated_Trajectory_Data/cfd_sim_circling_casting_all_wind_conditions_preprocessed.parquet
 
-  # ---------------------------------------------------------------- Animal_Trajectory_Data (Fig. S14, S15)
+  # ---------------------------------------------------------------- Animal_Trajectory_Data (Fig. 5, S14, S15)
+  # One folder per animal, each with a README.md (source paper, what every file is):
+  #   raw/          the source: a screenshot of the published figure, or the tracking data
+  #   digitized/    hand-labeled points read off the figure (only for figure-based animals)
+  #   <name>_trajec.parquet, <name>_unifying_analysis.parquet   cleaned trajectory and its fit
+  #   paper/        the paper's PDF (local reference copy; not listed here)
   animal.all_species:         Animal_Trajectory_Data/df_all_species.parquet
-  # raw trajectories that are on disk (the per-animal notebooks write <name>_trajec.parquet and
-  # <name>_unifying_analysis.parquet next to them)
-  animal.raw.d_mel_laminar:   Animal_Trajectory_Data/d_melanogaster/d_mel_laminar_20220927_170437_3462_123.parquet
-  animal.raw.d_mel_stillair:  Animal_Trajectory_Data/d_melanogaster/d_mel_stillair_20220815_162329_5322_124.parquet
-  animal.raw.d_mel_unsteady:  Animal_Trajectory_Data/d_melanogaster/d_mel_unsteady_20240110_164820_11858_151.parquet
-  animal.raw.d_sechelia_1384: Animal_Trajectory_Data/d_sechelia/d_sechelia_1384.parquet
-  animal.raw.d_sechelia_3661: Animal_Trajectory_Data/d_sechelia/d_sechelia_3661.parquet
-  animal.raw.walking_fly_0_4: Animal_Trajectory_Data/walking_drosophila/walking_fly_0_4.parquet
-  animal.shark_fit:
-    path: Animal_Trajectory_Data/sharks/shark_{id}_{kind}.parquet
-    values: {id: [a, d], kind: [trajec, unifying_analysis]}
+  # cleaned trajectory and unifying-algorithm fit of every animal trajectory
+  animal.fit:
+    path: Animal_Trajectory_Data/{trajectory}_{kind}.parquet
+    values:
+      kind: [trajec, unifying_analysis]
+      trajectory:
+        - RL_agents/rl_agent_c
+        - albatross/albatross_casting_trajec
+        - albatross/albatross_circling_trajec
+        - cockroach/23april09i
+        - crabs/crab_105N_vx
+        - crabs/crab_12710
+        - d_melanogaster/d_mel_laminar_20220927_170437_3462_123
+        - d_melanogaster/d_mel_stillair_20220815_162329_5322_124
+        - d_melanogaster/d_mel_unsteady_20240110_164820_11858_151
+        - d_sechelia/d_sechelia_1384
+        - d_sechelia/d_sechelia_3661
+        - eels/eel
+        - mosquitoes/mosquito_trajec
+        - moths/1Oct08B
+        - moths/1Oct08E
+        - mouse/mouse_straight
+        - mouse/mouse_tortuous
+        - nautical_search/charlie_sierra
+        - nautical_search/sierra_sierra
+        - nautilus/nautilus_yellow
+        - sharks/shark_a
+        - sharks/shark_b
+        - sharks/shark_c
+        - sharks/shark_d
+        - terns/terns_Tern1838-1-1
+        - walking_drosophila/walking_fly_0_4
+    made_by: the notebooks in FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/<animal>/
+  # hand-labeled points digitized from a published figure
+  animal.digitized.rl_agent_c: Animal_Trajectory_Data/RL_agents/digitized/rl_agent_c.csv
+  animal.digitized.albatross:
+    path: Animal_Trajectory_Data/albatross/digitized/albatross_{behavior}_trajec.csv
+    values: {behavior: [casting, circling]}
+  animal.digitized.crab:
+    path: Animal_Trajectory_Data/crabs/digitized/crab_{id}_{component}.csv
+    values: {id: [105N, '12710'], component: [vx, vy]}
+  animal.digitized.eel:       Animal_Trajectory_Data/eels/digitized/eel.csv
+  animal.digitized.mosquito:  Animal_Trajectory_Data/mosquitoes/digitized/mosquito_trajec.csv
+  animal.digitized.mouse:
+    path: Animal_Trajectory_Data/mouse/digitized/mouse_{kind}.csv
+    values: {kind: [straight, tortuous]}
+  animal.digitized.nautical_search:
+    path: Animal_Trajectory_Data/nautical_search/digitized/{pattern}.csv
+    values: {pattern: [charlie_sierra, sierra_sierra]}
+  animal.digitized.nautilus:  Animal_Trajectory_Data/nautilus/digitized/nautilus_yellow.csv
+  animal.digitized.shark:
+    path: Animal_Trajectory_Data/sharks/digitized/shark_{id}.csv
+    values: {id: [a, b, c, d]}
+  # the published figures the points were digitized from (screenshots; no code reads them)
+  animal.source_figure:
+    path: Animal_Trajectory_Data/{figure}.png
+    values:
+      figure: [RL_agents/raw/RL_agent_c, albatross/raw/albatross_casting, albatross/raw/albatross_circling,
+               crabs/raw/crab_105N, crabs/raw/crab_12710, eels/raw/eel, mosquitoes/raw/mosquito_trajec,
+               mouse/raw/mouse_straight, nautical_search/raw/charlie_sierra, nautical_search/raw/sierra_sierra,
+               nautilus/raw/nautilus_yellow, sharks/raw/shark_a, sharks/raw/shark_b, sharks/raw/shark_c,
+               sharks/raw/shark_d]
+  # raw tracking data
+  animal.raw.cockroach_laminar: Animal_Trajectory_Data/cockroach/raw/wind100/laminar/23april09i.dat
+  animal.raw.moth:
+    path: Animal_Trajectory_Data/moths/raw/wind100/{trial}.3.dat
+    values: {trial: [laminar/1Oct08B, turbulent/1Oct08E]}
+  animal.raw.terns:           Animal_Trajectory_Data/terns/raw/terns.csv
+  animal.raw.terns_all_merged: Animal_Trajectory_Data/terns/raw/ALL_merged_d200div_d25curl.csv
+  animal.raw.mouse_tracked_trial: Animal_Trajectory_Data/mouse/raw/from_venki_Trajectory1_0205.csv   # no code reads it
+  animal.raw.d_mel_laminar:   Animal_Trajectory_Data/d_melanogaster/raw/d_mel_laminar_20220927_170437_3462_123.parquet
+  animal.raw.d_mel_stillair:  Animal_Trajectory_Data/d_melanogaster/raw/d_mel_stillair_20220815_162329_5322_124.parquet
+  animal.raw.d_mel_unsteady:  Animal_Trajectory_Data/d_melanogaster/raw/d_mel_unsteady_20240110_164820_11858_151.parquet
+  animal.raw.d_sechelia_1384: Animal_Trajectory_Data/d_sechelia/raw/d_sechelia_1384.parquet
+  animal.raw.d_sechelia_3661: Animal_Trajectory_Data/d_sechelia/raw/d_sechelia_3661.parquet
+  animal.raw.walking_fly_0_4: Animal_Trajectory_Data/walking_drosophila/raw/walking_fly_0_4.parquet
 
   # ---------------------------------------------------------------- wind_tunnel_data (Fig. 2, S1)
   wind.laminar:
@@ -115,6 +185,12 @@ files:
     values: {position: [H_LB, H_LC, H_LF, H_MB, H_MC, H_MF, H_RB, H_RC, H_RF,
                         V_LB, V_LC, V_LF, V_MB, V_MC, V_MF, V_RB, V_RC, V_RF]}
   wind.outdoor:               wind_tunnel_data/outdoor_data/df_TNF.csv
+
+
+# Files in Data/ that no entry lists but that belong there; `check_data.sh --unlisted` does not report them.
+expected_unlisted:
+  - '**/README.md'
+  - 'Animal_Trajectory_Data/*/paper/*.pdf'
 
 
 directories:
@@ -146,6 +222,9 @@ directories:
       - terns/*_trajec.parquet
       - walking_drosophila/*_trajec.parquet
       - '*/*_unifying_analysis.parquet'
+  # all tracked trials from Talley et al. (Dryad); one trial per animal is used (animal.raw.cockroach_laminar, animal.raw.moth)
+  animal.raw.cockroach_trials: {path: Animal_Trajectory_Data/cockroach/raw/wind100, contains: ['laminar/*.dat', 'turbulent/*.dat']}
+  animal.raw.moth_trials:      {path: Animal_Trajectory_Data/moths/raw, contains: ['wind100/laminar/*.dat', 'wind100/turbulent/*.dat', 'wind25/turbulent/*.dat', 'tracks.m']}
 
 
 # ---------------------------------------------------------------- unifying_algo_results
@@ -245,57 +324,6 @@ unifying_results:
 # ======================================================================================
 not_yet_located:
 
-  # ---------------------------------------------------------------- raw animal trajectories
-  # (their fitted *_trajec.parquet / *_unifying_analysis.parquet outputs ARE in Data/Animal_Trajectory_Data)
-  animal.raw.rl_agent_c:
-    path: Animal_Trajectory_Data/RL_agents/rl_agent_c.csv
-    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/RL_agents]
-  animal.raw.albatross:
-    path: Animal_Trajectory_Data/albatross/albatross_{behavior}_trajec.csv
-    values: {behavior: [casting, circling]}
-    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/albatross]
-    note: copies are in Data/Fig5_Input_Data/animal_trajectories/albatross/
-  animal.raw.cockroach_laminar:
-    path: Animal_Trajectory_Data/cockroach/wind100/laminar/23april09i.dat
-    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/cockroach]
-  animal.raw.crab:
-    path: Animal_Trajectory_Data/crabs/crab_{id}_{component}.csv
-    values: {id: [105N, '12710'], component: [vx, vy]}
-    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/crabs]
-  animal.raw.eel:
-    path: Animal_Trajectory_Data/eels/eel.csv
-    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/eels]
-  animal.raw.mosquito:
-    path: Animal_Trajectory_Data/mosquitoes/mosquito_trajec.csv
-    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/mosquitoes]
-  animal.raw.moth:
-    path: Animal_Trajectory_Data/moths/1Oct08{id}.3.dat
-    values: {id: [B, E]}
-    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/moths]
-    note: copies are in Data/Fig5_Input_Data/animal_trajectories/moth/ and inside wind100-*.zip in the moths notebook folder
-  animal.raw.mouse:
-    path: Animal_Trajectory_Data/mouse/mouse_{kind}.csv
-    values: {kind: [straight, tortuous]}
-    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/mouse]
-  animal.raw.nautical_search:
-    path: Animal_Trajectory_Data/nautical_search/{pattern}.csv
-    values: {pattern: [charlie_sierra, sierra_sierra]}
-    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/nautical_search]
-  animal.raw.nautilus:
-    path: Animal_Trajectory_Data/nautilus/nautilus_yellow.csv
-    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/nautilus]
-  animal.raw.shark:
-    path: Animal_Trajectory_Data/sharks/shark_{id}.csv
-    values: {id: [a, b, c, d]}
-    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/sharks]
-    note: copies are in Data/Fig5_Input_Data/animal_trajectories/shark/
-  animal.raw.terns:
-    path: Animal_Trajectory_Data/terns/terns.csv
-    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/terns]
-  animal.raw.terns_all_merged:
-    path: Animal_Trajectory_Data/terns/ALL_merged_d200div_d25curl.csv
-    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/terns]
-
   # ---------------------------------------------------------------- raw fly recordings (lab server)
   fly.raw.splitflow_topon_c1xwt_nights:
     path: /media/caveman/Vorchard1/jaleesa_unsteady/fly_data/horizontal_split_top_on
@@ -337,11 +365,6 @@ not_yet_located:
     path: TrajectorySimulations/generate_unifying_algo_trajectories/new_unifying_laminar.parquet
     root: repo
     used_by: [TrajectorySimulations/generate_unifying_algo_trajectories/plot_trajectories.ipynb]
-  local.cockroach_turbulent:
-    path: FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/cockroach/wind100/turbulent
-    root: repo
-    kind: directory
-    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/cockroach/cockroach_turbulent.ipynb]
   local.walking_fly_mat:
     path: FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/walking_drosophila/MatchedOrco_{line}.mat
     values: {line: [chrimson, acv]}

@@ -353,6 +353,8 @@ def unlisted():
     if results_dir().is_dir():
         covered_files.add(results_dir() / 'README.md')
     keep = {config_file(), DATA_DIR / 'check_data.sh', DATA_DIR / 'download_from_dryad_and_unzip_here.txt'}
+    for pattern in config().get('expected_unlisted') or []:
+        keep |= set(DATA_DIR.glob(pattern))
 
     def is_covered(path):
         return path in covered_files or path in keep or any(d == path or d in path.parents for d in covered_dirs)
