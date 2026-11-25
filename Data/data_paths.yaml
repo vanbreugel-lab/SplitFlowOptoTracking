@@ -359,10 +359,6 @@ not_yet_located:
     used_by: [TrajectorySimulations/generating_synthetic_test_trajectory_data/cfd_casting_circling_sims.py,
               TrajectorySimulations/generating_synthetic_test_trajectory_data/Casting_Circling_CFD_trajectory_generation.ipynb]
     note: unzipped 3D CFD velocity fields (parquet frames), see cfd.velocity_fields_3d
-  local.new_unifying_laminar:
-    path: TrajectorySimulations/generate_unifying_algo_trajectories/new_unifying_laminar.parquet
-    root: repo
-    used_by: [TrajectorySimulations/generate_unifying_algo_trajectories/plot_trajectories.ipynb]
   local.walking_fly_mat:
     path: FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/walking_drosophila/MatchedOrco_{line}.mat
     values: {line: [chrimson, acv]}
