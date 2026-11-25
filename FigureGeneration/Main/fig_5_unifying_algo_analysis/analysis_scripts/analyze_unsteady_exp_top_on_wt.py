@@ -4,6 +4,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from splitflow.unifying_results import result_path
+
 
 # Data locations. This script lives 4 levels under the repo root:
 #   FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/<this>.py
@@ -13,7 +15,6 @@ _DATA = _REPO_ROOT / "Data"
 
 class _Config:
     RAW_DATA_DIR = _DATA / "Experimental_Fly_Data"
-    PREPROCESSED_DATA_DIR = _DATA / "Unifying_Algo_Results" / "Supplemental"
 
     def configure_gurobi_env(self):
         pass  # Gurobi picked up from the default license location / GRB_LICENSE_FILE
@@ -97,9 +98,7 @@ if __name__ == '__main__':
                                                                      n_bootstraps=n_bootstraps,         
                                                                      use_cvx_affine=use_cvx_affine,      
                                                                      include_translation=include_translation)
-        unifying_algo_data.to_parquet(str(config.PREPROCESSED_DATA_DIR / f'unsteady_top_on_data_WT_flash_{translation_flag}.parquet'))
-
-
+        unifying_algo_data.to_parquet(str(result_path(f'unsteady_top_on_data_WT_flash_{translation_flag}.parquet', must_exist=False)))
         # Run analysis on SHAM data HIGH FLIES (unsteady)
         braid_df = sham_low_top_on
         unifying_algo_data = uaa.run_miop_affine_fit_on_trajectories(braid_df,    
@@ -113,9 +112,7 @@ if __name__ == '__main__':
                                                                      n_bootstraps=n_bootstraps,         
                                                                      use_cvx_affine=use_cvx_affine,      
                                                                      include_translation=include_translation)
-        unifying_algo_data.to_parquet(str(config.PREPROCESSED_DATA_DIR / f'unsteady_top_on_data_WT_sham_{translation_flag}.parquet'))
-
-
+        unifying_algo_data.to_parquet(str(result_path(f'unsteady_top_on_data_WT_sham_{translation_flag}.parquet', must_exist=False)))
     if 0:
         braid_df = flash_up_top_on
         unifying_algo_data = uaa.run_miop_affine_fit_on_trajectories(braid_df,    
@@ -129,9 +126,7 @@ if __name__ == '__main__':
                                                                      n_bootstraps=n_bootstraps,         
                                                                      use_cvx_affine=use_cvx_affine,      
                                                                      include_translation=include_translation)
-        unifying_algo_data.to_parquet(str(config.PREPROCESSED_DATA_DIR / f'steady_top_on_data_WT_flash_{translation_flag}.parquet'))
-
-
+        unifying_algo_data.to_parquet(str(result_path(f'steady_top_on_data_WT_flash_{translation_flag}.parquet', must_exist=False)))
         # Run analysis on SHAM data HIGH FLIES (unsteady)
         braid_df = sham_up_top_on
         unifying_algo_data = uaa.run_miop_affine_fit_on_trajectories(braid_df,    
@@ -145,8 +140,7 @@ if __name__ == '__main__':
                                                                      n_bootstraps=n_bootstraps,         
                                                                      use_cvx_affine=use_cvx_affine,      
                                                                      include_translation=include_translation)
-        unifying_algo_data.to_parquet(str(config.PREPROCESSED_DATA_DIR / f'steady_top_on_data_WT_sham_{translation_flag}.parquet'))
-
+        unifying_algo_data.to_parquet(str(result_path(f'steady_top_on_data_WT_sham_{translation_flag}.parquet', must_exist=False)))
     if 1:
         # Run analysis on FLASH data flies that dipped into unsteady region
         braid_df = flash_low_top_on
@@ -161,9 +155,7 @@ if __name__ == '__main__':
                                                                      n_bootstraps=n_bootstraps,         
                                                                      use_cvx_affine=use_cvx_affine,      
                                                                      include_translation=include_translation)
-        unifying_algo_data.to_parquet(str(config.PREPROCESSED_DATA_DIR / f'experiencedunsteady_top_on_data_WT_flash_{translation_flag}.parquet'))
-
-
+        unifying_algo_data.to_parquet(str(result_path(f'experiencedunsteady_top_on_data_WT_flash_{translation_flag}.parquet', must_exist=False)))
         # Run analysis on SHAM data flies that dipped into unsteady region
         braid_df = sham_low_top_on
         unifying_algo_data = uaa.run_miop_affine_fit_on_trajectories(braid_df,    
@@ -177,10 +169,7 @@ if __name__ == '__main__':
                                                                      n_bootstraps=n_bootstraps,         
                                                                      use_cvx_affine=use_cvx_affine,      
                                                                      include_translation=include_translation)
-        unifying_algo_data.to_parquet(str(config.PREPROCESSED_DATA_DIR / f'experiencedunsteady_top_on_data_WT_sham_{translation_flag}.parquet'))
-
-
-
+        unifying_algo_data.to_parquet(str(result_path(f'experiencedunsteady_top_on_data_WT_sham_{translation_flag}.parquet', must_exist=False)))
         # braid_df = flash_up_top_on
         # all_unifying_algo_data = run_miop_affine_fit_on_trajectories(braid_df, n_trajecs)
         # all_unifying_algo_data.to_parquet('steady_top_on_data_flash.parquet')

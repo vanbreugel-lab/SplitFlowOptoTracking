@@ -1,5 +1,5 @@
 """
-Generate the CFD test sets of Fig. 4E-F / SI Fig. S7 
+Generate the CFD test sets of Fig. 4E-F / SI Fig. S6 
 """
 import gc
 import io

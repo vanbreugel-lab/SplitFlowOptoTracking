@@ -4,6 +4,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from splitflow.unifying_results import result_path
+
 
 # Data locations. This script lives 4 levels under the repo root:
 #   FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/<this>.py
@@ -13,7 +15,6 @@ _DATA = _REPO_ROOT / "Data"
 
 class _Config:
     RAW_DATA_DIR = _DATA / "Experimental_Fly_Data"
-    PREPROCESSED_DATA_DIR = _DATA / "Unifying_Algo_Results" / "Supplemental"
 
     def configure_gurobi_env(self):
         pass  # Gurobi picked up from the default license location / GRB_LICENSE_FILE
@@ -78,8 +79,7 @@ if __name__ == '__main__':
                                                                          n_bootstraps=n_bootstraps,         
                                                                          use_cvx_affine=use_cvx_affine,      
                                                                          include_translation=include_translation)
-            unifying_algo_data.to_parquet(str(config.PREPROCESSED_DATA_DIR / f'varwind_N{n_trajecs}_flash_{wind_speed}_{translation_flag}.parquet'))
-        
+            unifying_algo_data.to_parquet(str(result_path(f'varwind_N{n_trajecs}_flash_{wind_speed}_{translation_flag}.parquet', must_exist=False)))
     # SHAM
     braid_df = df[df.intensity==0]
     for wind_speed in wind_speeds:
@@ -97,5 +97,4 @@ if __name__ == '__main__':
                                                                      n_bootstraps=n_bootstraps,         
                                                                      use_cvx_affine=use_cvx_affine,      
                                                                      include_translation=include_translation)
-        unifying_algo_data.to_parquet(str(config.PREPROCESSED_DATA_DIR / f'varwind_N{n_trajecs}_sham_{wind_speed}_{translation_flag}.parquet'))
-
+        unifying_algo_data.to_parquet(str(result_path(f'varwind_N{n_trajecs}_sham_{wind_speed}_{translation_flag}.parquet', must_exist=False)))

@@ -52,8 +52,8 @@ UNIFYING = {'Unifying, laminar': ('Laminar', COLORS['Laminar flash']),
 # matrix (E) columns: test set -> (label, colour strip); sections relabelled
 SPLIT_COLUMNS = {'Unsteady flash': '#2b75b3ff', 'Steady flash': '#da834dff', 'Unsteady sham': '#8db6daff',
                  'Steady sham': '#e8b48fff'}
-SECTIONS = {'validation set': 'validation', 'variable wind speed, flash': 'var. wind, flash',
-            'variable wind speed, sham': 'var. wind, sham', 'synthetic algorithms': 'synthetic',
+SECTIONS = {'validation set': 'validation', 'variable wind speed, flash': 'speed series, flash',
+            'variable wind speed, sham': 'speed series, sham', 'synthetic algorithms': 'synthetic',
             'CFD simulations': 'CFD', 'unifying algorithm': 'unifying'}
 LETTER_PT = 8                     # panel letters (bold)
 
@@ -137,8 +137,8 @@ def model_data():
     panels = [                                                                 # by column: B, C, D
         ('split flow, flash', {n: (proj(g), c) for g, (n, c) in SPLIT_FLASH.items()}),
         ('split flow, sham', {n: (proj(g), c) for g, (n, c) in SPLIT_SHAM.items()}),
-        ('variable wind, flash', {f'{s} m/s': (proj(f'{s} m/s flash'), c) for s, c in zip(SPEEDS, SPEED_COLORS)}),
-        ('variable wind, sham', {f'{s} m/s': (proj(f'{s} m/s sham'), c) for s, c in zip(SPEEDS, SPEED_COLORS)}),
+        ('laminar speed series, flash', {f'{s} m/s': (proj(f'{s} m/s flash'), c) for s, c in zip(SPEEDS, SPEED_COLORS)}),
+        ('laminar speed series, sham', {f'{s} m/s': (proj(f'{s} m/s sham'), c) for s, c in zip(SPEEDS, SPEED_COLORS)}),
         ('synthetic algorithms', {n: (one(g), c) for g, (n, c) in SYNTHETIC.items()}),
         ('unifying algorithm', {n: (one(g), c) for g, (n, c) in UNIFYING.items()}),
     ]

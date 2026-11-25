@@ -1,5 +1,6 @@
 """
-Shared code for r2_distribution_summary.ipynb (Figure 5 panel E: circular R2 to the mean model).
+Shared code for r2_distribution_summary.ipynb (Figure 5 panel E: circular R2 to the population model, which is
+the median-parameter model drawn as the pink lines in Figure 5 C-D; see POPULATION_MODEL).
 Copied from Figure_5_option/ (which also has the slope-vs-R2 scatter version, slope_vs_r2_summary.ipynb).
 
 Computation and plotting follow (and are duplicated from)
@@ -14,6 +15,8 @@ All paths are relative to this folder; run the notebook from its own directory.
 import re
 import sys
 from pathlib import Path
+
+from splitflow.unifying_results import result_path
 
 import numpy as np
 import pandas as pd
@@ -39,6 +42,14 @@ PERIOD_SHIFTS = [0]  # default: score each trajectory at its default alignment o
 # pre-fit surge flight that the -1..1 s window can reach back into is excluded. Period shifts don't apply.
 R2_WINDOW = 'aligned'
 
+# The single model each trajectory of a regime is scored against.
+# 'median_parameters': the model built from the regime's median fit parameters (median |slope|, element-wise median
+#     affine matrix, median translation). This is the pink line of Figure 5 C-D (median_parameter_model below;
+#     C_figure_align_course_directions.ipynb draws the line with the same function).
+# 'mean_of_fits': the circular mean, at each aligned time point, of the trajectories' own aligned affine fits
+#     (used until 2026-11-24; it is not the line drawn in Figure 5 C-D).
+POPULATION_MODEL = 'median_parameters'
+
 MARKERSIZE = 0.75
 ALPHA = 0.5
 
@@ -52,7 +63,7 @@ R2_POS_SCALE = 3.0  # stretch factor for R2 >= 0 on the plotted axis
 XLIM = (-5.5, R2_POS_SCALE)  # transformed units; -5.5 corresponds to R2 of about -244
 R2_TICKS = [-100, -10, -1, 0, 0.5, 1]
 R2_TICKLABELS = ['-100', '-10', '', '0', '', '1']
-X_LABEL = 'Circular $R^2$ to mean model'
+X_LABEL = 'Circular $R^2$ to median model'
 
 YLIM = (0, 8)  # weighted |slope| (rad/s)
 YTICKS = {(0, 8): ([0, 2, 4, 6, 8], ['0', '', '', '', '8']),
@@ -63,17 +74,8 @@ YTICKS = {(0, 8): ([0, 2, 4, 6, 8], ['0', '', '', '', '8']),
 # File lookup
 # --------------------------------------------------------------------------------------------------
 def unifying_results_path(filename):
-    """
-    Locate a unifying-algo results parquet. The local checkout has a flat Data/unifying_algo_results/;
-    the Dryad layout splits it into Data/Unifying_Algo_Results/{Main,Supplemental}/.
-    """
-    candidates = [DATA_DIR / 'unifying_algo_results' / filename,
-                  DATA_DIR / 'Unifying_Algo_Results' / 'Main' / filename,
-                  DATA_DIR / 'Unifying_Algo_Results' / 'Supplemental' / filename]
-    for c in candidates:
-        if c.exists():
-            return c
-    raise FileNotFoundError(filename)
+    """Locate a unifying-algo results parquet by file name (layout: splitflow.unifying_results)."""
+    return result_path(filename)
 
 
 def fly_trajec_filename(unifying_filename):
@@ -105,18 +107,10 @@ VARWIND_HIGHLIGHT_SPEED = '28'  # 20 cm/s
 VARWIND_TRAJEC_FILENAME = TRAJEC_DIR / 'flies_varwind_C1WT_combined_optotrigger_fancontrol_trimmed.parquet'
 VARWIND_SPEEDS = ['12', '20', '23', '28', '40', '90']
 VARWIND_SPEED_LABELS = {'12': 0, '20': 3, '23': 10, '28': 20, '40': 30, '90': 60}  # cm/s
-# Sham uses Kevin's analyzed files, flash uses the N700 files (as in the variable-wind supplemental figure)
-VARWIND_SHAM_FILENAMES = {'12': 'var-wind-12-fan_0-cms_all-traj_align_SHAM.parquet',
-                          '20': 'var-wind-20-fan_0-03-cms_all-traj_align_SHAM.parquet',
-                          '23': 'var-wind-23-fan_0-1-cms_all-traj_align_SHAM.parquet',
-                          '28': 'var-wind-28-fan_0-2-cms_all-traj_align_SHAM.parquet',
-                          '40': 'var-wind-40-fan_0-3-cms_all-traj_align_SHAM.parquet',
-                          '90': 'var-wind-90-fan_0-6-cms_all-traj_align_SHAM.parquet'}
 
 
 def varwind_unifying_filename(condition, speed):
-    if condition == 'sham':
-        return unifying_results_path(Path('var_wind_kevin_analyzed') / VARWIND_SHAM_FILENAMES[speed])
+    """Speed-series fits for 'flash' or 'sham' at one fan setting ('12' ... '90')."""
     return unifying_results_path('varwind_N700_%s_%s.0_translation%s.parquet' % (condition, speed, TRANSLATION))
 
 
@@ -172,10 +166,57 @@ def get_weighted_slopes(unifying_algo_data):
     return slopes
 
 
+def _best_fit_parameters(unifying_algo_data):
+    """
+    Parameters of each trajectory's best fit (lowest rmse_affine), normalized to a positive slope as in
+    uaa.get_aligned_course_array (mirror: flip the sign of the off-diagonal AM terms and of tx).
+    Returns (obj_ids, |slopes| (n,), AMs (n, 2, 2), translations (n, 2)).
+    """
+    best = (unifying_algo_data.sort_values('rmse_affine', kind='stable')
+            .groupby('obj_id_unique_event', sort=False).head(1))
+    flip = np.diag([-1.0, 1.0])
+    obj_ids, slopes, AMs, ts = [], [], [], []
+    for _, row in best.iterrows():
+        AM = np.array([[row.AM_0_0, row.AM_0_1], [row.AM_1_0, row.AM_1_1]])
+        t = np.nan_to_num(np.array([row.tx, row.ty], dtype=float))  # fits without translation store None
+        if row.slope < 0:
+            AM, t = flip @ AM @ flip, flip @ t
+        obj_ids.append(row.obj_id_unique_event); slopes.append(abs(row.slope)); AMs.append(AM); ts.append(t)
+    return np.array(obj_ids), np.array(slopes), np.array(AMs), np.array(ts)
+
+
+def _model_from_parameters(slopes, AMs, ts, ix_master):
+    phi = np.median(slopes) * np.asarray(ix_master, dtype=float)
+    w = np.median(AMs, axis=0) @ np.vstack((np.sin(phi), np.cos(phi))) + np.median(ts, axis=0)[:, None]
+    return np.arctan2(w[0], w[1])
+
+
+def median_parameter_model(unifying_algo_data, ix_master):
+    """
+    Model course vs. aligned time built from a regime's median fit parameters: the pink line of Figure 5 C-D and
+    the model that panel E scores every trajectory against.
+    Model: phi = median|slope| * aligned_ix (phase 0 at aligned t=0, a 0-crossing of the linear fit),
+           course = atan2(w0, w1), w = median(AM) @ [sin(phi), cos(phi)] + median([tx, ty])   ((sin, cos) convention)
+    """
+    _, slopes, AMs, ts = _best_fit_parameters(unifying_algo_data)
+    return _model_from_parameters(slopes, AMs, ts, ix_master)
+
+
+def _leave_one_out_median_parameter_models(unifying_algo_data, ix_master, obj_ids):
+    """median_parameter_model built without each trajectory in turn; one row per obj_id (order of obj_ids)."""
+    ids, slopes, AMs, ts = _best_fit_parameters(unifying_algo_data)
+    models = []
+    for obj_id in obj_ids:
+        keep = ids != obj_id
+        models.append(_model_from_parameters(slopes[keep], AMs[keep], ts[keep], ix_master))
+    return np.array(models)
+
+
 def get_r2_to_mean_model(unifying_algo_data, trajec_df, period_shifts=PERIOD_SHIFTS, return_aligned=False,
                          r2_window=R2_WINDOW):
     """
-    Circular R2 between each aligned trajectory and the mean of the aligned affine fits over ROI
+    Circular R2 between each aligned trajectory and the regime's population model (POPULATION_MODEL: the
+    median-parameter model, or the mean of the aligned affine fits) over ROI
     (r2_window='aligned'), or over the trajectory's own fit ROI (r2_window='fit_roi'; period_shifts must be [0]).
 
     period_shifts: shifts (in periods of each trajectory's own best fit, shifted left) to try; the best R2 is kept.
@@ -189,7 +230,12 @@ def get_r2_to_mean_model(unifying_algo_data, trajec_df, period_shifts=PERIOD_SHI
     results = uaa.get_aligned_course_array(unifying_algo_data, trajec_df, return_linear_and_affine_fits=True)
     ix_master, aligned_time_arr, aligned_course_arr, aligned_roi_arr, aligned_linear_fits, aligned_affine_fits = results
 
-    mean_affine_fit = np.array([mean_angle(aligned_affine_fits[:, i]) for i in range(aligned_affine_fits.shape[1])])
+    if POPULATION_MODEL == 'median_parameters':
+        mean_affine_fit = median_parameter_model(unifying_algo_data, ix_master)
+    elif POPULATION_MODEL == 'mean_of_fits':
+        mean_affine_fit = np.array([mean_angle(aligned_affine_fits[:, i]) for i in range(aligned_affine_fits.shape[1])])
+    else:
+        raise ValueError("POPULATION_MODEL must be 'median_parameters' or 'mean_of_fits'")
     mean_roi = mean_affine_fit[ROI]
     n_cols = aligned_course_arr.shape[1]
 
@@ -228,7 +274,8 @@ def get_r2_to_mean_model(unifying_algo_data, trajec_df, period_shifts=PERIOD_SHI
         r2[obj_id], shift_used[obj_id] = best
     if return_aligned:
         aligned = {'obj_ids': obj_ids, 'ix_master': ix_master, 'course': aligned_course_arr, 'roi': aligned_roi_arr,
-                   'linear_fits': aligned_linear_fits, 'affine_fits': aligned_affine_fits, 'mean_model': mean_affine_fit}
+                   'linear_fits': aligned_linear_fits, 'affine_fits': aligned_affine_fits, 'mean_model': mean_affine_fit,
+                   'unifying_algo_data': unifying_algo_data}
         return r2, shift_used, aligned
     return r2, shift_used
 
@@ -283,7 +330,8 @@ def get_heldout_r2_to_mean_model(aligned):
     Cross-validated circular R2 of each trajectory to the mean model, with nothing about the model's prediction
     estimated from the samples it is scored on:
 
-      - Mean model: leave-one-out circular mean of the OTHER trajectories' aligned affine fits.
+      - Population model: built from the OTHER trajectories only (leave-one-out median parameters, or the
+        leave-one-out circular mean of the aligned affine fits, per POPULATION_MODEL).
       - Two-fold split in time of the trajectory's own fit ROI (first / second half of its valid samples). On the
         training half, the model's mirror sign and time alignment (lag) are re-estimated by least squares, replacing
         the sign and alignment shift taken from the trajectory's own fit. The model with those settings is then
@@ -295,7 +343,11 @@ def get_heldout_r2_to_mean_model(aligned):
     R2_cv > 0: the out-of-sample model predicts the course better than an in-sample constant course.
     Returns a dict keyed by obj_id (NaN if fewer than MIN_SAMPLES valid samples or no admissible lag).
     """
-    loo_models = _leave_one_out_mean_models(aligned['affine_fits'])
+    if POPULATION_MODEL == 'median_parameters':
+        loo_models = _leave_one_out_median_parameter_models(aligned['unifying_algo_data'], aligned['ix_master'],
+                                                            aligned['obj_ids'])
+    else:
+        loo_models = _leave_one_out_mean_models(aligned['affine_fits'])
     r2_cv = {}
     for i, obj_id in enumerate(aligned['obj_ids']):
         course = aligned['course'][i]
@@ -494,7 +546,7 @@ def save_figure(layout, fifi_figure_label, figure_name=FIGURE_NAME):
 # R2-only distribution plots (style of Figure 5 panel D: fpl.scatter_box_violin_distribution)
 # --------------------------------------------------------------------------------------------------
 R2_FIGURE_NAME = 'unifying_analysis_translationTrue.svg'  # Figure 5
-R2_LABEL = 'Circular R²\nto mean model'  # plain text so it renders in Helvetica like the rest of Figure 5
+R2_LABEL = 'Circular R²\nto median model'  # plain text so it renders in Helvetica like the rest of Figure 5
 # Symmetric R2 axis for the distribution plots: R2 in [0, 1] gets the same height as R2 in [R2_FLOOR, 0],
 # so 0 sits in the middle of the axis. R2_FLOOR = 1 - e^5.5 (about -244), the same lower limit as the scatter plots.
 R2_DIST_POS_SCALE = 5.5

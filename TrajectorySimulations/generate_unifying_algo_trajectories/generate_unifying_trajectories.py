@@ -9,6 +9,7 @@ import pandas as pd
 import pandas
 
 import copy
+import sys
 
 import cvxpy
 cp = cvxpy
@@ -167,42 +168,25 @@ def generate_trajectory(scenario, length, add_pre_search=True, max_length=500):
 
     x, y, xvel, yvel = get_trajec(get_noisy_course(course), dt, get_speed(), return_speed=True)
 
-    # saccadic trajec
-    staircase_warped_course_angle = get_upwind_biased_trajec_saccade(wind_direction, axis_ratio, affine_trans_warped_circle_xy, 
-                                     dt,
-                                     0,
-                                     SMOOTHING_WINDOW, 
-                                     SACCADE_THRESHOLD_PROPORTIONAL, SACCADE_THRESHOLD_DERIVATIVE,
-                                     RANDOMNESS=False)
-    if add_pre_search:
-        pre_search_t, angle = get_pre_search_course(wind_direction, wind_speed)
-        course = np.hstack((angle, staircase_warped_course_angle))[0:max_length]
-        t = np.hstack((pre_search_t, t+1))[0:max_length]
-        lights_on = np.zeros_like(t)
-        lights_on[20:87] = 1
-
-    sac_x, sac_y, sac_xvel, sac_yvel = get_trajec(get_noisy_course(course), dt, get_speed(), return_speed=True)
-
+    # The saved trajectory is the smooth affine-warped course. Position and velocity both come from this one
+    # integration, so they describe the same path. (A saccade-and-fixate variant used to be built here as well and
+    # was saved with the smooth positions but the saccadic velocities, and with the time vector prepended twice.)
     df_affine = pandas.DataFrame({'x': x,
                                   'y': y,
                                   'xvel': xvel,
                                   'yvel': yvel,
                                   'time_relative_to_flash': t,
                                   'lights_on': lights_on})
+    assert np.all(np.diff(df_affine.time_relative_to_flash.values) > 0), 'time must increase monotonically'
 
-    df_saccadic = pandas.DataFrame({'x': x,
-                                    'y': y,
-                                    'xvel': sac_xvel,
-                                    'yvel': sac_yvel,
-                                    'time_relative_to_flash': t,
-                                    'lights_on': lights_on})
-
-    return df_affine, df_saccadic
+    return df_affine
 
 if __name__ == '__main__':
     import warnings
     warnings.filterwarnings('ignore', category=UserWarning)
 
+
+    np.random.seed(0)  # reproducible trajectories
 
     num_trajecs = 200
 
@@ -213,12 +197,10 @@ if __name__ == '__main__':
         for i in range(num_trajecs):
             obj_id += 1
 
-            df_affine, df_sac = generate_trajectory(scenario, 5)
-            
-            df = df_sac
+            df = generate_trajectory(scenario, 5)
 
-            df['windtype'] = [scenario]*len(df_sac)
-            df['obj_id'] = [obj_id]*len(df_sac)
+            df['windtype'] = [scenario]*len(df)
+            df['obj_id'] = [obj_id]*len(df)
             df['obj_id_unique'] = df['obj_id']
             df['obj_id_unique_event'] = df['obj_id']
 
@@ -235,4 +217,6 @@ if __name__ == '__main__':
 
             
 
-    full_df.to_parquet('../../Data/Fig5_Input_Data/new_unifying.parquet')
+    out = sys.argv[1] if len(sys.argv) > 1 else '../../Data/Fig5_Input_Data/new_unifying.parquet'
+    full_df.to_parquet(out)
+    print('Saved', out)

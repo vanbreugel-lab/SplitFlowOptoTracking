@@ -1,28 +1,29 @@
 # analysis_scripts
 
 These scripts run the unifying-algorithm fit (a mixed-integer quadratic program,
-solved with cvxpy's GUROBI solver) on each raw trajectory dataset in
-`../raw_data/` and write the fitted results as parquet files to
-`../preprocessed_data/`. They are the code that turns the raw data (fetched
-from Dryad — see the top-level `README.md`) into the preprocessed data
-committed to this repo.
+solved with cvxpy's GUROBI solver) on each trajectory dataset in `Data/` and
+write the fitted results as parquet files to `Data/Unifying_Algo_Results/`,
+one subdirectory per dataset (`c1xwt_laminar/`, `c1xwt_variable_wind_series/`,
+`cfd_sim_steady_casting/`, ...). The layout is defined in
+`Code/unifying_results.py`; figure code finds a result by its file name with
+`splitflow.unifying_results.result_path(name)`.
 
-All path handling goes through `../config.py`, so these scripts can be run from
-any working directory.
+**Always pass `--include-translation`.** Every figure uses fits with the
+translation term. A run without the flag writes `*_translationFalse.parquet`
+into `deprecated/`, which no figure reads.
 
 ## Setup
 
 1. Install `requirements.txt` (repo root).
 2. Point `config.py`'s `GUROBI_LICENSE_FILE` at your Gurobi academic license
    (see the top-level `README.md`).
-3. Make sure `../raw_data/` is populated (downloaded from Dryad).
+3. Make sure `Data/` is populated (downloaded from Dryad).
 
 ## Running
 
 Each script is standalone:
 
 ```bash
-python analyze_still.py                    # translation=False (default)
 python analyze_still.py --include-translation
 ```
 
@@ -33,7 +34,7 @@ once, unless you have time to wait.
 
 ## Scripts
 
-| Script | Reads (`raw_data/`) | Writes (`preprocessed_data/`) |
+| Script | Reads (`Data/`) | Writes (`Data/Unifying_Algo_Results/<dataset>/`) |
 |---|---|---|
 | `analyze_still.py` | `flies_stillair_c1xwt_preprocessed_optotrigger_trimmed.hdf` | `stillair_data_{flash,sham}_translation{Bool}.parquet` |
 | `analyze_still_wt.py` | `flies_stillair_wt_preprocessed_optotrigger_trimmed.hdf` | `WT_stillair_data_{flash,sham}_translation{Bool}.parquet` |

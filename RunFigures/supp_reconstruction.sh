@@ -6,7 +6,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/_common.sh"
 
 begin_figure supp_reconstruction "Supplemental: reconstructions, real vs synthetic"
-D=FigureGeneration/Supplemental/supp_fig_06_reconstruction
+D=FigureGeneration/Supplemental/supp_fig_07_reconstruction
 
 run_python "$D" plot_reconstruction_summary.py
 

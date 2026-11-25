@@ -41,7 +41,7 @@ source .venv/bin/activate            # Windows: .venv\Scripts\activate
 ### 2. Install the Python dependencies and the `splitflow` package
 
 ```bash
-pip install -r requirements.txt      # all Python dependencies (incl. the private lab repos)
+pip install -r requirements.txt      # all Python dependencies (incl. the lab's GitHub packages)
 pip install -e .                     # installs the local splitflow package (the Code/ directory)
 ```
 
@@ -51,10 +51,11 @@ pip install -e .                     # installs the local splitflow package (the
   returns read-only arrays from `DataFrame.values`; the unifying-algorithm
   alignment code performs in-place array operations and fails with *"output
   array is read-only"* under pandas ≥ 3.0.
-- **Private lab repositories** — `align_course_direction_analysis`,
+- **Lab packages on GitHub (not on PyPI)** — `align_course_direction_analysis`,
   `braid_tools` (imported as `braid_analysis`), `FlyPlotLib` (`fly_plot_lib`),
-  and `FlyStat` (`flystat`) are installed directly from git (pinned URLs in
-  `requirements.txt`); you need access to those repositories.
+  and `FlyStat` (`flystat`) are public repositories that are not published on
+  PyPI, so they are installed directly from GitHub (pinned URLs in
+  `requirements.txt`).
 
 Once installed, notebooks import the shared utilities from the package, e.g.:
 
@@ -192,12 +193,12 @@ directory (Jupyter's default), so no path edits are needed.
 │   │               └── shark/
 │   ├── Supplemental/                   # one folder per SI figure, numbered in SI order (RunFigures/figures.yaml)
 │   │   ├── supp_fig_01_tunnel_methods/          # S1  additional wind tunnel / CFD analysis
-│   │   ├── supp_fig_02_altitude_response/       # S2  altitude responses
-│   │   ├── supp_fig_03_vertical_split/          # S3  vertical split
+│   │   ├── supp_fig_02_course_direction_response/ # S2  course direction responses
+│   │   ├── supp_fig_03_altitude_response/       # S3  altitude responses
 │   │   ├── supp_fig_04_real_trajectories/       # S4  example real fly trajectories
 │   │   ├── supp_fig_05_synthetic_trajectories/  # S5  example synthetic trajectories
-│   │   ├── supp_fig_06_reconstruction/          # S6  VAE reconstructions + reconstruction error, real vs synthetic
-│   │   ├── supp_fig_07_pca_rf_classifier/       # S7  random forest on the first k = 2-10 principal components
+│   │   ├── supp_fig_06_pca_rf_classifier/       # S6  random forest on the first k = 2-10 principal components
+│   │   ├── supp_fig_07_reconstruction/          # S7  VAE reconstructions + reconstruction error, real vs synthetic
 │   │   ├── supp_fig_08_real_fly_vae/            # S8  VAE + random forest trained on real flies only
 │   │   ├── supp_fig_09_variable_wind_speed/     # S9  variable wind speed
 │   │   ├── supp_fig_10_own_fit_r2_pvalues/      # S10 own-fit R^2 and p-values
@@ -208,7 +209,7 @@ directory (Jupyter's default), so no path edits are needed.
 │   │   ├── supp_fig_15_all_animal_slopes/       # S15 all-animal summary, slope vs movement speed
 │   │   ├── unifying_simulation/                 # supplementary movies (unifying algorithm animations)
 │   │   ├── unused_altitude_sorted_trajectories/ # no longer in the SI
-│   │   └── unused_course_direction_response/    # no longer in the SI
+│   │   └── unused_vertical_split/               # not in the SI
 │   │
 │   └── VAE_pipeline/                   # Fig. 4 / SI S6-S8 (inputs: Data/Fig4_vae_data/; see VAE_pipeline/README.md)
 │       ├── vae_utils.py                # shared by the figure scripts: data loading, encoding, random forest
@@ -269,9 +270,10 @@ The pre-existing figure outputs shipped with the repo are kept under an
 alongside with a `_test` suffix so the committed figures are never overwritten.
 
 **Figure 5 / Supplemental unifying analysis** read pre-computed unifying-algorithm
-results from `Data/Unifying_Algo_Results/` (`Main/` for the main figure,
-`Supplemental/` for the supplemental figures), so the figure notebooks run
-without any preprocessing. To *regenerate* those results from the raw trajectory
+results from `Data/Unifying_Algo_Results/` (one subdirectory per dataset; the
+layout is defined in `Code/unifying_results.py`, and code looks a result up by
+file name with `splitflow.unifying_results.result_path`), so the figure
+notebooks run without any preprocessing. To *regenerate* those results from the raw trajectory
 data, run the scripts in
 `FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/` (each reads
 from `Data/Experimental_Fly_Data/` and writes to `Data/Unifying_Algo_Results/`).

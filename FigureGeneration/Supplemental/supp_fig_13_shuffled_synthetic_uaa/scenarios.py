@@ -7,13 +7,14 @@ from pathlib import Path
 
 import pandas as pd
 
+from splitflow.unifying_results import result_path
+
 FIGURE_NAME = 'supplemental_unifying_analysis_shuffled_synthetic.svg'
 TRANSLATION = True
 
 DATA_DIR = Path('../../../Data')
 SHUFFLED_DIR = DATA_DIR / 'Shuffled_Flies'                # made by time_shift_flies/make_shuffled_datasets.py
 SYNTHETIC_DIR = DATA_DIR / 'Synthetic_Flies_for_Unifying'  # made by uaa_on_synthetic_trajectories/extract_synthetic_trajectories.py
-RESULTS_DIR = DATA_DIR / 'unifying_algo_results'          # made by analyze_shuffled.py / analyze_synthetic.py
 
 # Ordered left -> right in the figure
 SCENARIOS = ['shuffled_laminar', 'shuffled_stillair', 'levy_flight', 'random_turns', 'brownian', 'run_and_tumble']
@@ -46,8 +47,8 @@ _SHUFFLED_STEM = {'shuffled_laminar': 'SHUFFLED_flies_laminar_c1xwt_preprocessed
 
 def get_unifying_filename(key):
     if key in _SHUFFLED_STEM:
-        return RESULTS_DIR / f'SHUFFLED_{_SHUFFLED_STEM[key]}_translation{TRANSLATION}.parquet'
-    return RESULTS_DIR / f'synthetic_{key}_translation{TRANSLATION}.parquet'
+        return result_path(f'SHUFFLED_{_SHUFFLED_STEM[key]}_translation{TRANSLATION}.parquet')
+    return result_path(f'synthetic_{key}_translation{TRANSLATION}.parquet')
 
 
 def get_trajec_filename(key):

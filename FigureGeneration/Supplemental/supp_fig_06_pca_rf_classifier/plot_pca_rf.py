@@ -1,4 +1,4 @@
-"""SI Fig. S7: random-forest classification in reduced latent spaces."""
+"""SI Fig. S6: random-forest classification in reduced latent spaces."""
 import os
 import sys
 
@@ -19,8 +19,8 @@ SPEEDS = ['0', '0.03', '0.1', '0.2', '0.3', '0.6']
 # matrix sections (test sets of synthetic_model_test_sets.parquet) and column colours
 GROUPS = [('Fig. 4 flies', ['Still air, flash', 'Unsteady, flash', 'Steady, flash', 'Laminar, flash']),
           ('shams', ['Still air, sham', 'Unsteady, sham', 'Steady, sham', 'Laminar, sham']),
-          ('var. wind, flash', [f'Var. wind {s} m/s, flash' for s in SPEEDS]),
-          ('var. wind, sham', [f'Var. wind {s} m/s, sham' for s in SPEEDS]),
+          ('speed series, flash', [f'Var. wind {s} m/s, flash' for s in SPEEDS]),   # laminar speed series; set names as stored
+          ('speed series, sham', [f'Var. wind {s} m/s, sham' for s in SPEEDS]),
           ('wild type', ['WT still air', 'WT unsteady', 'WT steady', 'WT laminar']),
           ('CFD', ['CFD casting, steady', 'CFD casting, unsteady', 'CFD circling, steady', 'CFD circling, unsteady']),
           ('unifying', ['Unifying, laminar', 'Unifying, still air', 'Unifying, unsteady'])]
@@ -77,7 +77,7 @@ def matrix_figure(counts, path):
         ax_x = fig.add_axes(box(HM_X, top + HM_H, HM_W, STRIP_H))
         ax_cb = fig.add_axes(box(CB_X, top, CB_W, HM_H)) if last else None
         cnt = cnt[cols]
-        named = {k: f'{k} ({cnt[k].sum()})' for k in cols}
+        named = {k: f"{k.replace('Var. wind', 'Speed series')} ({cnt[k].sum()})" for k in cols}   # displayed column labels
         cnt = cnt.rename(index={'Levy flight': 'Lévy flight'})
         RF.plot_classification_matrix_with_colorbars(
             percentage_matrix=(cnt / cnt.sum() * 100).rename(columns=named), count_matrix=cnt.rename(columns=named),

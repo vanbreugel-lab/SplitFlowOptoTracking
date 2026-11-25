@@ -30,7 +30,9 @@ optuna              # hyperparameter search notebook (fig_4/misc)
 # --- Optimization solver (REQUIRED for the unifying algorithm) ---
 # The unifying-algo fit is a MIQP solved with solver=cvxpy.GUROBI.
 # Gurobi is commercial but free for academics (https://www.gurobi.com/academia/).
-gurobipy
+# Pinned to the 13 series: a Gurobi license is tied to a major version, and the
+# fits in Data/Unifying_Algo_Results were made with Gurobi 13.
+gurobipy>=13,<14
 
 # --- I/O backends (used at runtime, not imported by name) ---
 pyarrow             # pandas .read_parquet / .to_parquet (all *.parquet files)
@@ -40,7 +42,7 @@ tables              # pandas .read_hdf (*.hdf); PyTables
 shapely             # supp_fig_14_all_animal_trajectories (label collision geometry)
 cairosvg            # unifying_simulation/plot_simulation.ipynb (SVG -> PNG frames)
 
-# --- Undeclared transitive deps of the private lab repos ---
+# --- Undeclared transitive deps of the lab's GitHub packages ---
 h5py
 sympy
 opencv-python       # cv2, imported by braid_analysis / fly_plot_lib
@@ -63,7 +65,7 @@ imageio-ffmpeg      # bundled ffmpeg binary, used to save .mp4 animations
 pynumdiff==0.2.4    # https://github.com/florisvb/PyNumDiff (savgoldiff)
 figurefirst         # https://github.com/FlyRanch/figurefirst (SVG figure layout)
 
-# --- Private lab repositories (require access) ---
+# --- Lab packages, public on GitHub but not on PyPI ---
 # Provides: unifying_algo_analysis (uaa), unifying_algo_plots (uap)
 git+https://github.com/vanbreugel-lab/align_course_direction_analysis.git@5f66655cf973b6e3d4b27797136dfdf36632be70
 # Provides: braid_analysis.flymath, braid_analysis.braid_analysis_plots (repo: braid_tools)

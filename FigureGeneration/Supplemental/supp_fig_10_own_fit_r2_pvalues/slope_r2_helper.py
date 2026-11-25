@@ -15,6 +15,8 @@ import re
 import sys
 from pathlib import Path
 
+from splitflow.unifying_results import result_path
+
 import numpy as np
 import pandas as pd
 import scipy.stats
@@ -63,17 +65,8 @@ YTICKS = {(0, 8): ([0, 2, 4, 6, 8], ['0', '', '', '', '8']),
 # File lookup
 # --------------------------------------------------------------------------------------------------
 def unifying_results_path(filename):
-    """
-    Locate a unifying-algo results parquet. The local checkout has a flat Data/unifying_algo_results/;
-    the Dryad layout splits it into Data/Unifying_Algo_Results/{Main,Supplemental}/.
-    """
-    candidates = [DATA_DIR / 'unifying_algo_results' / filename,
-                  DATA_DIR / 'Unifying_Algo_Results' / 'Main' / filename,
-                  DATA_DIR / 'Unifying_Algo_Results' / 'Supplemental' / filename]
-    for c in candidates:
-        if c.exists():
-            return c
-    raise FileNotFoundError(filename)
+    """Locate a unifying-algo results parquet by file name (layout: splitflow.unifying_results)."""
+    return result_path(filename)
 
 
 def fly_trajec_filename(unifying_filename):
@@ -105,18 +98,10 @@ VARWIND_HIGHLIGHT_SPEED = '28'  # 20 cm/s
 VARWIND_TRAJEC_FILENAME = TRAJEC_DIR / 'flies_varwind_C1WT_combined_optotrigger_fancontrol_trimmed.parquet'
 VARWIND_SPEEDS = ['12', '20', '23', '28', '40', '90']
 VARWIND_SPEED_LABELS = {'12': 0, '20': 3, '23': 10, '28': 20, '40': 30, '90': 60}  # cm/s
-# Sham uses Kevin's analyzed files, flash uses the N700 files (as in the variable-wind supplemental figure)
-VARWIND_SHAM_FILENAMES = {'12': 'var-wind-12-fan_0-cms_all-traj_align_SHAM.parquet',
-                          '20': 'var-wind-20-fan_0-03-cms_all-traj_align_SHAM.parquet',
-                          '23': 'var-wind-23-fan_0-1-cms_all-traj_align_SHAM.parquet',
-                          '28': 'var-wind-28-fan_0-2-cms_all-traj_align_SHAM.parquet',
-                          '40': 'var-wind-40-fan_0-3-cms_all-traj_align_SHAM.parquet',
-                          '90': 'var-wind-90-fan_0-6-cms_all-traj_align_SHAM.parquet'}
 
 
 def varwind_unifying_filename(condition, speed):
-    if condition == 'sham':
-        return unifying_results_path(Path('var_wind_kevin_analyzed') / VARWIND_SHAM_FILENAMES[speed])
+    """Speed-series fits for 'flash' or 'sham' at one fan setting ('12' ... '90')."""
     return unifying_results_path('varwind_N700_%s_%s.0_translation%s.parquet' % (condition, speed, TRANSLATION))
 
 

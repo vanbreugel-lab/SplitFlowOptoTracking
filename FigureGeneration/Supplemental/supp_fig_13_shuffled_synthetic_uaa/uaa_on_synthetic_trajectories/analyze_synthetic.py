@@ -11,7 +11,7 @@ Differences from the template (needed for the synthetic data):
     abs_min_ix=100 keeps the "start 1.0 s into the trajectory-relative clock" choice
     (fly: 120 frames from start = 1.0 s after flash); fit window sizes (190-210) unchanged.
 
-Reads Data/Synthetic_Flies_for_Unifying/, writes Data/unifying_algo_results/.
+Reads Data/Synthetic_Flies_for_Unifying/, writes Data/unifying_algo_results/<dataset>/ (see splitflow.unifying_results).
 
 Usage:
     python analyze_synthetic.py [--no-include-translation] [--time-limit S] [--mip-gap G]
@@ -22,6 +22,8 @@ from pathlib import Path
 
 import cvxpy
 import pandas as pd
+
+from splitflow.unifying_results import result_path
 
 from align_course_direction_analysis import unifying_algo_analysis as uaa
 
@@ -46,7 +48,6 @@ def override_gurobi_limits(time_limit, mip_gap):
 
 REPO_ROOT = Path(__file__).resolve().parents[4]  # <repo>/FigureGeneration/Supplemental/supp_fig_13_shuffled_synthetic_uaa/<this dir>/<this file>
 DATA_DIR = REPO_ROOT / 'Data' / 'Synthetic_Flies_for_Unifying'
-RESULTS_DIR = REPO_ROOT / 'Data' / 'unifying_algo_results'
 
 SCENARIOS = ['random_turns', 'levy_flight', 'run_and_tumble', 'brownian']
 N_TRAJECS = 200
@@ -84,7 +85,6 @@ if __name__ == '__main__':
     override_gurobi_limits(args.time_limit, args.mip_gap)
 
     translation_flag = f'translation{args.include_translation}'
-    RESULTS_DIR.mkdir(exist_ok=True)
 
     for scenario in args.scenarios:
         print(scenario)
@@ -93,4 +93,4 @@ if __name__ == '__main__':
             braid_df, N_TRAJECS,
             include_translation=args.include_translation,
             **PARAMS)
-        unifying_algo_data.to_parquet(RESULTS_DIR / f'synthetic_{scenario}_{translation_flag}.parquet')
+        unifying_algo_data.to_parquet(result_path(f'synthetic_{scenario}_{translation_flag}.parquet', must_exist=False))

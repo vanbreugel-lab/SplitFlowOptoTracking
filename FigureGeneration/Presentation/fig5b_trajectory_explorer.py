@@ -242,8 +242,11 @@ def _(
 ):
     @functools.cache
     def _saved_fits_table(name):
-        path = DATA_DIR / "unifying_algo_results" / f"{name}_translationTrue.parquet"
-        return pd.read_parquet(path) if path.exists() else None
+        from splitflow.unifying_results import result_path
+        try:
+            return pd.read_parquet(result_path(f"{name}_translationTrue.parquet"))
+        except FileNotFoundError:
+            return None
 
     def saved_fits(name, obj_id):
         table = _saved_fits_table(name)

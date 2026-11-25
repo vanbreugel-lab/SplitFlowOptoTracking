@@ -6,7 +6,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/_common.sh"
 
 begin_figure supp_pca_rf_classifier "Supplemental: PCA-component RF classifier"
-D=FigureGeneration/Supplemental/supp_fig_07_pca_rf_classifier
+D=FigureGeneration/Supplemental/supp_fig_06_pca_rf_classifier
 
 run_python "$D" plot_pca_rf.py
 

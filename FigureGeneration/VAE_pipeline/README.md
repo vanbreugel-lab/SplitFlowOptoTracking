@@ -16,8 +16,8 @@ The figure scripts are in the figure folders. Each runs without arguments, from 
 | Figure | Script | RunFigures | Cold run |
 |---|---|---|---|
 | Fig. 4 | `Main/fig_4_autoencoder/make_f4.py` | `fig4.sh` | ~3 min (~10 s once cached) |
-| S6 reconstructions + reconstruction error | `Supplemental/supp_fig_06_reconstruction/plot_reconstruction_summary.py` | `supp_reconstruction.sh` | ~20 s |
-| S7 RF on the first k PCs | `Supplemental/supp_fig_07_pca_rf_classifier/plot_pca_rf.py` | `supp_pca_rf_classifier.sh` | ~6 min |
+| S7 reconstructions + reconstruction error | `Supplemental/supp_fig_07_reconstruction/plot_reconstruction_summary.py` | `supp_reconstruction.sh` | ~20 s |
+| S6 RF on the first k PCs | `Supplemental/supp_fig_06_pca_rf_classifier/plot_pca_rf.py` | `supp_pca_rf_classifier.sh` | ~6 min |
 | S8 real-fly autoencoder | `Supplemental/supp_fig_08_real_fly_vae/make_supp_real_ae.py` | `supp_real_fly_vae.sh` | ~2 min (headless Chrome) |
 
 Each script writes `output_figs/<name>_test.svg` next to the finished, hand-edited figure.

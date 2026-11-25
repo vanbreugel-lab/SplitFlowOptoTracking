@@ -94,10 +94,15 @@ Data/
 │   └── walking_drosophila/
 │
 ├── Unifying_Algo_Results/                    ← from Unifying_Algo_Results.zip
-│   ├── Main/
-│   │   └── *.parquet  (42 files)
-│   └── Supplemental/
-│       └── *.parquet  (42 files)
+│   │                                           (one folder per dataset; flash and sham fits
+│   │                                            together; layout in Code/unifying_results.py)
+│   ├── c1xwt_laminar/  c1xwt_stillair/  c1xwt_unsteady/
+│   ├── c1xwt_variable_wind_series/
+│   ├── wt_laminar/  wt_stillair/  wt_unsteady/
+│   ├── cfd_sim_<flow>_<behavior>/
+│   ├── unifying_sim_<wind>/
+│   ├── synthetic_<algorithm>/
+│   └── shuffled_c1xwt_<wind>/
 │
 ├── Fig1_Input_Data/                          ← from Fig1_Input_Data.zip
 │   ├── established_algorithm_example_trajectories.parquet

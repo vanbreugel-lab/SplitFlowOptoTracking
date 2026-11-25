@@ -1,5 +1,5 @@
 """
-SI Fig. S6: reconstructions and reconstruction error of the synthetic-trained autoencoder (Fig. 4;
+SI Fig. S7: reconstructions and reconstruction error of the synthetic-trained autoencoder (Fig. 4;
 """
 import os
 import sys
