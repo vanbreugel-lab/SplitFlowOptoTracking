@@ -288,9 +288,9 @@ template (e.g. `unifying_analysis.svg`) and write the populated figure back. For
 `generate_figure_5/`, run `A → B → C → D → E` in order — each populates a
 different layer of the same shared SVG.
 
-The pre-existing figure outputs shipped with the repo are kept under an
-`output_figs/` subfolder in each figure directory; a fresh run writes its output
-alongside with a `_test` suffix so the committed figures are never overwritten.
+Every figure's script writes its finished SVG to the path listed for it in
+`RunFigures/figures.yaml`, overwriting the committed copy (`git diff` shows what changed;
+`python RunFigures/compare_svg.py` renders a visual comparison).
 
 **Figure 5 / Supplemental unifying analysis** read pre-computed unifying-algorithm
 results from `Data/Unifying_Algo_Results/` (one subdirectory per dataset; the
