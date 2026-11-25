@@ -1,21 +1,14 @@
 import argparse
 import sys
-from pathlib import Path
 
 import pandas as pd
 
+from splitflow.data_paths import data_path
 from splitflow.unifying_results import result_path
 
 
-# Data locations. This script lives 4 levels under the repo root:
-#   FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/<this>.py
-_REPO_ROOT = Path(__file__).resolve().parents[4]
-_DATA = _REPO_ROOT / "Data"
-
 
 class _Config:
-    RAW_DATA_DIR = _DATA / "Experimental_Fly_Data"
-
     def configure_gurobi_env(self):
         pass  # Gurobi picked up from the default license location / GRB_LICENSE_FILE
 
@@ -38,7 +31,7 @@ if __name__ == '__main__':
     # 'C1WT_varwind_combined_optotrigger_fancontrol_trimmed.parquet' (no directory
     # prefix); every other notebook/script in this repo reads the file below, so
     # that is almost certainly the intended input.
-    hdf_filename = str(config.RAW_DATA_DIR / 'flies_varwind_C1WT_combined_optotrigger_fancontrol_trimmed.parquet')
+    hdf_filename = str(data_path('fly.varwind'))
     df = pd.read_parquet(hdf_filename)
 
     # How many trajectories to process (max)

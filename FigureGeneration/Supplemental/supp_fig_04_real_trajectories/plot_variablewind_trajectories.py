@@ -25,6 +25,8 @@ from matplotlib.collections import PatchCollection
 from matplotlib.gridspec import GridSpec, GridSpecFromSubplotSpec
 import pynumdiff
 
+from splitflow.data_paths import data_path
+
 # ---------------------------------------------------------------------------
 # Helpers (arrowhead style matches PlotUtilities.py, scaled for thinner lines)
 # ---------------------------------------------------------------------------
@@ -112,11 +114,7 @@ plt.rcParams["font.weight"] = "normal"
 # Load & filter data
 # ---------------------------------------------------------------------------
 
-DATA_PATH = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
-    "../../../Data/Experimental_Fly_Data/"
-    "flies_varwind_C1WT_combined_optotrigger_fancontrol_trimmed.parquet",
-)
+DATA_PATH = data_path("fly.varwind")
 df = pd.read_parquet(DATA_PATH)
 
 # Ensure all trajectories are in strict chronological order

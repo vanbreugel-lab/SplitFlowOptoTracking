@@ -1,5 +1,4 @@
 import numpy as np
-from pathlib import Path
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
@@ -22,6 +21,8 @@ import fly_plot_lib.plot as fpl
 import pynumdiff
 
 import scipy.stats
+
+from .data_paths import data_path
 
 # Plotting parameters
 course_markersize = 2
@@ -80,7 +81,7 @@ def get_wind(scenario, RANDOMNESS=False, SMOOTHING_WINDOW=11, dt=0.01, length=5)
     t = interp_t - interp_t[0]
     
     # load unsteady wind
-    unsteady_wind = pd.read_hdf(str(Path(__file__).resolve().parents[1] / 'Data' / 'Fig1_Input_Data' / 'unsteady_timeseries.hdf'))
+    unsteady_wind = pd.read_hdf(str(data_path('fig1.unsteady_timeseries')))
     cfd_t = unsteady_wind.Time.values
     cfd_xvel = unsteady_wind.xvel.values
     cfd_yvel = unsteady_wind.yvel.values

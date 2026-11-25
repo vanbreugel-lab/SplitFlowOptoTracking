@@ -24,6 +24,8 @@ import pynumdiff
 
 import scipy.stats
 
+from splitflow.data_paths import data_path
+
 ###
 from affine_math_and_plot_helper import *
 ###
@@ -217,6 +219,6 @@ if __name__ == '__main__':
 
             
 
-    out = sys.argv[1] if len(sys.argv) > 1 else '../../Data/Fig5_Input_Data/new_unifying.parquet'
+    out = sys.argv[1] if len(sys.argv) > 1 else str(data_path('sim.unifying', must_exist=False))
     full_df.to_parquet(out)
     print('Saved', out)

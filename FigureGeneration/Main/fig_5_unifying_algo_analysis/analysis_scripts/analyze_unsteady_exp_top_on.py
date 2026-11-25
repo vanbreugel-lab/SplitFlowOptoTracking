@@ -1,21 +1,14 @@
 import argparse
 import sys
-from pathlib import Path
 
 import pandas as pd
 
+from splitflow.data_paths import data_path
 from splitflow.unifying_results import result_path
 
 
-# Data locations. This script lives 4 levels under the repo root:
-#   FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/<this>.py
-_REPO_ROOT = Path(__file__).resolve().parents[4]
-_DATA = _REPO_ROOT / "Data"
-
 
 class _Config:
-    RAW_DATA_DIR = _DATA / "Experimental_Fly_Data"
-
     def configure_gurobi_env(self):
         pass  # Gurobi picked up from the default license location / GRB_LICENSE_FILE
 
@@ -36,7 +29,7 @@ if __name__ == '__main__':
 
     n_trajecs = 200
 
-    top_on_df = pd.read_hdf(str(config.RAW_DATA_DIR / 'flies_splitflow_topon_c1xwt_preprocessed_optotrigger_trimmed.hdf'))
+    top_on_df = pd.read_hdf(str(data_path('fly.splitflow_topon_c1xwt')))
 
     df_flash_top_on = top_on_df[top_on_df.intensity>0]
     df_sham_top_on = top_on_df[top_on_df.intensity==0]

@@ -38,10 +38,9 @@ import matplotlib.patches as mpatches
 from matplotlib.collections import PatchCollection
 from matplotlib.gridspec import GridSpec, GridSpecFromSubplotSpec
 
+from splitflow.data_paths import data_path
+
 HERE = Path(__file__).resolve().parent
-REPO_ROOT = Path(__file__).resolve().parents[4]  # <repo>/FigureGeneration/Supplemental/supp_fig_13_shuffled_synthetic_uaa/<this dir>/<this file>
-DATA_DIR = REPO_ROOT / "Data" / "Experimental_Fly_Data"
-SHUFFLED_DIR = REPO_ROOT / "Data" / "Shuffled_Flies"
 
 # ── Layout / style (matches combined_real_trajectories) ──────────────────────
 N_TRAJ_COLS = 3
@@ -58,8 +57,8 @@ WINDOW_PAD = 1.05              # margin around the largest trajectory in a panel
 SCALE_BAR_SIZES = [0.1, 0.2, 0.5, 1.0]   # m
 
 CONDITIONS = [
-    ("Laminar flow (0.4 m/s)", "flies_laminar_c1xwt_preprocessed_optotrigger_trimmed.hdf"),
-    ("Still air", "flies_stillair_c1xwt_preprocessed_optotrigger_trimmed.hdf"),
+    ("Laminar flow (0.4 m/s)", "laminar"),   # wind: fly.<wind>_c1xwt and shuffled.flies in Data/data_paths.yaml
+    ("Still air", "stillair"),
 ]
 
 plt.rcParams["font.family"] = "sans-serif"
@@ -172,9 +171,9 @@ def main():
     # Panels in row-major order: one row per condition, [original, shuffled],
     # both showing the same trajectory IDs. (title, df, traj_ids)
     panels = []
-    for label, fname in CONDITIONS:
-        orig = load(DATA_DIR / fname)
-        shuf = load(SHUFFLED_DIR / f"SHUFFLED_{fname}")
+    for label, wind in CONDITIONS:
+        orig = load(data_path(f"fly.{wind}_c1xwt"))
+        shuf = load(data_path("shuffled.flies", wind=wind))
         ids = qualified_ids(orig)   # speed/NaN pattern identical in shuffled copy
         n = min(N_TRAJS, len(ids))
         chosen = rng.choice(ids, size=n, replace=False)

@@ -10,14 +10,12 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from vae_utils import (DATA, FEATS, WINDOWS, N_T, REAL_SOURCES, REAL_CLASSES, SYN_CLASSES, VARWIND_SPEED, fill_gaps,
+from vae_utils import (data_path, FEATS, WINDOWS, N_T, REAL_SOURCES, REAL_CLASSES, SYN_CLASSES, VARWIND_SPEED, fill_gaps,
                        windows, natural, balanced_split)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-FLIES = os.path.join(HERE, '..', '..', 'Data', 'Experimental_Fly_Data')
-FIG5 = os.path.join(HERE, '..', '..', 'Data', 'Fig5_Input_Data')
-TOP_ON = 'all_nights_new_processing_protocol_top_laminar_09082024.hdf'
-BOTTOM_ON = 'all_nights_new_processing_protocol_bottom_laminar_09092024.hdf'
+TOP_ON = 'fly.all_nights_top_laminar'                      # keys in Data/data_paths.yaml
+BOTTOM_ON = 'fly.all_nights_bottom_laminar'
 COLS = ['obj_id_unique', 'time stamp', 'x', 'y', 'z', 'xvel', 'yvel']
 CFD = {'CFD casting, steady': 'steady casting', 'CFD casting, unsteady': 'unsteady casting',
        'CFD circling, steady': 'steady circling', 'CFD circling, unsteady': 'unsteady circling'}
@@ -31,8 +29,8 @@ OUT_COLS = {
 
 
 # ---------------------------------------------------------------- source data
-def read(fname):
-    path = os.path.join(FLIES, fname)
+def read(key):
+    path = str(data_path(key))
     return pd.read_parquet(path) if path.endswith('.parquet') else pd.read_hdf(path)
 
 
@@ -50,22 +48,21 @@ def is_sham(d):
 
 def event_file(kind, genotype):
     # kind: stillair, laminar or splitflow_topon; genotype: c1xwt (CsChrimson) or wt (wild type)
-    stem = f'flies_{kind}_{genotype}_preprocessed_optotrigger_trimmed'
-    return events(read(stem + ('.hdf' if os.path.exists(os.path.join(FLIES, stem + '.hdf')) else '.parquet')))
+    return events(read(f'fly.{kind}_{genotype}'))
 
 
 def varwind():
     # (fan %, 'flash' | 'sham') -> variable-wind CsChrimson events
-    df = events(read('flies_varwind_C1WT_combined_optotrigger_fancontrol_trimmed.parquet'))
+    df = events(read('fly.varwind'))
     fan = df.groupby('obj_id_unique')['fan_speed_percent'].transform('first')
     kind = np.where(df.intensity > 0, 'flash', 'sham')
     return {(int(f), k): d for (f, k), d in df.groupby([fan, kind])}
 
 
-def split_flow(fname):
+def split_flow(key):
     # flash / sham trajectories tracked >= 3.0 s after the flash with mean ground speed > 0.15 m/s; lower region = whole
     # trajectory below z = 0.25 m, upper region = whole trajectory above
-    df = pd.read_hdf(os.path.join(FLIES, fname))
+    df = pd.read_hdf(data_path(key))
     ok = lambda d: d.groupby('obj_id_unique').filter(
         lambda g: np.hypot(g.xvel, g.yvel).mean() > 0.15 and g['time stamp'].max() >= 3000)
     low = lambda d: d.groupby('obj_id_unique').filter(lambda g: g.z.max() < 0.25)
@@ -114,7 +111,7 @@ def table(sets):
 
 
 def save(df, name):
-    path = os.path.join(DATA, f'{name}_rebuilt.parquet')
+    path = str(data_path('vae.rebuilt', name=name, must_exist=False))
     for c in ['class', 'split', 'section', 'test_set', 'source']:
         if c in df:
             df[c] = df[c].astype('category')
@@ -128,10 +125,10 @@ def save(df, name):
 def cfd_and_unifying():
     # CFD casting / circling test sets (300 each, ids <behaviour>_<n>_<vel_k>_<flow>; generate_cfd_data.py) and the
     # unifying-algorithm simulations
-    cfd = pd.read_parquet(os.path.join(DATA, 'cfd_test_simple.parquet')).astype({'class': str})
+    cfd = pd.read_parquet(data_path('vae.cfd_test_simple')).astype({'class': str})
     cfd['dataset_name'] = cfd.flow.astype(str) + ' ' + cfd['class']
     cfd['cfd_velocity_field'] = cfd.obj_id_unique.str.extract(r'(vel_\d)', expand=False)
-    uni = pd.read_parquet(os.path.join(FIG5, 'new_unifying.parquet'))
+    uni = pd.read_parquet(data_path('sim.unifying'))
     uni['time stamp'] = (uni['time_relative_to_flash'] * 1000).round()
     uni['obj_id_unique'] = uni.obj_id_unique.map(lambda s: s.decode() if isinstance(s, bytes) else s)
     sets = []
@@ -198,7 +195,7 @@ def real_tests(info, raw, sf, sims):
             ids = [i for i in complete(d) if i not in train]       # 0, 0.3, 0.6 m/s: only flies outside the training 80%
             sets.append((f'variable wind speed, {kind}', f'{speed:g} m/s {kind}', part(d, ids)))
     held = synthetic_held_out()
-    syn = pd.read_parquet(os.path.join(DATA, 'synthetic_training_simple.parquet'))
+    syn = pd.read_parquet(data_path('vae.synthetic_training'))
     syn = syn[syn.obj_id_unique.isin(held)].astype({'class': str})
     sets += [('synthetic algorithms', c, syn[syn['class'] == c]) for c in SYN_CLASSES]
     return table(sets + sims)
@@ -211,10 +208,10 @@ def synthetic_tests(sf, sims):
     unsteady = scored(sf['Unsteady, flash'])          # Fig. 4 unsteady flash: 99% part of a 99/1 split
     unsteady = unsteady[train_test_split(np.arange(len(unsteady)), test_size=0.01, random_state=44,
                                          stratify=np.zeros(len(unsteady)))[0]]
-    sets = [('flash', 'Still air, flash', read('training_stillair_df.parquet')[COLS]),   # validation flies
+    sets = [('flash', 'Still air, flash', read('fly.training_stillair')[COLS]),   # validation flies
             ('flash', 'Unsteady, flash', part(sf['Unsteady, flash'], unsteady)),
             ('flash', 'Steady, flash', part(sf['Steady, flash'], scored(sf['Steady, flash']))),
-            ('flash', 'Laminar, flash', read('training_laminar_df.parquet')[COLS])]
+            ('flash', 'Laminar, flash', read('fly.training_laminar')[COLS])]
     for name, d in [('Still air, sham', still[is_sham(still)]), ('Unsteady, sham', sf['Unsteady, sham']),
                     ('Steady, sham', sf['Steady, sham']), ('Laminar, sham', lam[is_sham(lam)])]:
         sets.append(('sham', name, part(d, scored(d))))

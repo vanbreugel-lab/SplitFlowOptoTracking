@@ -1,0 +1,349 @@
+# Where every data file used by the code lives.
+#
+# All scripts and notebooks ask for data by KEY, never by path:
+#
+#     from splitflow.data_paths import data_path, data_dir
+#     df = pd.read_hdf(data_path('fly.laminar_c1xwt'))
+#     folder = data_dir('cfd.xz_slice')
+#
+# so a file can be renamed or moved by editing this file only. Paths are relative to this
+# Data/ directory unless they start with "/" (absolute) or the entry says `root: repo`
+# (relative to the repository root).
+#
+# An entry is either   key: path
+# or                   key: {path: ..., <options>}
+#   values:   for a path with {placeholders}: every value each placeholder can take
+#             (data_path('wind.laminar', speed=40)); the checks expand all combinations
+#   made_by:  the script that writes the file (shown when the file is missing)
+#   contains: (directories) glob patterns that must each match at least one file
+#   min_files: (directories) with one `contains` pattern, how many files it must match
+#   note:     free text
+#
+# Check that everything is in place:      Data/check_data.sh
+# Check that all code resolves to data:   RunFigures/check_code_data.sh
+
+files:
+
+  # ---------------------------------------------------------------- Experimental_Fly_Data
+  # Flash-triggered fly trajectories, one row per tracked frame.
+  fly.laminar_c1xwt:          Experimental_Fly_Data/flies_laminar_c1xwt_preprocessed_optotrigger_trimmed.hdf
+  fly.stillair_c1xwt:         Experimental_Fly_Data/flies_stillair_c1xwt_preprocessed_optotrigger_trimmed.hdf
+  fly.splitflow_topon_c1xwt:  Experimental_Fly_Data/flies_splitflow_topon_c1xwt_preprocessed_optotrigger_trimmed.hdf
+  fly.splitflow_bottomon_c1xwt: Experimental_Fly_Data/flies_splitflow_bottomon_c1xwt_preprocessed_optotrigger_trimmed.hdf
+  fly.laminar_wt:             Experimental_Fly_Data/flies_laminar_wt_preprocessed_optotrigger_trimmed.hdf
+  fly.stillair_wt:            Experimental_Fly_Data/flies_stillair_wt_preprocessed_optotrigger_trimmed.hdf
+  fly.splitflow_topon_wt:     Experimental_Fly_Data/flies_splitflow_topon_wt_preprocessed_optotrigger_trimmed.parquet
+  fly.splitflow_topon_c1xwt_sham_augmented:
+    path: Experimental_Fly_Data/flies_splitflow_topon_c1xwt_preprocessed_optotrigger_trimmed_SHAM_AUGMENTED_merged.parquet
+    made_by: FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/find_augmented_shams/find_augmented_shams.ipynb
+  fly.varwind:                Experimental_Fly_Data/flies_varwind_C1WT_combined_optotrigger_fancontrol_trimmed.parquet
+  fly.all_nights_top_laminar:    Experimental_Fly_Data/all_nights_new_processing_protocol_top_laminar_09082024.hdf
+  fly.all_nights_bottom_laminar: Experimental_Fly_Data/all_nights_new_processing_protocol_bottom_laminar_09092024.hdf
+  fly.training_laminar:       Experimental_Fly_Data/training_laminar_df.parquet
+  fly.training_stillair:      Experimental_Fly_Data/training_stillair_df.parquet
+
+  # ---------------------------------------------------------------- Shuffled_Flies, Synthetic_Flies_for_Unifying
+  # Controls for the unifying analysis (Fig. S13).
+  shuffled.flies:
+    path: Shuffled_Flies/SHUFFLED_flies_{wind}_c1xwt_preprocessed_optotrigger_trimmed.hdf
+    values: {wind: [laminar, stillair]}
+    made_by: FigureGeneration/Supplemental/supp_fig_13_shuffled_synthetic_uaa/time_shift_flies/make_shuffled_datasets.py
+  synthetic.flies:
+    path: Synthetic_Flies_for_Unifying/synthetic_{scenario}_n{n}.parquet
+    values: {scenario: [brownian, levy_flight, random_turns, run_and_tumble], n: [200]}
+    made_by: FigureGeneration/Supplemental/supp_fig_13_shuffled_synthetic_uaa/uaa_on_synthetic_trajectories/extract_synthetic_trajectories.py
+
+  # ---------------------------------------------------------------- Fig1_Input_Data
+  fig1.unsteady_timeseries:   Fig1_Input_Data/unsteady_timeseries.hdf
+
+  # ---------------------------------------------------------------- Fig4_vae_data (VAE pipeline; Fig. 4, S6-S8)
+  vae.synthetic_training:     Fig4_vae_data/synthetic_training_simple.parquet
+  vae.real_training:          Fig4_vae_data/real_training.parquet
+  vae.test_sets:
+    path: Fig4_vae_data/{kind}_model_test_sets.parquet
+    values: {kind: [synthetic, real]}
+  vae.model:
+    path: Fig4_vae_data/{name}
+    values: {name: [synthetic_sliding_vae_seed42.pth, real_3class_sliding_vae_seed42.pth]}
+  vae.real_model_seed_matrices: Fig4_vae_data/real_model_seed_matrices.parquet
+  vae.cfd_test_simple:        Fig4_vae_data/cfd_test_simple.parquet
+  # outputs of the regeneration scripts (not read by any figure)
+  vae.rebuilt:
+    path: Fig4_vae_data/{name}_rebuilt.parquet
+    values: {name: [real_training, real_model_test_sets, synthetic_model_test_sets]}
+    made_by: FigureGeneration/VAE_pipeline/build_vae_tables.py
+    optional: true
+  vae.cfd_test_sets_regenerated:
+    path: Fig4_vae_data/cfd_test_sets_regenerated.parquet
+    made_by: FigureGeneration/VAE_pipeline/generate_cfd_data.py
+    optional: true
+  vae.synthetic_training_regenerated:
+    path: Fig4_vae_data/synthetic_training_regenerated.parquet
+    made_by: FigureGeneration/VAE_pipeline/generate_synthetic_data.py
+    optional: true
+
+  # ---------------------------------------------------------------- Fig5_Input_Data, Simulated_Trajectory_Data
+  sim.unifying:
+    path: Fig5_Input_Data/new_unifying.parquet
+    made_by: TrajectorySimulations/generate_unifying_algo_trajectories/generate_unifying_trajectories.py
+  sim.cfd_casting_circling:   Simulated_Trajectory_Data/cfd_sim_circling_casting_all_wind_conditions_preprocessed.parquet
+
+  # ---------------------------------------------------------------- Animal_Trajectory_Data (Fig. S14, S15)
+  animal.all_species:         Animal_Trajectory_Data/df_all_species.parquet
+  # raw trajectories that are on disk (the per-animal notebooks write <name>_trajec.parquet and
+  # <name>_unifying_analysis.parquet next to them)
+  animal.raw.d_mel_laminar:   Animal_Trajectory_Data/d_melanogaster/d_mel_laminar_20220927_170437_3462_123.parquet
+  animal.raw.d_mel_stillair:  Animal_Trajectory_Data/d_melanogaster/d_mel_stillair_20220815_162329_5322_124.parquet
+  animal.raw.d_mel_unsteady:  Animal_Trajectory_Data/d_melanogaster/d_mel_unsteady_20240110_164820_11858_151.parquet
+  animal.raw.d_sechelia_1384: Animal_Trajectory_Data/d_sechelia/d_sechelia_1384.parquet
+  animal.raw.d_sechelia_3661: Animal_Trajectory_Data/d_sechelia/d_sechelia_3661.parquet
+  animal.raw.walking_fly_0_4: Animal_Trajectory_Data/walking_drosophila/walking_fly_0_4.parquet
+  animal.shark_fit:
+    path: Animal_Trajectory_Data/sharks/shark_{id}_{kind}.parquet
+    values: {id: [a, d], kind: [trajec, unifying_analysis]}
+
+  # ---------------------------------------------------------------- wind_tunnel_data (Fig. 2, S1)
+  wind.laminar:
+    path: wind_tunnel_data/laminar_flow/laminar_{speed}.csv
+    values: {speed: [0, 20, 40, 60, 80, 100]}
+  wind.splitflow:
+    path: wind_tunnel_data/10_hz_splitflowdata/{position}.csv
+    values: {position: [H_LB, H_LC, H_LF, H_MB, H_MC, H_MF, H_RB, H_RC, H_RF,
+                        V_LB, V_LC, V_LF, V_MB, V_MC, V_MF, V_RB, V_RC, V_RF]}
+  wind.outdoor:               wind_tunnel_data/outdoor_data/df_TNF.csv
+
+
+directories:
+
+  # ---------------------------------------------------------------- 2D_PlanarSlices (CFD; Fig. 2, S1)
+  cfd.xz_slice:     {path: 2D_PlanarSlices/XZslice,     contains: ['*.csv'], min_files: 201}
+  cfd.xy_steady:    {path: 2D_PlanarSlices/XY_steady,   contains: ['*.csv'], min_files: 201}
+  cfd.xy_unsteady:  {path: 2D_PlanarSlices/XY_unsteady, contains: ['*.csv'], min_files: 201}
+
+  # ---------------------------------------------------------------- Animal_Trajectory_Data
+  # one folder per species; the figure notebooks look up <id>*trajec.parquet and
+  # <id>*unifying_analysis.parquet in them
+  animal.trajectories:
+    path: Animal_Trajectory_Data
+    contains:
+      - RL_agents/*_trajec.parquet
+      - albatross/*_trajec.parquet
+      - cockroach/*_trajec.parquet
+      - crabs/*_trajec.parquet
+      - d_melanogaster/*_trajec.parquet
+      - d_sechelia/*_trajec.parquet
+      - eels/*_trajec.parquet
+      - mosquitoes/*_trajec.parquet
+      - moths/*_trajec.parquet
+      - mouse/*_trajec.parquet
+      - nautical_search/*_trajec.parquet
+      - nautilus/*_trajec.parquet
+      - sharks/*_trajec.parquet
+      - terns/*_trajec.parquet
+      - walking_drosophila/*_trajec.parquet
+      - '*/*_unifying_analysis.parquet'
+
+
+# ---------------------------------------------------------------- unifying_algo_results
+# Fit results of the unifying algorithm: one parquet per dataset and flash/sham condition.
+# Code asks for them by file name:   result_path('laminar_data_flash_translationTrue.parquet')
+unifying_results:
+  # the first of these folders that exists is used (local checkout, Dryad)
+  dir_names: [unifying_algo_results, Unifying_Algo_Results]
+
+  # [file-name pattern, subfolder]; first match wins. Names that match nothing, and every
+  # fit made without the translation term, belong in `deprecated_dir` and are never returned.
+  deprecated_dir: deprecated
+  layout:
+    - ['^SHUFFLED_SHUFFLED_flies_laminar_c1xwt', shuffled_c1xwt_laminar]
+    - ['^SHUFFLED_SHUFFLED_flies_stillair_c1xwt', shuffled_c1xwt_stillair]
+    - ['^synthetic_(brownian|levy_flight|random_turns|run_and_tumble)_', 'synthetic_\1']
+    - ['^new_unifying_(laminar|stillair|unsteady)_', 'unifying_sim_\1']
+    - ['^cfd_sim_still_air_circle_', cfd_sim_stillair_circling]
+    - ['^cfd_sim_(laminar|steady|unsteady)_(casting|circling)_', 'cfd_sim_\1_\2']
+    - ['^varwind_N\d+_(flash|sham)_', c1xwt_variable_wind_series]
+    - ['^WT_laminar_data_', wt_laminar]
+    - ['^WT_stillair_data_', wt_stillair]
+    - ['^experiencedunsteady_top_on_data_WT_', wt_unsteady]
+    - ['^laminar_data_', c1xwt_laminar]
+    - ['^stillair_data_', c1xwt_stillair]
+    - ['^unsteady_top_on_data_(flash|sham_AUGMENTED)_', c1xwt_unsteady]
+
+  # [file-name pattern, command that makes the file] (paths relative to the repository root)
+  how_to_make:
+    - ['^SHUFFLED_', 'FigureGeneration/Supplemental/supp_fig_13_shuffled_synthetic_uaa/time_shift_flies/analyze_shuffled.py']
+    - ['^synthetic_', 'FigureGeneration/Supplemental/supp_fig_13_shuffled_synthetic_uaa/uaa_on_synthetic_trajectories/analyze_synthetic.py']
+    - ['^new_unifying_', 'FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/analyze_NEW_unifying_sims.py --include-translation']
+    - ['^cfd_sim_', 'FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/analyze_cfd_sims.py --include-translation']
+    - ['^varwind_', 'FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/analyze_varwind_combined.py --include-translation']
+    - ['^WT_laminar', 'FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/analyze_laminar_wt.py --include-translation']
+    - ['^WT_stillair', 'FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/analyze_still_wt.py --include-translation']
+    - ['^experiencedunsteady', 'FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/analyze_unsteady_exp_top_on_wt.py --include-translation']
+    - ['^laminar_data', 'FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/analyze_laminar.py --include-translation']
+    - ['^stillair_data', 'FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/analyze_still.py --include-translation']
+    - ['^unsteady_top_on_data_sham_AUGMENTED', 'FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/analyze_unsteady_exp_top_on_sham_augmented.py --include-translation']
+    - ['^unsteady_top_on_data_flash', 'FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/analyze_unsteady_exp_top_on.py --include-translation']
+
+  # [file-name pattern, key of the trajectory file the fits were made from]; first match wins.
+  # Used by trajectory_for_result('laminar_data_flash_translationTrue.parquet').
+  trajectories:
+    - ['WT_laminar', fly.laminar_wt]
+    - ['(unsteady|all)_top_on_data_WT', fly.splitflow_topon_wt]
+    - ['WT_stillair', fly.stillair_wt]
+    - ['^varwind_', fly.varwind]
+    - ['^cfd_sim_', sim.cfd_casting_circling]
+    - ['^new_unifying_', sim.unifying]
+    - ['^laminar_data', fly.laminar_c1xwt]
+    - ['^stillair_data', fly.stillair_c1xwt]
+    - ['unsteady.*flash', fly.splitflow_topon_c1xwt]
+    - ['unsteady.*sham', fly.splitflow_topon_c1xwt_sham_augmented]
+
+  # every result file the figures and scripts read; all must exist
+  current:
+    - laminar_data_{condition}_translationTrue.parquet
+    - stillair_data_{condition}_translationTrue.parquet
+    - unsteady_top_on_data_flash_translationTrue.parquet
+    - unsteady_top_on_data_sham_AUGMENTED_translationTrue.parquet
+    - varwind_N700_{condition}_{fan}.0_translationTrue.parquet
+    - WT_laminar_data_{condition}_translationTrue.parquet
+    - WT_stillair_data_{condition}_translationTrue.parquet
+    - experiencedunsteady_top_on_data_WT_{condition}_translationTrue.parquet
+    - cfd_sim_{flow}_casting_translationTrue.parquet
+    - cfd_sim_{cfd_circling}_translationTrue.parquet
+    - new_unifying_{wind}_translationTrue.parquet
+    - synthetic_{scenario}_translationTrue.parquet
+    - SHUFFLED_SHUFFLED_flies_{shuffled_wind}_c1xwt_preprocessed_optotrigger_trimmed.hdf_translationTrue.parquet
+  values:
+    condition: [flash, sham]
+    fan: [12, 20, 23, 28, 40, 90]
+    flow: [laminar, steady, unsteady]
+    cfd_circling: [steady_circling, unsteady_circling, still_air_circle]
+    wind: [laminar, stillair, unsteady]
+    scenario: [brownian, levy_flight, random_turns, run_and_tumble]
+    shuffled_wind: [laminar, stillair]
+
+
+# ======================================================================================
+# ======================================================================================
+#
+#   NOT YET LOCATED
+#
+#   Files the code refers to that are NOT in Data/ on this machine. Nothing the figure
+#   scripts (RunFigures/) run needs them; they are the raw inputs of hand-run notebooks
+#   and of the simulation / regeneration scripts. The checks list them every time but
+#   do not fail because of them. When you find one, put it at `path` (or change `path`)
+#   and move the entry up into `files:` or `directories:`.
+#
+#   used_by:  the code that reads the file
+#   note:     where a copy might be
+#
+# ======================================================================================
+# ======================================================================================
+not_yet_located:
+
+  # ---------------------------------------------------------------- raw animal trajectories
+  # (their fitted *_trajec.parquet / *_unifying_analysis.parquet outputs ARE in Data/Animal_Trajectory_Data)
+  animal.raw.rl_agent_c:
+    path: Animal_Trajectory_Data/RL_agents/rl_agent_c.csv
+    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/RL_agents]
+  animal.raw.albatross:
+    path: Animal_Trajectory_Data/albatross/albatross_{behavior}_trajec.csv
+    values: {behavior: [casting, circling]}
+    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/albatross]
+    note: copies are in Data/Fig5_Input_Data/animal_trajectories/albatross/
+  animal.raw.cockroach_laminar:
+    path: Animal_Trajectory_Data/cockroach/wind100/laminar/23april09i.dat
+    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/cockroach]
+  animal.raw.crab:
+    path: Animal_Trajectory_Data/crabs/crab_{id}_{component}.csv
+    values: {id: [105N, '12710'], component: [vx, vy]}
+    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/crabs]
+  animal.raw.eel:
+    path: Animal_Trajectory_Data/eels/eel.csv
+    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/eels]
+  animal.raw.mosquito:
+    path: Animal_Trajectory_Data/mosquitoes/mosquito_trajec.csv
+    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/mosquitoes]
+  animal.raw.moth:
+    path: Animal_Trajectory_Data/moths/1Oct08{id}.3.dat
+    values: {id: [B, E]}
+    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/moths]
+    note: copies are in Data/Fig5_Input_Data/animal_trajectories/moth/ and inside wind100-*.zip in the moths notebook folder
+  animal.raw.mouse:
+    path: Animal_Trajectory_Data/mouse/mouse_{kind}.csv
+    values: {kind: [straight, tortuous]}
+    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/mouse]
+  animal.raw.nautical_search:
+    path: Animal_Trajectory_Data/nautical_search/{pattern}.csv
+    values: {pattern: [charlie_sierra, sierra_sierra]}
+    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/nautical_search]
+  animal.raw.nautilus:
+    path: Animal_Trajectory_Data/nautilus/nautilus_yellow.csv
+    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/nautilus]
+  animal.raw.shark:
+    path: Animal_Trajectory_Data/sharks/shark_{id}.csv
+    values: {id: [a, b, c, d]}
+    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/sharks]
+    note: copies are in Data/Fig5_Input_Data/animal_trajectories/shark/
+  animal.raw.terns:
+    path: Animal_Trajectory_Data/terns/terns.csv
+    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/terns]
+  animal.raw.terns_all_merged:
+    path: Animal_Trajectory_Data/terns/ALL_merged_d200div_d25curl.csv
+    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/terns]
+
+  # ---------------------------------------------------------------- raw fly recordings (lab server)
+  fly.raw.splitflow_topon_c1xwt_nights:
+    path: /media/caveman/Vorchard1/jaleesa_unsteady/fly_data/horizontal_split_top_on
+    kind: directory
+    used_by: [FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/find_augmented_shams/find_augmented_shams.ipynb]
+    note: one folder per night, each with preprocessed_data/*_preprocessed.hdf and optotrigger_light_stimulus.hdf
+  fly.raw.splitflow_topon_wt_nights:
+    path: /media/caveman/Vorchard1/kevin_split_flow_data/wildtypes
+    kind: directory
+    used_by: [FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/find_augmented_shams/find_augmented_shams_wt_data.ipynb]
+    note: one folder per night, each with preprocessed_data/*_preprocessed.hdf and optotrigger_light_stimulus.hdf
+
+  # ---------------------------------------------------------------- CFD velocity fields and simulation inputs
+  cfd.velocity_fields_3d:
+    path: CFD/3D_Velocity_Fields
+    kind: directory
+    used_by: [FigureGeneration/VAE_pipeline/generate_cfd_data.py]
+    note: 3D_vel_1.zip ... 3D_vel_6.zip from Dryad (~4 GB each); the CFD_DIR environment variable overrides this
+  sim.casting_constwind_fixed:
+    path: Experimental_Fly_Data/casting_sim_constwind_n1000_fixed.parquet
+    used_by: [FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/preprocess_cfd_data.py]
+    note: an .hdf version is in Data/Simulated_Trajectory_Data/misc_ignore/
+  sim.casting_constwind_fixed_preprocessed:
+    path: Experimental_Fly_Data/casting_sim_constwind_n1000_fixed_preprocessed.parquet
+    used_by: [FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/preprocess_cfd_data.py]
+    note: written by preprocess_cfd_data.py from sim.casting_constwind_fixed
+
+  # ---------------------------------------------------------------- expected next to the code (root: repo)
+  # These notebooks and scripts read files from their own folder; the files are not there.
+  local.cfd_velocity_folders:
+    path: TrajectorySimulations/generating_synthetic_test_trajectory_data/vel_{n}
+    values: {n: [1, 2, 3, 4, 5, 6]}
+    root: repo
+    kind: directory
+    used_by: [TrajectorySimulations/generating_synthetic_test_trajectory_data/cfd_casting_circling_sims.py,
+              TrajectorySimulations/generating_synthetic_test_trajectory_data/Casting_Circling_CFD_trajectory_generation.ipynb]
+    note: unzipped 3D CFD velocity fields (parquet frames), see cfd.velocity_fields_3d
+  local.new_unifying_laminar:
+    path: TrajectorySimulations/generate_unifying_algo_trajectories/new_unifying_laminar.parquet
+    root: repo
+    used_by: [TrajectorySimulations/generate_unifying_algo_trajectories/plot_trajectories.ipynb]
+  local.cockroach_turbulent:
+    path: FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/cockroach/wind100/turbulent
+    root: repo
+    kind: directory
+    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/cockroach/cockroach_turbulent.ipynb]
+  local.walking_fly_mat:
+    path: FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/walking_drosophila/MatchedOrco_{line}.mat
+    values: {line: [chrimson, acv]}
+    root: repo
+    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/walking_drosophila/walking_fly.ipynb]
+  local.d_sechelia_raw:
+    path: FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/d_sechelia/actual_data/dsec07_noni.csv
+    root: repo
+    used_by: [FigureGeneration/Supplemental/supp_fig_14_all_animal_trajectories/animal_data/d_sechelia/explore_data.ipynb]

@@ -218,7 +218,7 @@ if __name__ == "__main__":
                 bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
     
     plt.tight_layout()
-    plt.savefig('/mnt/user-data/outputs/optimal_staircase.png', dpi=150)
+    plt.savefig('optimal_staircase.png', dpi=150)
     plt.show()
     
     print("\nOptimization complete!")

@@ -60,8 +60,9 @@ def _(mo):
 
 @app.cell
 def _(Path, mo):
+    from splitflow.data_paths import data_path
+
     NB_DIR = Path(mo.notebook_dir() or Path(__file__).parent)
-    DATA_DIR = (NB_DIR / "../../Data").resolve()
     OUT_DIR = NB_DIR / "output_figs"
 
     # Figure 5B settings, copied from
@@ -69,7 +70,7 @@ def _(Path, mo):
     # To add a dataset, add an entry here (fig5_obj_id=None if it is not in Figure 5B).
     DATASETS = {
         "Laminar": dict(
-            file="Experimental_Fly_Data/flies_laminar_c1xwt_preprocessed_optotrigger_trimmed.hdf",
+            file="fly.laminar_c1xwt",  # key in Data/data_paths.yaml
             flash_filter=lambda df: df.intensity == 100,
             fig5_obj_id="20220927_170437_3415_122",  # unique()[40] in notebook B
             seed=1,
@@ -77,7 +78,7 @@ def _(Path, mo):
             saved_fits="laminar_data_flash",
         ),
         "Still air": dict(
-            file="Experimental_Fly_Data/flies_stillair_c1xwt_preprocessed_optotrigger_trimmed.hdf",
+            file="fly.stillair_c1xwt",  # key in Data/data_paths.yaml
             flash_filter=lambda df: df.intensity == 100,
             fig5_obj_id="20220815_162329_1835_55",
             seed=2,
@@ -85,7 +86,7 @@ def _(Path, mo):
             saved_fits="stillair_data_flash",
         ),
         "Unsteady (split flow, top on)": dict(
-            file="Experimental_Fly_Data/flies_splitflow_topon_c1xwt_preprocessed_optotrigger_trimmed.hdf",
+            file="fly.splitflow_topon_c1xwt",  # key in Data/data_paths.yaml
             flash_filter=lambda df: df.intensity > 0,
             fig5_obj_id="20240110_164820_3734_82",
             seed=3,
@@ -93,7 +94,7 @@ def _(Path, mo):
             saved_fits="unsteady_top_on_data_flash",
         ),
         "Low wind (variable wind)": dict(
-            file="Experimental_Fly_Data/flies_varwind_C1WT_combined_optotrigger_fancontrol_trimmed.parquet",
+            file="fly.varwind",  # key in Data/data_paths.yaml
             flash_filter=lambda df: df.intensity > 0,
             fig5_obj_id="20260406_185025_103927_683",
             seed=4,
@@ -109,23 +110,23 @@ def _(Path, mo):
     OBJ_ID_KEY = "obj_id_unique_event"
     return (
         DATASETS,
-        DATA_DIR,
         FIT_PARAMS,
         FLASH_FRAME_START,
         OBJ_ID_KEY,
         OUT_DIR,
+        data_path,
     )
 
 
 @app.cell
-def _(DATASETS, DATA_DIR, OBJ_ID_KEY, functools, pd):
+def _(DATASETS, OBJ_ID_KEY, data_path, functools, pd):
     COLUMNS = [OBJ_ID_KEY, "x", "y", "time_relative_to_flash", "lights_on", "course_smoothish"]
 
     @functools.cache
     def load_dataset(name):
         """Flash trajectories of one dataset, NaN rows dropped (as in notebook B)."""
         cfg = DATASETS[name]
-        path = DATA_DIR / cfg["file"]
+        path = data_path(cfg["file"])
         df = pd.read_hdf(path) if path.suffix == ".hdf" else pd.read_parquet(path)
         df = df[cfg["flash_filter"](df)]
         return df[COLUMNS].dropna()
@@ -233,7 +234,6 @@ def _(
 @app.cell
 def _(
     FIT_PARAMS,
-    DATA_DIR,
     OBJ_ID_KEY,
     functools,
     np,

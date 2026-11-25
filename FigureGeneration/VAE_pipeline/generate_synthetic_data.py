@@ -19,8 +19,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', 'Code'))
 import opto_tracking                                
 import StochasticAlgorithms as SA
+from splitflow.data_paths import data_path
 
-OUT = os.path.join(HERE, '..', '..', 'Data', 'Fig4_vae_data', 'synthetic_training_regenerated.parquet')
+OUT = str(data_path('vae.synthetic_training_regenerated', must_exist=False))
 N_WORKERS = 8
 T = 4.0
 TT = T + 0.0100001                                          # int(TT / 0.01) = 401 steps (4.01 / 0.01 rounds down to 400)

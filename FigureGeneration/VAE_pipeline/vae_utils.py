@@ -13,9 +13,9 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 
 import splitflow.TripletLoss as CCL
+from splitflow.data_paths import data_path
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-DATA = os.path.join(HERE, '..', '..', 'Data', 'Fig4_vae_data')
 CACHE = os.path.join(HERE, 'cache')
 MODELS = {'synthetic': 'synthetic_sliding_vae_seed42.pth', 'real': 'real_3class_sliding_vae_seed42.pth'}
 
@@ -80,13 +80,13 @@ def order_ids(ids):
 def synthetic_training(wins=WINDOWS):
     # synthetic_training_simple.parquet: windows [3 x (60000, 191, 4)], class ids, ids (casting_1 ...), train / held-out
     # indices. The held-out 20% (the VAE's validation set) are the synthetic test set of real_model_test_sets.parquet
-    df = pd.read_parquet(os.path.join(DATA, 'synthetic_training_simple.parquet'),
+    df = pd.read_parquet(data_path('vae.synthetic_training'),
                          columns=['obj_id_unique', 'class', 'time stamp'] + FEATS,
                          filters=[('time stamp', '>=', wins[0][0] - 1)])
     info = df.groupby('obj_id_unique', sort=False)['class'].first().astype(str)
     ids = np.array(order_ids(info.index))
     y = info.loc[ids].map(SYN_CLASSES.index).to_numpy()
-    real = pd.read_parquet(os.path.join(DATA, 'real_model_test_sets.parquet'), columns=['obj_id_unique', 'section'])
+    real = pd.read_parquet(data_path('vae.test_sets', kind='real'), columns=['obj_id_unique', 'section'])
     held = np.isin(ids, real.obj_id_unique[real.section == 'synthetic algorithms'].unique())
     assert held.sum() == len(ids) // 5, 'held-out set: 20% of the synthetic training set'
     Xs, ok = windows(df, ids, wins)
@@ -95,7 +95,7 @@ def synthetic_training(wins=WINDOWS):
 
 
 def test_sets(kind, wins=WINDOWS[:1]):
-    df = pd.read_parquet(os.path.join(DATA, f'{kind}_model_test_sets.parquet'),
+    df = pd.read_parquet(data_path('vae.test_sets', kind=kind),
                          columns=['obj_id_unique', 'section', 'test_set', 'time stamp'] + FEATS,
                          filters=[('time stamp', '>=', wins[0][0] - 1), ('time stamp', '<=', wins[-1][1] + 1)])
     out = {}
@@ -109,7 +109,7 @@ def test_sets(kind, wins=WINDOWS[:1]):
 
 
 def real_training(wins=WINDOWS):
-    df = fill_gaps(pd.read_parquet(os.path.join(DATA, 'real_training.parquet'),
+    df = fill_gaps(pd.read_parquet(data_path('vae.real_training'),
                                    columns=['obj_id_unique', 'class', 'source', 'split', 'time stamp'] + FEATS))
     info = df.groupby('obj_id_unique')[['class', 'source', 'split']].first()
     rank = {s: i for i, s in enumerate(s for c in REAL_CLASSES for s in REAL_SOURCES[c])}
@@ -141,7 +141,7 @@ def new_model():
 
 def load_model(kind):
     model = new_model()
-    model.load_state_dict(torch.load(os.path.join(DATA, MODELS[kind])))
+    model.load_state_dict(torch.load(data_path('vae.model', name=MODELS[kind])))
     model.eval()
     return model
 

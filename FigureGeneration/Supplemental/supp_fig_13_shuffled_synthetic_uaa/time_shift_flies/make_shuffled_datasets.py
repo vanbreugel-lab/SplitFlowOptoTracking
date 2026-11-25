@@ -21,19 +21,13 @@ Run from anywhere:
     python make_shuffled_datasets.py [--seed 0]
 """
 import argparse
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-REPO_ROOT = Path(__file__).resolve().parents[4]  # <repo>/FigureGeneration/Supplemental/supp_fig_13_shuffled_synthetic_uaa/<this dir>/<this file>
-DATA_DIR = REPO_ROOT / "Data" / "Experimental_Fly_Data"
-OUT_DIR = REPO_ROOT / "Data" / "Shuffled_Flies"
+from splitflow.data_paths import data_path
 
-FILENAMES = [
-    "flies_laminar_c1xwt_preprocessed_optotrigger_trimmed.hdf",
-    "flies_stillair_c1xwt_preprocessed_optotrigger_trimmed.hdf",
-]
+WINDS = ["laminar", "stillair"]  # source: fly.<wind>_c1xwt, output: shuffled.flies (Data/data_paths.yaml)
 
 OBJ_ID_KEY = "obj_id_unique_event"
 DT = 0.01  # s; 100 Hz, matches diff of time_relative_to_flash
@@ -103,11 +97,11 @@ def main():
     parser.add_argument("--seed", type=int, default=0)
     args = parser.parse_args()
     rng = np.random.default_rng(args.seed)
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    for fname in FILENAMES:
-        src = DATA_DIR / fname
-        dst = OUT_DIR / f"SHUFFLED_{fname}"
+    for wind in WINDS:
+        src = data_path(f"fly.{wind}_c1xwt")
+        dst = data_path("shuffled.flies", wind=wind, must_exist=False)
+        fname = src.name
         with pd.HDFStore(src, "r") as store:
             key = store.keys()[0]
         df = pd.read_hdf(src, key=key)

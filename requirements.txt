@@ -36,6 +36,7 @@ gurobipy>=13,<14
 
 # --- I/O backends (used at runtime, not imported by name) ---
 pyarrow             # pandas .read_parquet / .to_parquet (all *.parquet files)
+pyyaml              # imported as `yaml`: Data/data_paths.yaml (splitflow.data_paths), RunFigures/figures.yaml
 tables              # pandas .read_hdf (*.hdf); PyTables
 
 # --- Geometry / rendering used by specific figures ---

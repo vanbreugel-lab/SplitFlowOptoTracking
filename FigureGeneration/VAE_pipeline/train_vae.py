@@ -15,7 +15,7 @@ import pandas as pd
 import torch
 
 from vae_utils import (synthetic_training, real_training, real_split, balanced_split, test_sets, new_model, encode, fit_rf,
-                       label, CCL, DATA, MODELS, WINDOWS, SYN_CLASSES, REAL_CLASSES, VARWIND_SPEED, OOD)
+                       label, CCL, data_path, MODELS, WINDOWS, SYN_CLASSES, REAL_CLASSES, VARWIND_SPEED, OOD)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, 'output')
@@ -159,4 +159,4 @@ if __name__ == '__main__':
         a, _, b = opt('--seeds', '0-9').partition('-')
         seed_matrices(range(int(a), int(b or a) + 1), opt('--epochs', 250), opt('--threads', 5))
     else:
-        classify(kind, opt('--model', os.path.join(DATA, MODELS[kind])))
+        classify(kind, opt('--model', str(data_path('vae.model', name=MODELS[kind]))))

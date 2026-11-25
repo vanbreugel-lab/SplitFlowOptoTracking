@@ -13,14 +13,15 @@ import zipfile
 import numpy as np
 import pandas as pd
 
+from splitflow.data_paths import data_dir, data_path
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', 'TrajectorySimulations', 'generating_synthetic_test_trajectory_data'))
 import generate_synthetic_data as G                         # (puts Code/ on the path: opto_tracking)
 import opto_tracking
 from cfd_casting_circling_sims import FastWindObs
 
-CFD_DIR = os.environ.get('CFD_DIR', os.path.join(HERE, '..', '..', 'Data', 'CFD', '3D_Velocity_Fields'))
-OUT = os.path.join(HERE, '..', '..', 'Data', 'Fig4_vae_data', 'cfd_test_sets_regenerated.parquet')
+OUT = str(data_path('vae.cfd_test_sets_regenerated', must_exist=False))
 CONDITIONS = [f'vel_{i}' for i in range(1, 7)]
 N_WORKERS = int(os.environ.get('N_WORKERS', mp.cpu_count() // 2))
 DURATION, DT, BOUNDS = 3.21, 0.01, [(-0.5, 0.5), (-0.25, 0.25), (0, 0.5)]
@@ -34,7 +35,9 @@ _WIND = None                                                # (velocities, ux, u
 
 def load_condition(cond):
     # the 33 frames of 3D_<cond>.zip: velocities (frames, points, 3), the grid axes and the grid -> point index
-    z = zipfile.ZipFile(os.path.join(CFD_DIR, f'3D_{cond}.zip'))
+    # the folder of 3D_vel_<n>.zip: the CFD_DIR environment variable, else cfd.velocity_fields_3d in Data/data_paths.yaml
+    cfd_dir = os.environ.get('CFD_DIR') or data_dir('cfd.velocity_fields_3d')
+    z = zipfile.ZipFile(os.path.join(cfd_dir, f'3D_{cond}.zip'))
     names = sorted([n for n in z.namelist() if n.endswith('.parquet')], key=lambda s: int(s.split('__')[1].split('.')[0]))
     df0 = pd.read_parquet(io.BytesIO(z.read(names[0])), columns=['x', 'y', 'z', 'xvel', 'yvel', 'zvel'])
     pos = df0[['x', 'y', 'z']].values.astype(np.float32)

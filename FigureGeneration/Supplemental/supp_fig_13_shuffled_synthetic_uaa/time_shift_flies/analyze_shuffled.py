@@ -8,20 +8,18 @@ Reads Data/Shuffled_Flies/, writes Data/unifying_algo_results/<dataset>/ (see sp
 """
 
 import argparse
-from pathlib import Path
 
 import pandas as pd
 
+from splitflow.data_paths import data_path
 from splitflow.unifying_results import result_path
 
 from align_course_direction_analysis import unifying_algo_analysis as uaa
 
-REPO_ROOT = Path(__file__).resolve().parents[4]  # <repo>/FigureGeneration/Supplemental/supp_fig_13_shuffled_synthetic_uaa/<this dir>/<this file>
-DATA_DIR = REPO_ROOT / 'Data' / 'Shuffled_Flies'
-
-SCENARIOS = ['SHUFFLED_flies_laminar_c1xwt_preprocessed_optotrigger_trimmed.hdf',
-            'SHUFFLED_flies_stillair_c1xwt_preprocessed_optotrigger_trimmed.hdf',
-            ]
+# wind condition of each shuffled dataset (data_path('shuffled.flies', wind=...)), keyed by the name used in the results file
+SCENARIOS = {'SHUFFLED_flies_laminar_c1xwt_preprocessed_optotrigger_trimmed.hdf': 'laminar',
+             'SHUFFLED_flies_stillair_c1xwt_preprocessed_optotrigger_trimmed.hdf': 'stillair',
+             }
 N_TRAJECS = 200
 
 # PARAMETERS
@@ -51,7 +49,7 @@ if __name__ == '__main__':
 
     for scenario in args.scenarios:
         print(scenario)
-        braid_df = pd.read_hdf(DATA_DIR / scenario)
+        braid_df = pd.read_hdf(data_path('shuffled.flies', wind=SCENARIOS[scenario]))
         unifying_algo_data = uaa.run_miop_affine_fit_on_trajectories(
             braid_df, N_TRAJECS,
             include_translation=args.include_translation,

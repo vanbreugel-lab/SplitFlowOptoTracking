@@ -112,6 +112,9 @@ FigureGeneration/Main/fig_4_autoencoder/misc/
 # =====================
 Data/*
 !Data/download_from_dryad_and_unzip_here.txt
+# the list of data files the code uses, and the script that checks Data/ against it
+!Data/data_paths.yaml
+!Data/check_data.sh
 
 # Trajectory simulation outputs
 TrajectorySimulations/generating_synthetic_test_trajectory_data/param_sweep/

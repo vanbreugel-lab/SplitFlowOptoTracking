@@ -1,21 +1,14 @@
 import argparse
 import sys
-from pathlib import Path
 
 import pandas as pd
 
+from splitflow.data_paths import data_path
 from splitflow.unifying_results import result_path
 
 
-# Data locations. This script lives 4 levels under the repo root:
-#   FigureGeneration/Main/fig_5_unifying_algo_analysis/analysis_scripts/<this>.py
-_REPO_ROOT = Path(__file__).resolve().parents[4]
-_DATA = _REPO_ROOT / "Data"
-
 
 class _Config:
-    RAW_DATA_DIR = _DATA / "Experimental_Fly_Data"
-
     def configure_gurobi_env(self):
         pass  # Gurobi picked up from the default license location / GRB_LICENSE_FILE
 
@@ -34,7 +27,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Load the data
-    hdf_filename =  str(config.RAW_DATA_DIR / 'flies_stillair_c1xwt_preprocessed_optotrigger_trimmed.hdf')
+    hdf_filename =  str(data_path('fly.stillair_c1xwt'))
     df_laminar = pd.read_hdf(hdf_filename)
 
     # How many trajectories to process (max)

@@ -16,16 +16,15 @@ The first frame of brownian / run-and-tumble / random-turns sims has zero veloci
 Usage (from anywhere):
     python extract_synthetic_trajectories.py
 """
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
 from braid_analysis import flymath
 
-REPO_ROOT = Path(__file__).resolve().parents[4]  # <repo>/FigureGeneration/Supplemental/supp_fig_13_shuffled_synthetic_uaa/<this dir>/<this file>
-SRC_PARQUET = REPO_ROOT / 'Data' / 'Fig4_vae_data' / 'synthetic_training_simple.parquet'
-OUT_DIR = REPO_ROOT / 'Data' / 'Synthetic_Flies_for_Unifying'
+from splitflow.data_paths import data_path
+
+SRC_PARQUET = data_path('vae.synthetic_training')
 
 N_TRAJECS = 200
 SEED = 0
@@ -59,7 +58,6 @@ if __name__ == '__main__':
     rng = np.random.default_rng(SEED)
     df_all = pd.read_parquet(SRC_PARQUET, columns=SRC_COLS)
     df_all['class'] = df_all['class'].astype(str)  # stored as categorical
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     for class_name, stem in SCENARIOS.items():
         df = df_all[df_all['class'] == class_name]
@@ -69,7 +67,7 @@ if __name__ == '__main__':
 
         df = format_for_uaa(df)
 
-        out = OUT_DIR / f'synthetic_{stem}_n{N_TRAJECS}.parquet'
+        out = data_path('synthetic.flies', scenario=stem, n=N_TRAJECS, must_exist=False)
         df.to_parquet(out)
         lengths = df.groupby('obj_id_unique_event').size()
         print(f'{class_name:30s} -> {out.name}: {df.obj_id_unique_event.nunique()} trajecs, '

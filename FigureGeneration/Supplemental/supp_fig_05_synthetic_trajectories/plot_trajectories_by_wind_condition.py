@@ -18,6 +18,8 @@ import matplotlib.patches as mpatches
 from matplotlib.collections import PatchCollection
 import pynumdiff
 
+from splitflow.data_paths import data_path
+
 # ---------------------------------------------------------------------------
 # Inline helpers (from SplitFlowOptoTracking_new/Code/PlotUtilities.py)
 # ---------------------------------------------------------------------------
@@ -83,10 +85,7 @@ plt.rcParams["mathtext.fontset"] = "cm"
 # Load data
 # ---------------------------------------------------------------------------
 
-DATA_PATH = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
-    "../../../Data/Fig5_Input_Data/new_unifying.parquet",
-)
+DATA_PATH = data_path("sim.unifying")
 df = pd.read_parquet(DATA_PATH)
 
 WIND_CONDITIONS = ["laminar", "unsteady", "stillair"]

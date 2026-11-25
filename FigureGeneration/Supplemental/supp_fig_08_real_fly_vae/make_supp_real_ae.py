@@ -148,7 +148,7 @@ def model_data():
 def mean_counts():
     # E: mean counts over the seeds (rows: classes + Uncertain; columns (section, test set) in file order), and the
     # columns' labels and colours
-    M = pd.read_parquet(os.path.join(V.DATA, 'real_model_seed_matrices.parquet'))
+    M = pd.read_parquet(V.data_path('vae.real_model_seed_matrices'))
     counts = M.pivot_table(index='label', columns=['section', 'test_set'], values='count', aggfunc='mean',
                            observed=True, sort=False).reindex(V.REAL_CLASSES + ['Uncertain'])
     counts = counts[list(dict.fromkeys(zip(M.section, M.test_set)))]

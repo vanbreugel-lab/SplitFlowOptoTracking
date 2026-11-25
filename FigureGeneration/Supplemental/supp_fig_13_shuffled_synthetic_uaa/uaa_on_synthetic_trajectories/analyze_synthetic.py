@@ -18,11 +18,11 @@ Usage:
                                 [--scenarios brownian levy_flight ...]
 """
 import argparse
-from pathlib import Path
 
 import cvxpy
 import pandas as pd
 
+from splitflow.data_paths import data_path
 from splitflow.unifying_results import result_path
 
 from align_course_direction_analysis import unifying_algo_analysis as uaa
@@ -46,9 +46,6 @@ def override_gurobi_limits(time_limit, mip_gap):
     cvxpy.Problem.solve = solve
 
 
-REPO_ROOT = Path(__file__).resolve().parents[4]  # <repo>/FigureGeneration/Supplemental/supp_fig_13_shuffled_synthetic_uaa/<this dir>/<this file>
-DATA_DIR = REPO_ROOT / 'Data' / 'Synthetic_Flies_for_Unifying'
-
 SCENARIOS = ['random_turns', 'levy_flight', 'run_and_tumble', 'brownian']
 N_TRAJECS = 200
 
@@ -67,7 +64,7 @@ PARAMS = dict(
 
 
 def input_path(scenario):
-    return DATA_DIR / f'synthetic_{scenario}_n{N_TRAJECS}.parquet'
+    return data_path('synthetic.flies', scenario=scenario, n=N_TRAJECS)
 
 
 if __name__ == '__main__':

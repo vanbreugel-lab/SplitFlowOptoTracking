@@ -16,6 +16,7 @@ import re
 import sys
 from pathlib import Path
 
+from splitflow.data_paths import data_path, trajectory_for_result
 from splitflow.unifying_results import result_path
 
 import numpy as np
@@ -29,8 +30,6 @@ from align_course_direction_analysis import unifying_algo_analysis as uaa
 FIGURE_NAME = 'unifying_analysis_translationTrue.svg'
 TRANSLATION = True
 
-DATA_DIR = Path('../../../../Data')
-TRAJEC_DIR = DATA_DIR / 'Experimental_Fly_Data'
 SHUFFLED_SYNTHETIC_DIR = Path('../../../Supplemental/supp_fig_13_shuffled_synthetic_uaa')
 
 # Average model window: columns of the aligned arrays (-300..300 samples at 0.01 s), 200:400 = aligned time -1..1 s
@@ -80,22 +79,7 @@ def unifying_results_path(filename):
 
 def fly_trajec_filename(unifying_filename):
     """Trajectory file matching a fly unifying-results file (laminar / unsteady / still air datasets)."""
-    name = Path(unifying_filename).name
-    if 'WT_laminar' in name:
-        return TRAJEC_DIR / 'flies_laminar_wt_preprocessed_optotrigger_trimmed.hdf'
-    if 'unsteady_top_on_data_WT' in name:  # includes experiencedunsteady_
-        return TRAJEC_DIR / 'flies_splitflow_topon_wt_preprocessed_optotrigger_trimmed.parquet'
-    if 'WT_stillair' in name:
-        return TRAJEC_DIR / 'flies_stillair_wt_preprocessed_optotrigger_trimmed.hdf'
-    if name.startswith('laminar_data'):
-        return TRAJEC_DIR / 'flies_laminar_c1xwt_preprocessed_optotrigger_trimmed.hdf'
-    if name.startswith('stillair_data'):
-        return TRAJEC_DIR / 'flies_stillair_c1xwt_preprocessed_optotrigger_trimmed.hdf'
-    if 'unsteady' in name and 'flash' in name:
-        return TRAJEC_DIR / 'flies_splitflow_topon_c1xwt_preprocessed_optotrigger_trimmed.hdf'
-    if 'unsteady' in name and 'sham' in name:
-        return TRAJEC_DIR / 'flies_splitflow_topon_c1xwt_preprocessed_optotrigger_trimmed_SHAM_AUGMENTED_merged.parquet'
-    raise ValueError('No trajectory file known for ' + name)
+    return trajectory_for_result(unifying_filename)  # mapping: unifying_results.trajectories in Data/data_paths.yaml
 
 
 # Figure 5 colors for the variable wind data: all speeds light purple, 20 cm/s (fan setting 28) highlighted.
@@ -104,7 +88,7 @@ VARWIND_COLOR = '#c4aee0'
 VARWIND_HIGHLIGHT_COLOR = '#a245ff'
 VARWIND_HIGHLIGHT_SPEED = '28'  # 20 cm/s
 
-VARWIND_TRAJEC_FILENAME = TRAJEC_DIR / 'flies_varwind_C1WT_combined_optotrigger_fancontrol_trimmed.parquet'
+VARWIND_TRAJEC_FILENAME = data_path('fly.varwind')
 VARWIND_SPEEDS = ['12', '20', '23', '28', '40', '90']
 VARWIND_SPEED_LABELS = {'12': 0, '20': 3, '23': 10, '28': 20, '40': 30, '90': 60}  # cm/s
 

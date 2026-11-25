@@ -1,20 +1,16 @@
 """
 Scenario metadata shared by the shuffled / synthetic UAA supplemental figure notebooks.
 
-Paths are relative to this folder (notebooks are run from their own directory).
+Data locations come from Data/data_paths.yaml (splitflow.data_paths).
 """
-from pathlib import Path
 
 import pandas as pd
 
+from splitflow.data_paths import data_path
 from splitflow.unifying_results import result_path
 
 FIGURE_NAME = 'supplemental_unifying_analysis_shuffled_synthetic.svg'
 TRANSLATION = True
-
-DATA_DIR = Path('../../../Data')
-SHUFFLED_DIR = DATA_DIR / 'Shuffled_Flies'                # made by time_shift_flies/make_shuffled_datasets.py
-SYNTHETIC_DIR = DATA_DIR / 'Synthetic_Flies_for_Unifying'  # made by uaa_on_synthetic_trajectories/extract_synthetic_trajectories.py
 
 # Ordered left -> right in the figure
 SCENARIOS = ['shuffled_laminar', 'shuffled_stillair', 'levy_flight', 'random_turns', 'brownian', 'run_and_tumble']
@@ -53,8 +49,8 @@ def get_unifying_filename(key):
 
 def get_trajec_filename(key):
     if key in _SHUFFLED_STEM:
-        return SHUFFLED_DIR / _SHUFFLED_STEM[key]
-    return SYNTHETIC_DIR / f'synthetic_{key}_n200.parquet'
+        return data_path('shuffled.flies', wind=key.replace('shuffled_', ''))  # made by time_shift_flies/make_shuffled_datasets.py
+    return data_path('synthetic.flies', scenario=key, n=200)  # made by uaa_on_synthetic_trajectories/extract_synthetic_trajectories.py
 
 
 def load_unifying(key):
