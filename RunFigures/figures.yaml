@@ -7,8 +7,7 @@
 # collect_final_figures.sh reads this file (the `main` and `supplemental` lists).
 # Supplemental figures are listed in SI order; their folders are numbered to
 # match (FigureGeneration/Supplemental/supp_fig_NN_*). To renumber, rename the
-# folder and edit `name`. `unused` lists figure folders that are no longer in
-# the SI; collect_final_figures.sh skips them.
+# folder and edit `name`.
 #
 # Where a figure's notebooks write somewhere other than `svg`, the path they
 # write is given in a comment ("notebook writes: ..."). Those figures currently
@@ -151,17 +150,3 @@ supplemental:
     # the notebook fills a copy of supp_fig_all_animal_slopes.svg (template and finished figure) and writes
     #   supp_fig_all_animal_slopes_test.svg; copy the test file over it to adopt a rerun
     svg: FigureGeneration/Supplemental/supp_fig_15_all_animal_slopes/supp_fig_all_animal_slopes.svg
-
-unused:
-  - id: supp_vertical_split
-    name: Supp_vertical_split
-    title: Vertical split (not in the SI)
-    script: supp_vertical_split.sh
-    svg: FigureGeneration/Supplemental/unused_vertical_split/output_figs/S1_verticalsplit.svg
-
-  - id: supp_sorted_trajectories
-    name: Supp_sorted_trajectories
-    title: Altitude-sorted trajectories (no longer in the SI)
-    script: supp_sorted_trajectories.sh
-    # notebook writes: FigureGeneration/Supplemental/unused_altitude_sorted_trajectories/supp_all_trajectories_altitude_sorted_pca.svg
-    svg: FigureGeneration/Supplemental/unused_altitude_sorted_trajectories/output_figs/supp_all_trajectories_altitude_sorted_pca.svg

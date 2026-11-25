@@ -155,11 +155,7 @@ directory (Jupyter's default), so no path edits are needed.
 │   │   ├── fig_1_math_figure/
 │   │   │   ├── A_figure_math_affine_explanation.ipynb
 │   │   │   ├── B_figure_math_consolidate_params.ipynb
-│   │   │   ├── C_f1_example_trajectories.ipynb
-│   │   │   └── misc/
-│   │   │       └── basic_plotting_examples/
-│   │   │           ├── f1_example_trajectories.ipynb
-│   │   │           └── slope_vs_speed_over_length.ipynb
+│   │   │   └── C_f1_example_trajectories.ipynb
 │   │   ├── fig_2_wind_tunnel_CFD_and_sup_fig_1/
 │   │   │   ├── fig2_CFD.ipynb
 │   │   │   ├── fig2_wind_tunnel_plots.ipynb
@@ -186,7 +182,6 @@ directory (Jupyter's default), so no path edits are needed.
 │   │           ├── C_figure_align_course_directions.ipynb
 │   │           ├── D_figure_unifying_algo_results_slope_axis.ipynb
 │   │           ├── E_variable_wind_slope_axis_ratio.ipynb
-│   │           ├── misc/                # alternate/older panel notebooks (not part of the final figure)
 │   │           └── animal_trajectories/
 │   │               ├── albatross/
 │   │               ├── moth/
@@ -207,9 +202,7 @@ directory (Jupyter's default), so no path edits are needed.
 │   │   ├── supp_fig_13_shuffled_synthetic_uaa/  # S13 unifying algorithm on shuffled and synthetic trajectories
 │   │   ├── supp_fig_14_all_animal_trajectories/ # S14 example trajectories from all species
 │   │   ├── supp_fig_15_all_animal_slopes/       # S15 all-animal summary, slope vs movement speed
-│   │   ├── unifying_simulation/                 # supplementary movies (unifying algorithm animations)
-│   │   ├── unused_altitude_sorted_trajectories/ # no longer in the SI
-│   │   └── unused_vertical_split/               # not in the SI
+│   │   └── unifying_simulation/                 # supplementary movies (unifying algorithm animations)
 │   │
 │   └── VAE_pipeline/                   # Fig. 4 / SI S6-S8 (inputs: Data/Fig4_vae_data/; see VAE_pipeline/README.md)
 │       ├── vae_utils.py                # shared by the figure scripts: data loading, encoding, random forest
